@@ -1,0 +1,188 @@
+/* ==========================================================================
+   COMPONENTS CSS - SIM-MBG
+   Reusable UI components (Buttons, Badges, Cards, Chips)
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. BUTTONS (Figma Frame 2 & Frame 5 specs)
+   -------------------------------------------------------------------------- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-8);
+  font-family: var(--font-family);
+  font-size: var(--font-size-md);
+  font-weight: 600;
+  line-height: 1.2;
+  border-radius: var(--radius-md);
+  padding: 12px 24px;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  border: 1px solid transparent;
+  user-select: none;
+  white-space: nowrap;
+}
+
+/* Primary Button (Frame 2: #297373, text #FAFAF9, radius 8px) */
+.btn-primary {
+  background-color: var(--color-primary);
+  color: var(--color-bg);
+  box-shadow: 0 2px 4px rgba(41, 115, 115, 0.2);
+}
+
+.btn-primary:hover {
+  background-color: var(--color-primary-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(41, 115, 115, 0.28);
+}
+
+.btn-primary:active {
+  background-color: var(--color-primary-active);
+  transform: translateY(0);
+}
+
+/* Secondary Button / Contact (Frame 5: #FAFAF9, text #39393A, shadow 0 0 4 @25%) */
+.btn-secondary {
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-btn-sec);
+}
+
+.btn-secondary:hover {
+  background-color: var(--color-white);
+  border-color: var(--color-muted);
+  transform: translateY(-1px);
+}
+
+.btn-secondary:active {
+  transform: translateY(0);
+}
+
+/* Outline Button */
+.btn-outline {
+  background-color: transparent;
+  color: var(--color-primary);
+  border-color: var(--color-primary);
+}
+
+.btn-outline:hover {
+  background-color: var(--color-primary);
+  color: var(--color-bg);
+}
+
+/* Button Sizing */
+.btn-sm {
+  padding: 8px 16px;
+  font-size: var(--font-size-sm);
+  border-radius: var(--radius-sm);
+}
+
+.btn-lg {
+  padding: 14px 28px;
+  font-size: var(--font-size-lg);
+  border-radius: var(--radius-md);
+}
+
+/* --------------------------------------------------------------------------
+   2. BADGES & PILLS
+   -------------------------------------------------------------------------- */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-6);
+  padding: 6px 14px;
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-radius: var(--radius-pill);
+  line-height: 1;
+}
+
+.badge-primary {
+  background-color: rgba(41, 115, 115, 0.12);
+  color: var(--color-primary);
+  border: 1px solid rgba(41, 115, 115, 0.25);
+}
+
+.badge-accent {
+  background-color: rgba(255, 133, 82, 0.12);
+  color: var(--color-accent);
+  border: 1px solid rgba(255, 133, 82, 0.25);
+}
+
+.badge-secondary {
+  background-color: rgba(133, 255, 199, 0.25);
+  color: #00594D;
+  border: 1px solid rgba(133, 255, 199, 0.5);
+}
+
+/* --------------------------------------------------------------------------
+   3. CARDS
+   -------------------------------------------------------------------------- */
+.card {
+  background-color: var(--color-white);
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-card);
+  transition: all var(--transition-normal);
+  overflow: hidden;
+}
+
+.card:hover {
+  box-shadow: var(--shadow-card-elevated);
+}
+
+/* --------------------------------------------------------------------------
+   4. CHIP MENU (Frame 6 Figma Spec: 201×60, bg #297373, radius 6px, shadow)
+   -------------------------------------------------------------------------- */
+.menu-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 200px;
+  height: 60px;
+  padding: 8px 16px;
+  background-color: var(--color-primary);
+  color: var(--color-white);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-chip);
+  white-space: nowrap;
+  user-select: none;
+  cursor: pointer;
+  transition: transform var(--transition-fast), background-color var(--transition-fast);
+}
+
+.menu-chip:hover {
+  background-color: var(--color-primary-hover);
+  transform: translateY(-2px);
+}
+
+.menu-chip-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: 20px;
+  overflow: hidden;
+}
+
+.menu-chip-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.menu-chip-name {
+  font-size: var(--font-size-md);
+  font-weight: 700;
+  color: var(--color-white);
+  letter-spacing: -0.2px;
+}

@@ -1,0 +1,121 @@
+/* ==========================================================================
+   GLOBAL CSS - SIM-MBG
+   Typography, base element styling, and utility classes
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,600&display=swap');
+
+body {
+  font-family: var(--font-family);
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  font-size: var(--font-size-md);
+  font-weight: 400;
+  line-height: 1.6;
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* Headings */
+h1, h2, h3, h4, h5, h6 {
+  color: var(--color-heading);
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+h1 {
+  font-size: var(--font-size-4xl);
+}
+
+h2 {
+  font-size: var(--font-size-3xl);
+}
+
+h3 {
+  font-size: var(--font-size-2xl);
+}
+
+h4 {
+  font-size: var(--font-size-xl);
+}
+
+p {
+  color: var(--color-text);
+  line-height: 1.6;
+}
+
+/* Text Utilities */
+.text-primary {
+  color: var(--color-primary);
+}
+
+.text-accent {
+  color: var(--color-accent);
+}
+
+.text-muted {
+  color: var(--color-muted);
+}
+
+.text-center {
+  text-align: center;
+}
+
+.text-bold {
+  font-weight: 700;
+}
+
+.text-extrabold {
+  font-weight: 800;
+}
+
+/* Accessibility Focus Outline */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+/* Decorative Ambient Blur Ellipses (Figma Verified 11.1) */
+.ambient-decorations {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.ambient-ellipse-secondary {
+  position: absolute;
+  width: 900px;
+  height: 900px;
+  top: -200px;
+  left: -200px;
+  background: var(--color-secondary);
+  opacity: 0.45;
+  border-radius: 50%;
+  filter: blur(140px);
+}
+
+.ambient-ellipse-accent {
+  position: absolute;
+  width: 850px;
+  height: 850px;
+  top: 100px;
+  right: -200px;
+  background: var(--color-accent);
+  opacity: 0.18;
+  border-radius: 50%;
+  filter: blur(140px);
+}
+
+@media (max-width: 768px) {
+  .ambient-ellipse-secondary,
+  .ambient-ellipse-accent {
+    width: 450px;
+    height: 450px;
+    filter: blur(90px);
+  }
+}
