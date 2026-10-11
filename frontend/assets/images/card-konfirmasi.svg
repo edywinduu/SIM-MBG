@@ -70,13 +70,29 @@
       <!-- Compartments -->
       <!-- Rice -->
       <rect x="10" y="10" width="62" height="80" rx="8" fill="#FFFFFF" />
-      <text x="41" y="58" font-size="28" text-anchor="middle">🍚</text>
+      <g transform="translate(23, 30)">
+        <ellipse cx="18" cy="22" rx="16" ry="12" fill="#E2E8F0" />
+        <ellipse cx="18" cy="18" rx="15" ry="10" fill="#F8FAFC" />
+        <circle cx="14" cy="16" r="1.5" fill="#CBD5E1" />
+        <circle cx="21" cy="15" r="1.5" fill="#CBD5E1" />
+        <circle cx="17" cy="20" r="1.5" fill="#CBD5E1" />
+        <path d="M7 24 Q18 34 29 24" stroke="#64748B" stroke-width="2" fill="none" stroke-linecap="round" />
+      </g>
       <!-- Main Dish -->
       <rect x="78" y="10" width="62" height="38" rx="8" fill="#FFF7ED" />
-      <text x="109" y="36" font-size="20" text-anchor="middle">🍗</text>
+      <g transform="translate(95, 16)">
+        <path d="M6 14 C6 8 18 5 24 9 C27 11 26 18 20 20 C14 22 7 19 6 14 Z" fill="#EA580C" />
+        <path d="M5 16 C3 18 1 20 4 21 C6 21 8 18 6 16 Z" fill="#FDBA74" />
+        <circle cx="16" cy="12" r="2" fill="#FED7AA" />
+      </g>
       <!-- Veggies -->
       <rect x="78" y="52" width="62" height="38" rx="8" fill="#F0FDF4" />
-      <text x="109" y="78" font-size="20" text-anchor="middle">🥦</text>
+      <g transform="translate(97, 58)">
+        <circle cx="10" cy="10" r="6" fill="#16A34A" />
+        <circle cx="17" cy="10" r="5" fill="#22C55E" />
+        <circle cx="14" cy="7" r="5" fill="#4ADE80" />
+        <path d="M14 14 V21" stroke="#15803D" stroke-width="3" stroke-linecap="round" />
+      </g>
     </g>
 
     <!-- Floating Badges -->
@@ -89,7 +105,9 @@
 
     <g transform="translate(130, 150)" filter="url(#badgeShadow3)">
       <rect width="90" height="26" rx="13" fill="#FFFFFF" />
-      <text x="10" y="17" font-size="12">✨</text>
+      <g transform="translate(9, 7)">
+        <path d="M6 1 L7.5 4.5 L11 6 L7.5 7.5 L6 11 L4.5 7.5 L1 6 L4.5 4.5 Z" fill="#297373" />
+      </g>
       <text x="26" y="17" font-family="'Plus Jakarta Sans', sans-serif" font-size="9" font-weight="700" fill="#297373">Siap Saji SPPG</text>
     </g>
   </g>

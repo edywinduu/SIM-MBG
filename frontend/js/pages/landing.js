@@ -19,23 +19,24 @@ function init3DCoverflowCarousel() {
   const prevBtn = document.querySelector('#prevBtn');
   const nextBtn = document.querySelector('#nextBtn');
   const stepItems = document.querySelectorAll('.timeline-steps .step-item');
+  const progressLine = document.querySelector('#timelineProgress');
   const captionEl = document.querySelector('#carouselCaption');
   const carouselContainer = document.querySelector('.carousel-stage-container');
+  const viewport = document.querySelector('#carouselViewport');
 
   if (!cards || cards.length === 0) return;
 
-  // Step 2 is active by default as shown in the design
-  let currentStep = 2;
+  let currentStep = 1;
   const totalSteps = 3;
 
   const stepCaptions = {
-    1: 'Daftar Akun Siswa Baru',
+    1: 'Daftar Akun Siswa',
     2: 'Tekan Menu Makanan',
-    3: 'Konfirmasi & Jadwal Pengambilan'
+    3: 'Konfirmasi Pesanan'
   };
 
   /**
-   * Updates 3D card layout classes and timeline indicator
+   * Updates 3D card layout classes, timeline progress, and captions
    */
   function renderCarousel(step) {
     currentStep = step;
@@ -44,6 +45,7 @@ function init3DCoverflowCarousel() {
     const leftStep = ((currentStep - 2 + totalSteps) % totalSteps) + 1;
     const rightStep = (currentStep % totalSteps) + 1;
 
+    // Update Coverflow cards
     cards.forEach((card) => {
       const cardStep = parseInt(card.getAttribute('data-step'), 10);
 
@@ -65,6 +67,12 @@ function init3DCoverflowCarousel() {
       }
     });
 
+    // Update timeline stepper progress bar line
+    if (progressLine) {
+      const progressPercent = ((currentStep - 1) / (totalSteps - 1)) * 100;
+      progressLine.style.width = `${progressPercent}%`;
+    }
+
     // Update timeline indicator states
     if (stepItems && stepItems.length > 0) {
       stepItems.forEach((item) => {
@@ -73,15 +81,25 @@ function init3DCoverflowCarousel() {
 
         if (itemStep === currentStep) {
           item.classList.add('active');
+          item.setAttribute('aria-selected', 'true');
         } else if (itemStep < currentStep) {
           item.classList.add('active-done');
+          item.setAttribute('aria-selected', 'false');
+        } else {
+          item.setAttribute('aria-selected', 'false');
         }
       });
     }
 
-    // Update bottom caption text
+    // Update bottom caption text with smooth transition
     if (captionEl) {
-      captionEl.textContent = stepCaptions[currentStep] || 'Tekan Menu Makanan';
+      captionEl.style.opacity = '0';
+      captionEl.style.transform = 'translateY(4px)';
+      setTimeout(() => {
+        captionEl.textContent = stepCaptions[currentStep] || 'Tekan Menu Makanan';
+        captionEl.style.opacity = '1';
+        captionEl.style.transform = 'translateY(0)';
+      }, 150);
     }
   }
 
@@ -96,10 +114,20 @@ function init3DCoverflowCarousel() {
     renderCarousel(prev);
   }
 
+  // Auto-rotation timer (8s), resets on user interaction
+  const AUTO_INTERVAL = 8000;
+  let autoTimer = setInterval(goNext, AUTO_INTERVAL);
+
+  function resetAutoTimer() {
+    clearInterval(autoTimer);
+    autoTimer = setInterval(goNext, AUTO_INTERVAL);
+  }
+
   if (nextBtn) {
     nextBtn.addEventListener('click', (e) => {
       e.stopPropagation();
       goNext();
+      resetAutoTimer();
     });
   }
 
@@ -107,6 +135,7 @@ function init3DCoverflowCarousel() {
     prevBtn.addEventListener('click', (e) => {
       e.stopPropagation();
       goPrev();
+      resetAutoTimer();
     });
   }
 
@@ -116,6 +145,19 @@ function init3DCoverflowCarousel() {
       const cardStep = parseInt(card.getAttribute('data-step'), 10);
       if (cardStep && cardStep !== currentStep) {
         renderCarousel(cardStep);
+        resetAutoTimer();
+      }
+    });
+
+    // Keyboard support for cards
+    card.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        const cardStep = parseInt(card.getAttribute('data-step'), 10);
+        if (cardStep && cardStep !== currentStep) {
+          renderCarousel(cardStep);
+          resetAutoTimer();
+        }
       }
     });
   });
@@ -127,35 +169,65 @@ function init3DCoverflowCarousel() {
         const targetStep = parseInt(item.getAttribute('data-step'), 10);
         if (targetStep) {
           renderCarousel(targetStep);
+          resetAutoTimer();
         }
       });
     });
   }
 
-  // Keyboard navigation support
+  // Touch swipe gesture support for mobile devices
+  if (viewport) {
+    let touchStartX = 0;
+    let touchEndX = 0;
+
+    viewport.addEventListener('touchstart', (e) => {
+      if (e.changedTouches && e.changedTouches.length > 0) {
+        touchStartX = e.changedTouches[0].screenX;
+      }
+    }, { passive: true });
+
+    viewport.addEventListener('touchend', (e) => {
+      if (e.changedTouches && e.changedTouches.length > 0) {
+        touchEndX = e.changedTouches[0].screenX;
+        const diffX = touchEndX - touchStartX;
+        if (Math.abs(diffX) > 40) {
+          if (diffX < 0) {
+            goNext();
+          } else {
+            goPrev();
+          }
+          resetAutoTimer();
+        }
+      }
+    }, { passive: true });
+  }
+
+  // Keyboard navigation support when carousel area is focused or hovered
   document.addEventListener('keydown', (e) => {
     const alurSection = document.querySelector('#alur');
     if (!alurSection) return;
     const rect = alurSection.getBoundingClientRect();
     const isVisible = rect.top < window.innerHeight && rect.bottom >= 0;
     if (isVisible) {
-      if (e.key === 'ArrowLeft') goPrev();
-      if (e.key === 'ArrowRight') goNext();
+      if (e.key === 'ArrowLeft') {
+        goPrev();
+        resetAutoTimer();
+      } else if (e.key === 'ArrowRight') {
+        goNext();
+        resetAutoTimer();
+      }
     }
   });
 
-  // Auto-rotation timer every 6 seconds, pauses on hover
-  let autoTimer = setInterval(goNext, 6000);
-
+  // Pause rotation on hover and keyboard focus
   if (carouselContainer) {
     carouselContainer.addEventListener('mouseenter', () => clearInterval(autoTimer));
-    carouselContainer.addEventListener('mouseleave', () => {
-      clearInterval(autoTimer);
-      autoTimer = setInterval(goNext, 6000);
-    });
+    carouselContainer.addEventListener('mouseleave', resetAutoTimer);
+    carouselContainer.addEventListener('focusin', () => clearInterval(autoTimer));
+    carouselContainer.addEventListener('focusout', resetAutoTimer);
   }
 
-  // Initial render
+  // Initial render (starts on Step 2 per Figma)
   renderCarousel(currentStep);
 }
 
