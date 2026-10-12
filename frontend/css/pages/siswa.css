@@ -1,0 +1,1753 @@
+/* ==========================================================================
+   SISWA CSS - SIM-MBG (Member 2: Siswa)
+   Strict adherence to DESIGN_SYSTEM.md & AGENTS.md
+   Colors: #297373 (primary), #FAFAF9 (bg), #FF8552 (accent), #85FFC7 (secondary)
+   Siswa Surface tokens: #FFFFFF, #EFF4FF, #E5EEFF, #BDCABA
+   Typography: Plus Jakarta Sans
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. SISWA NAVBAR CUSTOMIZATION & USER CHIP
+   -------------------------------------------------------------------------- */
+.student-navbar-brand {
+  display: flex;
+  align-items: center;
+  gap: var(--space-12);
+  text-decoration: none;
+}
+
+.student-navbar-brand img {
+  height: 52px;
+  width: auto;
+}
+
+.student-brand-title {
+  font-size: 26px;
+  font-weight: 800;
+  color: var(--color-primary);
+  letter-spacing: -0.5px;
+}
+
+.student-nav-menu {
+  display: flex;
+  align-items: center;
+  gap: var(--space-16);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.student-nav-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-8);
+  font-family: var(--font-family);
+  font-size: var(--font-size-md);
+  font-weight: 700;
+  color: var(--color-text);
+  padding: 10px 18px;
+  border-radius: var(--radius-md);
+  text-decoration: none;
+  transition: all var(--transition-fast);
+  border: 1px solid transparent;
+}
+
+.student-nav-btn:hover {
+  color: var(--color-primary);
+  background-color: rgba(41, 115, 115, 0.08);
+}
+
+.student-nav-btn.active {
+  color: var(--color-bg);
+  background-color: var(--color-primary);
+  box-shadow: 0 2px 6px rgba(41, 115, 115, 0.25);
+}
+
+.student-user-chip {
+  display: flex;
+  align-items: center;
+  gap: var(--space-10);
+  padding: 6px 14px 6px 8px;
+  background-color: var(--color-white);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-pill);
+  box-shadow: var(--shadow-card);
+  text-decoration: none;
+  transition: all var(--transition-fast);
+}
+
+.student-user-chip:hover {
+  border-color: var(--color-primary);
+  transform: translateY(-1px);
+}
+
+.student-user-avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--color-primary), #3b9b9b);
+  color: var(--color-white);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: var(--font-size-sm);
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.student-user-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.student-user-meta {
+  display: flex;
+  flex-direction: column;
+}
+
+.student-user-name {
+  font-size: var(--font-size-sm);
+  font-weight: 700;
+  color: var(--color-heading);
+  line-height: 1.2;
+}
+
+.student-user-role {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--color-primary);
+}
+
+/* --------------------------------------------------------------------------
+   2. MAIN WRAPPER & HEADER SECTION
+   -------------------------------------------------------------------------- */
+.student-main-content {
+  padding-top: var(--space-32);
+  padding-bottom: var(--space-64);
+  position: relative;
+  z-index: 1;
+}
+
+.student-header-banner {
+  margin-bottom: var(--space-32);
+}
+
+.student-welcome-h1 {
+  font-size: var(--font-size-3xl);
+  font-weight: 800;
+  color: #0B1C30;
+  letter-spacing: -0.7px;
+  margin-bottom: var(--space-6);
+}
+
+.student-meta-subtitle {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-16);
+  font-size: var(--font-size-sm);
+  color: #3E4A3D;
+  font-weight: 500;
+}
+
+.student-meta-item {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-6);
+}
+
+.student-meta-badge {
+  background-color: rgba(41, 115, 115, 0.12);
+  color: var(--color-primary);
+  padding: 3px 10px;
+  border-radius: var(--radius-pill);
+  font-weight: 700;
+  font-size: var(--font-size-xs);
+}
+
+/* --------------------------------------------------------------------------
+   3. TOAST & NOTIFICATIONS
+   -------------------------------------------------------------------------- */
+.student-toast {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  padding: 14px 20px;
+  background-color: var(--color-heading);
+  color: var(--color-white);
+  border-radius: var(--radius-md);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  display: flex;
+  align-items: center;
+  gap: var(--space-12);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  z-index: 9999;
+  transform: translateY(100px);
+  opacity: 0;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.student-toast.show {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.student-toast.success {
+  background-color: var(--color-primary);
+}
+
+.student-toast.warning {
+  background-color: var(--color-warning);
+}
+
+.student-toast.danger {
+  background-color: var(--color-danger);
+}
+
+/* --------------------------------------------------------------------------
+   4. DASHBOARD PAGE SPECIFIC (Frame 97:1000)
+   -------------------------------------------------------------------------- */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: var(--space-24);
+  margin-bottom: var(--space-32);
+}
+
+.dashboard-left-col,
+.dashboard-right-col {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-24);
+}
+
+/* Schedule Card */
+.distribusi-card {
+  background: var(--color-white);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-card);
+  padding: var(--space-24);
+}
+
+.card-top-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-16);
+}
+
+.section-title-sm {
+  font-size: var(--font-size-lg);
+  font-weight: 700;
+  color: #0B1C30;
+  display: flex;
+  align-items: center;
+  gap: var(--space-8);
+}
+
+.time-badge-box {
+  background-color: #EFF4FF;
+  border-radius: var(--radius-md);
+  padding: var(--space-16);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-16);
+  border-left: 4px solid var(--color-primary);
+}
+
+.time-info-left {
+  display: flex;
+  align-items: center;
+  gap: var(--space-12);
+}
+
+.time-icon-circle {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background-color: var(--color-white);
+  color: var(--color-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-card);
+}
+
+.time-val {
+  font-size: var(--font-size-xl);
+  font-weight: 800;
+  color: #0B1C30;
+  line-height: 1.2;
+}
+
+.time-loc {
+  font-size: var(--font-size-xs);
+  color: #3E4A3D;
+  font-weight: 600;
+}
+
+.pickup-status-btn {
+  width: 100%;
+  height: 52px;
+  border-radius: var(--radius-md);
+  font-weight: 700;
+  font-size: var(--font-size-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-8);
+  border: none;
+  cursor: pointer;
+  transition: all var(--transition-normal);
+}
+
+.pickup-status-btn.pending {
+  background-color: #FFDDB8;
+  color: #855300;
+}
+
+.pickup-status-btn.pending:hover {
+  background-color: #f7ce9e;
+}
+
+.pickup-btn-icon {
+  width: 22px;
+  height: 22px;
+  object-fit: contain;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.pickup-status-btn.claimed {
+  background-color: #ECFDF5;
+  color: #007A55;
+  border: 1px solid #A4F4CF;
+  cursor: default;
+}
+
+/* Notice & Tomorrow banner */
+.notice-card {
+  background: var(--color-white);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-card);
+  padding: var(--space-24);
+}
+
+.sppg-notice-banner {
+  background: linear-gradient(135deg, rgba(41, 115, 115, 0.08), rgba(133, 255, 199, 0.15));
+  border: 1px solid rgba(41, 115, 115, 0.2);
+  border-radius: var(--radius-md);
+  padding: var(--space-16);
+  margin-bottom: var(--space-16);
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-12);
+}
+
+.sppg-notice-banner .material-symbols-outlined {
+  color: var(--color-primary);
+  font-size: 28px;
+}
+
+.sppg-notice-text h4 {
+  font-size: var(--font-size-md);
+  font-weight: 700;
+  color: #0B1C30;
+  margin-bottom: 4px;
+}
+
+.sppg-notice-text p {
+  font-size: var(--font-size-sm);
+  color: #3E4A3D;
+  margin: 0;
+}
+
+.tomorrow-action-box {
+  background-color: #EFF4FF;
+  border-radius: var(--radius-md);
+  padding: var(--space-16);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.tomorrow-meta h4 {
+  font-size: var(--font-size-md);
+  font-weight: 700;
+  color: #0B1C30;
+  margin-bottom: 2px;
+}
+
+.tomorrow-meta p {
+  font-size: var(--font-size-xs);
+  color: #3E4A3D;
+  margin: 0;
+}
+
+/* Right Col: Menu Hari Ini Card */
+.menu-today-card {
+  background: var(--color-white);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-card);
+  overflow: hidden;
+}
+
+.menu-today-img-wrap {
+  position: relative;
+  width: 100%;
+  height: 208px;
+  background-color: #EFF4FF;
+  overflow: hidden;
+}
+
+.menu-today-img-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.menu-img-badge {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  background-color: rgba(15, 23, 43, 0.75);
+  backdrop-filter: blur(8px);
+  color: var(--color-white);
+  padding: 4px 12px;
+  border-radius: var(--radius-pill);
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.menu-today-body {
+  padding: var(--space-20);
+}
+
+.menu-today-title {
+  font-size: var(--font-size-xl);
+  font-weight: 800;
+  color: #0B1C30;
+  margin-bottom: var(--space-8);
+}
+
+.menu-composition-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-6);
+  margin-bottom: var(--space-16);
+}
+
+.comp-chip {
+  background-color: #EFF4FF;
+  color: #0B1C30;
+  padding: 4px 10px;
+  border-radius: var(--radius-pill);
+  font-size: 11px;
+  font-weight: 600;
+}
+
+/* Macro Bar (Protein, Karbo, Lemak, Serat) */
+.macro-bar-container {
+  margin-bottom: var(--space-16);
+}
+
+.macro-bar-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+  color: #3E4A3D;
+  margin-bottom: 6px;
+}
+
+.macro-bar-track {
+  height: 10px;
+  background-color: #E2E8F0;
+  border-radius: var(--radius-pill);
+  display: flex;
+  overflow: hidden;
+}
+
+.macro-seg-protein {
+  width: 35%;
+  background-color: var(--color-primary);
+}
+
+.macro-seg-carb {
+  width: 45%;
+  background-color: var(--color-accent);
+}
+
+.macro-seg-fat {
+  width: 20%;
+  background-color: #85FFC7;
+}
+
+/* Gizi Mini Grid */
+.nutrition-grid-4 {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-8);
+  margin-bottom: var(--space-16);
+}
+
+.nutri-cell {
+  background-color: #EFF4FF;
+  border-radius: var(--radius-sm);
+  padding: 8px 6px;
+  text-align: center;
+}
+
+.nutri-val {
+  font-size: var(--font-size-sm);
+  font-weight: 800;
+  color: #0B1C30;
+}
+
+.nutri-lbl {
+  font-size: 10px;
+  color: #62748E;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.menu-eco-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background-color: #ECFDF5;
+  color: #007A55;
+  padding: 6px 12px;
+  border-radius: var(--radius-pill);
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+}
+
+/* 3 Bottom KPI Stats */
+.dashboard-kpi-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-16);
+}
+
+.kpi-stat-card {
+  background: var(--color-white);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-card);
+  padding: var(--space-20);
+  display: flex;
+  align-items: center;
+  gap: var(--space-16);
+}
+
+.kpi-icon-wrap {
+  width: 52px;
+  height: 52px;
+  border-radius: var(--radius-md);
+  background-color: #EFF4FF;
+  color: var(--color-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  flex-shrink: 0;
+}
+
+.kpi-stat-info h3 {
+  font-size: var(--font-size-2xl);
+  font-weight: 800;
+  color: #0B1C30;
+  line-height: 1.1;
+}
+
+.kpi-stat-info p {
+  font-size: var(--font-size-xs);
+  color: #62748E;
+  font-weight: 600;
+  margin: 0;
+}
+
+/* --------------------------------------------------------------------------
+   5. PILIH MENU PAGE (Frame 101:3408)
+   -------------------------------------------------------------------------- */
+.menu-selection-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-16);
+  margin-bottom: var(--space-24);
+}
+
+.allergy-profile-pill {
+  display: flex;
+  align-items: center;
+  gap: var(--space-12);
+  padding: 10px 16px;
+  background-color: var(--color-white);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+}
+
+.allergy-icon-circle {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #FFDAD6;
+  color: #93000A;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.allergy-pill-text h4 {
+  font-size: var(--font-size-xs);
+  text-transform: uppercase;
+  color: #62748E;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  margin-bottom: 2px;
+}
+
+.allergy-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.allergy-item-tag {
+  font-size: 11px;
+  font-weight: 700;
+  background-color: #FFDAD6;
+  color: #93000A;
+  padding: 2px 8px;
+  border-radius: var(--radius-pill);
+}
+
+/* Cut-off Countdown Banner */
+.cutoff-banner {
+  background: linear-gradient(135deg, #FFDDB8 0%, #FFE9D1 100%);
+  border: 1px solid rgba(133, 83, 0, 0.2);
+  border-radius: var(--radius-lg);
+  padding: var(--space-20) var(--space-24);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-24);
+}
+
+.cutoff-left {
+  display: flex;
+  align-items: center;
+  gap: var(--space-16);
+}
+
+.cutoff-icon-box {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background-color: rgba(133, 83, 0, 0.12);
+  color: #855300;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cutoff-left h3 {
+  font-size: var(--font-size-lg);
+  font-weight: 800;
+  color: #653E00;
+  margin-bottom: 2px;
+}
+
+.cutoff-left p {
+  font-size: var(--font-size-sm);
+  color: #855300;
+  font-weight: 600;
+  margin: 0;
+}
+
+.countdown-timer-box {
+  background-color: var(--color-white);
+  padding: 8px 18px;
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(133, 83, 0, 0.2);
+  box-shadow: 0 2px 6px rgba(133, 83, 0, 0.1);
+  text-align: right;
+}
+
+.countdown-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: #855300;
+  text-transform: uppercase;
+}
+
+.countdown-digits {
+  font-size: var(--font-size-2xl);
+  font-weight: 800;
+  color: #653E00;
+  font-family: monospace;
+  letter-spacing: 1px;
+}
+
+/* Day Tabs Selector (Senin - Jumat) - Full Width Flexible Layout */
+.day-tabs-nav {
+  display: flex;
+  align-items: stretch;
+  gap: var(--space-12);
+  width: 100%;
+  margin-bottom: var(--space-24);
+}
+
+.day-tab-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 14px 18px;
+  background-color: var(--color-white);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  white-space: nowrap;
+  font-family: var(--font-family);
+  flex: 0 0 auto;
+  min-width: 130px;
+}
+
+/* Hari yang dipilih membesar dan memanjang memenuhi sisa baris */
+.day-tab-btn.active {
+  flex: 1 1 auto;
+  background-color: var(--color-primary);
+  color: var(--color-white);
+  border-color: var(--color-primary);
+  box-shadow: 0 6px 16px rgba(41, 115, 115, 0.28);
+  padding: 16px 24px;
+}
+
+.day-tab-btn:hover:not(:disabled):not(.active) {
+  border-color: var(--color-primary);
+  background-color: #F8FAFC;
+  transform: translateY(-1px);
+}
+
+.day-tab-btn.active .day-name,
+.day-tab-btn.active .day-date {
+  color: var(--color-white);
+}
+
+.day-tab-btn.active .day-name {
+  font-size: var(--font-size-lg);
+}
+
+.day-name {
+  font-size: var(--font-size-md);
+  font-weight: 800;
+  color: #0B1C30;
+  transition: font-size var(--transition-fast);
+}
+
+.day-date {
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  color: #62748E;
+  margin-top: 2px;
+}
+
+.day-state-tag {
+  margin-top: 6px;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: var(--radius-pill);
+}
+
+.day-tab-btn.active .day-state-tag {
+  background-color: rgba(255, 255, 255, 0.25);
+  color: var(--color-white);
+}
+
+.day-tab-btn:not(.active) .day-state-tag.open {
+  background-color: rgba(41, 115, 115, 0.1);
+  color: var(--color-primary);
+}
+
+/* Hari yang telah berakhir: warna diredupkan, opacity turun, tidak bisa diklik */
+.day-tab-btn.past,
+.day-tab-btn:disabled {
+  background-color: #F1F5F9;
+  border-color: #E2E8F0;
+  opacity: 0.55;
+  cursor: not-allowed;
+  filter: grayscale(40%);
+  box-shadow: none;
+}
+
+.day-tab-btn.past .day-name {
+  color: #94A3B8;
+  font-weight: 600;
+}
+
+.day-tab-btn.past .day-date {
+  color: #94A3B8;
+}
+
+.day-tab-btn.past .day-state-tag.past {
+  background-color: #E2E8F0;
+  color: #64748B;
+}
+
+/* Section Title & Grid of 3 Menu Cards */
+.menu-grid-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-20);
+}
+
+.menu-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-24);
+  margin-bottom: var(--space-32);
+}
+
+.menu-package-card {
+  background: var(--color-white);
+  border-radius: var(--radius-xl);
+  border: 2px solid var(--color-border);
+  box-shadow: var(--shadow-card);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: all var(--transition-normal);
+  position: relative;
+}
+
+.menu-package-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-card-elevated);
+}
+
+.menu-package-card.selected {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 1px var(--color-primary), var(--shadow-card-elevated);
+}
+
+.card-selected-ribbon {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  background-color: var(--color-primary);
+  color: var(--color-white);
+  font-size: 11px;
+  font-weight: 800;
+  padding: 4px 12px;
+  border-radius: var(--radius-pill);
+  z-index: 2;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+.card-warning-ribbon {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  background-color: var(--color-warning);
+  color: var(--color-white);
+  font-size: 11px;
+  font-weight: 800;
+  padding: 4px 12px;
+  border-radius: var(--radius-pill);
+  z-index: 2;
+}
+
+.package-img-holder {
+  height: 220px;
+  width: 100%;
+  background-color: #EFF4FF;
+  position: relative;
+  overflow: hidden;
+}
+
+.package-img-holder img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.package-card-body {
+  padding: var(--space-20);
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.package-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-6);
+}
+
+.package-title {
+  font-size: var(--font-size-xl);
+  font-weight: 800;
+  color: #0B1C30;
+}
+
+.package-calories {
+  font-size: var(--font-size-sm);
+  font-weight: 800;
+  color: var(--color-primary);
+}
+
+.package-desc {
+  font-size: var(--font-size-sm);
+  color: #62748E;
+  margin-bottom: var(--space-12);
+  line-height: 1.4;
+}
+
+/* Macro Pills */
+.package-macros-row {
+  display: flex;
+  gap: var(--space-6);
+  margin-bottom: var(--space-16);
+}
+
+.macro-pill {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: var(--radius-sm);
+  background-color: #EFF4FF;
+  color: #0B1C30;
+}
+
+.macro-pill.protein {
+  background-color: rgba(41, 115, 115, 0.12);
+  color: var(--color-primary);
+}
+
+.macro-pill.fiber {
+  background-color: rgba(133, 255, 199, 0.3);
+  color: #00594D;
+}
+
+/* Plate Details List */
+.plate-details-box {
+  background-color: #F8FAFC;
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-md);
+  padding: var(--space-12);
+  margin-bottom: var(--space-16);
+}
+
+.plate-details-box h5 {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #62748E;
+  margin-bottom: 6px;
+}
+
+.plate-items-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  font-size: var(--font-size-xs);
+  color: #0B1C30;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.plate-items-list li {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.plate-items-list li::before {
+  content: "•";
+  color: var(--color-primary);
+  font-weight: bold;
+}
+
+/* Allergy Warning Box inside Card */
+.card-allergy-alert {
+  background-color: #FFDAD6;
+  border: 1px solid #ffb4ab;
+  border-radius: var(--radius-md);
+  padding: 8px 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: var(--space-16);
+}
+
+.card-allergy-alert .material-symbols-outlined {
+  color: #93000A;
+  font-size: 20px;
+}
+
+.card-allergy-alert p {
+  font-size: 11px;
+  font-weight: 700;
+  color: #93000A;
+  margin: 0;
+}
+
+.card-allergy-safe {
+  background-color: #ECFDF5;
+  border: 1px solid #A4F4CF;
+  border-radius: var(--radius-md);
+  padding: 8px 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: var(--space-16);
+}
+
+.card-allergy-safe .material-symbols-outlined {
+  color: #007A55;
+  font-size: 20px;
+}
+
+.card-allergy-safe p {
+  font-size: 11px;
+  font-weight: 700;
+  color: #007A55;
+  margin: 0;
+}
+
+.package-btn-action {
+  margin-top: auto;
+  width: 100%;
+}
+
+/* Weekly Nutrition Balance Panel */
+.weekly-balance-panel {
+  background: var(--color-white);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-card);
+  padding: var(--space-24);
+}
+
+.weekly-balance-panel h3 {
+  font-size: var(--font-size-xl);
+  font-weight: 800;
+  color: #0B1C30;
+  margin-bottom: 4px;
+}
+
+.weekly-balance-panel p {
+  font-size: var(--font-size-sm);
+  color: #62748E;
+  margin-bottom: var(--space-20);
+}
+
+.balance-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-20);
+}
+
+.balance-card {
+  background-color: #EFF4FF;
+  border-radius: var(--radius-lg);
+  padding: var(--space-16);
+  border-left: 4px solid var(--color-primary);
+}
+
+.balance-title {
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+  color: #62748E;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+
+.balance-score {
+  font-size: var(--font-size-2xl);
+  font-weight: 800;
+  color: #0B1C30;
+  margin-bottom: 2px;
+}
+
+.balance-status {
+  font-size: var(--font-size-xs);
+  color: #007A55;
+  font-weight: 700;
+}
+
+/* --------------------------------------------------------------------------
+   6. RIWAYAT & ULASAN PAGE (Frame 101:4971)
+   -------------------------------------------------------------------------- */
+.riwayat-ribbon-summary {
+  background: linear-gradient(135deg, var(--color-primary) 0%, #174848 100%);
+  border-radius: var(--radius-xl);
+  padding: var(--space-24) var(--space-32);
+  color: var(--color-white);
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-24);
+  margin-bottom: var(--space-32);
+  box-shadow: var(--shadow-glow);
+}
+
+.summary-col {
+  display: flex;
+  flex-direction: column;
+}
+
+.summary-col:not(:last-child) {
+  border-right: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.summary-lbl {
+  font-size: var(--font-size-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: rgba(255, 255, 255, 0.8);
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.summary-val {
+  font-size: 32px;
+  font-weight: 800;
+  color: var(--color-white);
+  line-height: 1.1;
+  margin-bottom: 2px;
+}
+
+.summary-desc {
+  font-size: var(--font-size-xs);
+  color: rgba(255, 255, 255, 0.85);
+}
+
+/* Filter & Search Toolbar */
+.riwayat-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-16);
+  margin-bottom: var(--space-24);
+}
+
+.filter-chips-group {
+  display: flex;
+  gap: var(--space-8);
+}
+
+.filter-chip-btn {
+  height: 38px;
+  padding: 0 16px;
+  border-radius: var(--radius-pill);
+  font-family: var(--font-family);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  border: 1px solid var(--color-border);
+  background-color: var(--color-white);
+  color: var(--color-text);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.filter-chip-btn:hover {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+.filter-chip-btn.active {
+  background-color: var(--color-primary);
+  border-color: var(--color-primary);
+  color: var(--color-white);
+}
+
+.riwayat-search-sort {
+  display: flex;
+  align-items: center;
+  gap: var(--space-12);
+}
+
+.search-input-wrapper {
+  position: relative;
+  width: 240px;
+}
+
+.search-input-wrapper .material-symbols-outlined {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #62748E;
+  font-size: 20px;
+}
+
+.search-field {
+  width: 100%;
+  height: 38px;
+  padding-left: 38px;
+  padding-right: 12px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  font-family: var(--font-family);
+  font-size: var(--font-size-sm);
+}
+
+.search-field:focus {
+  border-color: var(--color-primary);
+}
+
+.sort-select {
+  height: 38px;
+  padding: 0 12px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background-color: var(--color-white);
+  font-family: var(--font-family);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--color-heading);
+}
+
+/* Feed of 3 Riwayat Cards */
+.riwayat-cards-feed {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-20);
+}
+
+.riwayat-card {
+  background: var(--color-white);
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-card);
+  padding: var(--space-24);
+  display: grid;
+  grid-template-columns: 240px 1fr auto;
+  gap: var(--space-24);
+  align-items: center;
+  transition: all var(--transition-fast);
+}
+
+.riwayat-card:hover {
+  box-shadow: var(--shadow-card-elevated);
+}
+
+.riwayat-img-col {
+  width: 100%;
+  height: 150px;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background-color: #EFF4FF;
+}
+
+.riwayat-img-col img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.riwayat-info-col {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+}
+
+.riwayat-date-badge-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-12);
+}
+
+.riwayat-date {
+  font-size: var(--font-size-sm);
+  font-weight: 700;
+  color: #62748E;
+}
+
+.riwayat-badge {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: var(--radius-pill);
+}
+
+.riwayat-badge.success {
+  background-color: #ECFDF5;
+  color: #007A55;
+  border: 1px solid #A4F4CF;
+}
+
+.riwayat-badge.warning {
+  background-color: #FFDDB8;
+  color: #855300;
+  border: 1px solid #ffcca3;
+}
+
+.riwayat-menu-name {
+  font-size: var(--font-size-xl);
+  font-weight: 800;
+  color: #0B1C30;
+}
+
+.star-rating-box {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.star-rating-box .material-symbols-outlined {
+  font-size: 20px;
+  color: #FEA619;
+}
+
+.riwayat-review-quote {
+  font-style: italic;
+  font-size: var(--font-size-sm);
+  color: #3E4A3D;
+  background-color: #F8FAFC;
+  padding: 8px 14px;
+  border-radius: var(--radius-md);
+  border-left: 3px solid var(--color-primary);
+  margin: 0;
+}
+
+.riwayat-actions-col {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+  min-width: 140px;
+}
+
+/* --------------------------------------------------------------------------
+   7. PROFIL SAYA PAGE (Frame 107:6395)
+   -------------------------------------------------------------------------- */
+.profile-container-grid {
+  display: grid;
+  grid-template-columns: 360px 1fr;
+  gap: var(--space-40); /* Jarak lega antar card kiri dan kanan */
+}
+
+.profile-card-sidebar {
+  background: var(--color-white);
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-card);
+  padding: var(--space-32) var(--space-24);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.profile-avatar-wrapper {
+  position: relative;
+  margin-bottom: var(--space-16);
+  display: inline-block;
+}
+
+.profile-big-avatar {
+  width: 104px;
+  height: 104px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--color-primary), #3b9b9b);
+  color: var(--color-white);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 38px;
+  font-weight: 800;
+  box-shadow: 0 4px 14px rgba(41, 115, 115, 0.22);
+  overflow: hidden;
+  border: 3px solid var(--color-white);
+}
+
+.profile-big-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Tombol Ubah Foto Profil */
+.btn-change-avatar {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background-color: var(--color-primary);
+  color: var(--color-white);
+  border: 2px solid var(--color-white);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--transition-fast);
+}
+
+.btn-change-avatar:hover {
+  background-color: var(--color-primary-hover);
+  transform: scale(1.1);
+}
+
+.btn-change-avatar .material-symbols-outlined {
+  font-size: 18px;
+}
+
+.btn-upload-text {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+  color: var(--color-primary);
+  background-color: rgba(41, 115, 115, 0.08);
+  padding: 6px 14px;
+  border-radius: var(--radius-pill);
+  border: 1px solid rgba(41, 115, 115, 0.2);
+  cursor: pointer;
+  margin-bottom: var(--space-16);
+  transition: all var(--transition-fast);
+}
+
+.btn-upload-text:hover {
+  background-color: var(--color-primary);
+  color: var(--color-white);
+}
+
+.profile-user-title {
+  font-size: var(--font-size-2xl);
+  font-weight: 800;
+  color: #0B1C30;
+  margin-bottom: 4px;
+}
+
+.profile-school-subtitle {
+  font-size: var(--font-size-sm);
+  color: #62748E;
+  margin-bottom: var(--space-24);
+}
+
+.profile-sidebar-meta-list {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-12);
+  border-top: 1px solid var(--color-border-subtle);
+  padding-top: var(--space-20);
+  text-align: left;
+}
+
+.profile-meta-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: var(--font-size-sm);
+}
+
+.profile-meta-lbl {
+  color: #62748E;
+  font-weight: 600;
+}
+
+.profile-meta-val {
+  color: #0B1C30;
+  font-weight: 700;
+}
+
+/* Profile Right Content: Allergy & Health Form */
+.profile-content-card {
+  background: var(--color-white);
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-card);
+  padding: var(--space-32);
+}
+
+.profile-section-heading {
+  margin-bottom: var(--space-24);
+  border-bottom: 1px solid var(--color-border-subtle);
+  padding-bottom: var(--space-16);
+}
+
+.profile-section-heading h2 {
+  font-size: var(--font-size-2xl);
+  font-weight: 800;
+  color: #0B1C30;
+  margin-bottom: 4px;
+}
+
+.profile-section-heading p {
+  font-size: var(--font-size-sm);
+  color: #62748E;
+  margin: 0;
+}
+
+.allergy-checkbox-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-16);
+  margin-bottom: var(--space-28);
+}
+
+.allergy-checkbox-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-12);
+  padding: var(--space-16);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  background-color: #F8FAFC;
+}
+
+.allergy-checkbox-item:hover {
+  border-color: var(--color-primary);
+  background-color: #EFF4FF;
+}
+
+.allergy-checkbox-item.checked {
+  border-color: #FF8552;
+  background-color: #FFF6F2;
+}
+
+.allergy-checkbox-item input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  accent-color: var(--color-accent);
+  cursor: pointer;
+}
+
+.allergy-item-info h4 {
+  font-size: var(--font-size-md);
+  font-weight: 700;
+  color: #0B1C30;
+  margin-bottom: 2px;
+}
+
+.allergy-item-info p {
+  font-size: var(--font-size-xs);
+  color: #62748E;
+  margin: 0;
+}
+
+.form-group-medical {
+  margin-bottom: var(--space-28);
+}
+
+.form-group-medical label {
+  display: block;
+  font-size: var(--font-size-sm);
+  font-weight: 700;
+  color: #0B1C30;
+  margin-bottom: var(--space-8);
+}
+
+.form-textarea {
+  width: 100%;
+  min-height: 100px;
+  padding: 12px 16px;
+  border: 1px solid #767676;
+  border-radius: var(--radius-md);
+  font-family: var(--font-family);
+  font-size: var(--font-size-sm);
+  resize: vertical;
+}
+
+.form-textarea:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 2px rgba(41, 115, 115, 0.2);
+}
+
+.profile-form-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--space-16);
+}
+
+/* --------------------------------------------------------------------------
+   8. REVIEW MODAL DIALOG
+   -------------------------------------------------------------------------- */
+.student-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(15, 23, 43, 0.6);
+  backdrop-filter: blur(4px);
+  z-index: 1000;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-20);
+}
+
+.student-modal-backdrop.show {
+  display: flex;
+  animation: modalFadeIn 0.2s ease-out;
+}
+
+@keyframes modalFadeIn {
+  from { opacity: 0; transform: scale(0.96); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.student-modal-card {
+  background: var(--color-white);
+  border-radius: var(--radius-xl);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+  width: 100%;
+  max-width: 540px;
+  overflow: hidden;
+}
+
+.student-modal-header {
+  padding: var(--space-20) var(--space-24);
+  border-bottom: 1px solid var(--color-border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.student-modal-header h3 {
+  font-size: var(--font-size-xl);
+  font-weight: 800;
+  color: #0B1C30;
+}
+
+.modal-close-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: #62748E;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+}
+
+.student-modal-body {
+  padding: var(--space-24);
+}
+
+.star-rating-interactive {
+  display: flex;
+  gap: 8px;
+  margin-bottom: var(--space-20);
+}
+
+.star-rate-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  color: #CBD5E1;
+  font-size: 32px;
+  transition: color 0.15s;
+}
+
+.star-rate-btn.active,
+.star-rate-btn:hover {
+  color: #FEA619;
+}
+
+.student-modal-footer {
+  padding: var(--space-16) var(--space-24);
+  border-top: 1px solid var(--color-border);
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--space-12);
+  background-color: #F8FAFC;
+}
+
+/* --------------------------------------------------------------------------
+   9. RESPONSIVE MEDIA QUERIES
+   -------------------------------------------------------------------------- */
+@media (max-width: 1100px) {
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+  .menu-cards-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+  .balance-cards-grid {
+    grid-template-columns: 1fr;
+  }
+  .riwayat-ribbon-summary {
+    grid-template-columns: 1fr;
+    gap: var(--space-16);
+  }
+  .summary-col:not(:last-child) {
+    border-right: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    padding-bottom: var(--space-12);
+  }
+  .riwayat-card {
+    grid-template-columns: 180px 1fr;
+  }
+  .riwayat-actions-col {
+    grid-column: span 2;
+    flex-direction: row;
+  }
+  .profile-container-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .dashboard-kpi-row {
+    grid-template-columns: 1fr;
+  }
+  .menu-cards-grid {
+    grid-template-columns: 1fr;
+  }
+  .cutoff-banner {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-16);
+  }
+  .countdown-timer-box {
+    text-align: left;
+    width: 100%;
+  }
+  .riwayat-toolbar {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .search-input-wrapper {
+    width: 100%;
+  }
+  .riwayat-card {
+    grid-template-columns: 1fr;
+  }
+  .riwayat-actions-col {
+    grid-column: span 1;
+    flex-direction: column;
+  }
+  .allergy-checkbox-grid {
+    grid-template-columns: 1fr;
+  }
+}
