@@ -211,14 +211,215 @@ function initDashboard() {
 /* ------------------------------------------------------------------ */
 const CAT_LABEL = { reguler: 'Reguler SD/SMP', khusus: 'Alergi Khusus', cadangan: 'Cadangan Operasional' };
 
+
 const MENUS = [
-  { id: 1, day: 'Senin • Minggu ke-1', cat: 'reguler', name: 'Paket Ayam Panggang Madu & Capcay Bakso', desc: 'Nasi Merah Organik, Ayam Panggang Madu 80g, Capcay Sayur Segar, Semangka Merah, Kotak Susu UHT', kcal: 630, carb: 75, prot: 26, fat: 16, tags: [['ok', 'Bebas Kacang'], ['warn', 'Mengandung Susu Sapi']], active: true, img: '' },
-  { id: 2, day: 'Selasa • Minggu ke-1', cat: 'khusus', catLabel: 'Diet Alergi Seafood', name: 'Paket Semur Daging Sapi & Tumis Buncis Tempe', desc: 'Nasi Putih Pulen, Semur Daging Gandik 75g + Tahu Sutra, Tumis Buncis Tempe, Potongan Pepaya, Susu Kedelai', kcal: 620, carb: 78, prot: 28, fat: 14, tags: [['ok', 'Bebas Ikan & Udang'], ['ok', 'Bebas Laktosa Sapi']], active: true, img: '' },
-  { id: 3, day: 'Rabu • Minggu ke-1', cat: 'reguler', name: 'Paket Ikan Fillet Kunyit & Sayur Bening Bayam', desc: 'Nasi Putih Pulen, Fillet Ikan Kakap Bumbu Kunyit 85g, Sayur Bening Bayam Jagung Manis, Pisang Cavendish', kcal: 595, carb: 72, prot: 27, fat: 12, tags: [['warn', 'Mengandung Ikan Laut'], ['ok', 'Bebas Telur']], active: true, img: '' },
-  { id: 4, day: 'Kamis • Minggu ke-1', cat: 'khusus', catLabel: 'Bebas Gluten / Celiac', name: 'Paket Sate Ayam Lilit & Sayur Daun Kelor Jagung', desc: 'Nasi Jagung Organik, Sate Ayam Lilit Tanpa Terigu 80g, Sup Sayur Daun Kelor & Labu Kuning, Melon Hijau', kcal: 605, carb: 70, prot: 25, fat: 15, tags: [['ok', 'Bebas Gandum / Terigu'], ['ok', 'Bebas Kacang Tanah']], active: true, img: '' },
-  { id: 5, day: 'Jumat • Minggu ke-1', cat: 'reguler', name: 'Paket Rolade Daging Telur & Tumis Brokoli', desc: 'Nasi Merah, Rolade Sapi Isi Telur Rebus 85g, Tumis Brokoli Wortel Saus Tiram Ringan, Pir Hijau Segar', kcal: 635, carb: 74, prot: 29, fat: 17, tags: [['warn', 'Mengandung Telur Ayam'], ['ok', 'Bebas Kacang']], active: true, img: '' },
-  { id: 6, day: 'Cadangan Operasional', cat: 'cadangan', catLabel: 'Ready-to-Deploy', name: 'Paket Siaga Cadangan: Ayam Opor Suwir & Tahu Tempe', desc: 'Nasi Pulen, Ayam Opor Suwir Higienis 80g, Bacem Tahu Tempe Kedelai Lokal, Apel Manis Fuji, Susu UHT', kcal: 610, carb: 76, prot: 24, fat: 15, tags: [['ok', 'Hipoalergenik Ringan'], ['warn', 'Mengandung Kedelai']], active: true, img: '' }
+  {
+    id: 1,
+    day: 'Senin • Minggu ke-1',
+    cat: 'reguler',
+    name: 'Paket Ayam Panggang Madu & Capcay Bakso',
+    desc: 'Nasi Merah Organik, Ayam Panggang Madu 80g, Capcay Sayur Segar, Semangka Merah, Kotak Susu UHT',
+    kcal: 630,
+    carb: 75,
+    prot: 26,
+    fat: 16,
+    tags: [
+      ['ok', 'Bebas Kacang'],
+      ['warn', 'Mengandung Susu Sapi']
+    ],
+    active: true,
+    img: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=800&q=80',
+
+    // Properti kompatibel dengan siswa.js
+    code: 'Paket A',
+    calories: '630 kkal',
+    protein: '26g',
+    carbs: '75g',
+    fiber: '8g',
+    items: [
+      'Nasi Merah Organik',
+      'Ayam Panggang Madu 80g',
+      'Capcay Sayur Segar',
+      'Semangka Merah',
+      'Kotak Susu UHT'
+    ],
+    allergens: ['Susu Sapi'],
+    image: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=800&q=80',
+    ecoFriendly: true
+  },
+
+  {
+    id: 2,
+    day: 'Selasa • Minggu ke-1',
+    cat: 'khusus',
+    catLabel: 'Diet Alergi Seafood',
+    name: 'Paket Semur Daging Sapi & Tumis Buncis Tempe',
+    desc: 'Nasi Putih Pulen, Semur Daging Gandik 75g + Tahu Sutra, Tumis Buncis Tempe, Potongan Pepaya, Susu Kedelai',
+    kcal: 620,
+    carb: 78,
+    prot: 28,
+    fat: 14,
+    tags: [
+      ['ok', 'Bebas Ikan & Udang'],
+      ['ok', 'Bebas Laktosa Sapi']
+    ],
+    active: true,
+    img: 'https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=800&q=80',
+
+    code: 'Paket B',
+    calories: '620 kkal',
+    protein: '28g',
+    carbs: '78g',
+    fiber: '7g',
+    items: [
+      'Nasi Putih Pulen',
+      'Semur Daging Gandik 75g',
+      'Tahu Sutra',
+      'Tumis Buncis Tempe',
+      'Potongan Pepaya',
+      'Susu Kedelai'
+    ],
+    allergens: ['Kedelai'],
+    image: 'https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=800&q=80',
+    ecoFriendly: true
+  },
+
+  {
+    id: 3,
+    day: 'Rabu • Minggu ke-1',
+    cat: 'reguler',
+    name: 'Paket Ikan Fillet Kunyit & Sayur Bening Bayam',
+    desc: 'Nasi Putih Pulen, Fillet Ikan Kakap Bumbu Kunyit 85g, Sayur Bening Bayam Jagung Manis, Pisang Cavendish',
+    kcal: 595,
+    carb: 72,
+    prot: 27,
+    fat: 12,
+    tags: [
+      ['warn', 'Mengandung Ikan Laut'],
+      ['ok', 'Bebas Telur']
+    ],
+    active: true,
+    img: 'https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?auto=format&fit=crop&w=800&q=80',
+
+    code: 'Paket C',
+    calories: '595 kkal',
+    protein: '27g',
+    carbs: '72g',
+    fiber: '6g',
+    items: [
+      'Nasi Putih Pulen',
+      'Fillet Ikan Kakap Bumbu Kunyit 85g',
+      'Sayur Bening Bayam Jagung Manis',
+      'Pisang Cavendish'
+    ],
+    allergens: ['Ikan Laut'],
+    image: 'https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?auto=format&fit=crop&w=800&q=80',
+    ecoFriendly: true
+  },
+
+  {
+    id: 4,
+    day: 'Kamis • Minggu ke-1',
+    cat: 'khusus',
+    catLabel: 'Bebas Gluten / Celiac',
+    name: 'Paket Sate Ayam Lilit & Sayur Daun Kelor Jagung',
+    desc: 'Nasi Jagung Organik, Sate Ayam Lilit Tanpa Terigu 80g, Sup Sayur Daun Kelor & Labu Kuning, Melon Hijau',
+    kcal: 605,
+    carb: 70,
+    prot: 25,
+    fat: 15,
+    tags: [
+      ['ok', 'Bebas Gandum / Terigu'],
+      ['ok', 'Bebas Kacang Tanah']
+    ],
+    active: true,
+    img: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=800&q=80',
+
+    code: 'Paket D',
+    calories: '605 kkal',
+    protein: '25g',
+    carbs: '70g',
+    fiber: '7g',
+    items: [
+      'Nasi Jagung Organik',
+      'Sate Ayam Lilit Tanpa Terigu 80g',
+      'Sup Sayur Daun Kelor & Labu Kuning',
+      'Melon Hijau'
+    ],
+    allergens: [],
+    image: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=800&q=80',
+    ecoFriendly: true
+  },
+
+  {
+    id: 5,
+    day: 'Jumat • Minggu ke-1',
+    cat: 'reguler',
+    name: 'Paket Rolade Daging Telur & Tumis Brokoli',
+    desc: 'Nasi Merah, Rolade Sapi Isi Telur Rebus 85g, Tumis Brokoli Wortel Saus Tiram Ringan, Pir Hijau Segar',
+    kcal: 635,
+    carb: 74,
+    prot: 29,
+    fat: 17,
+    tags: [
+      ['warn', 'Mengandung Telur Ayam'],
+      ['ok', 'Bebas Kacang']
+    ],
+    active: true,
+    img: 'https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=800&q=80',
+
+    code: 'Paket E',
+    calories: '635 kkal',
+    protein: '29g',
+    carbs: '74g',
+    fiber: '6g',
+    items: [
+      'Nasi Merah',
+      'Rolade Sapi Isi Telur Rebus 85g',
+      'Tumis Brokoli Wortel Saus Tiram Ringan',
+      'Pir Hijau Segar'
+    ],
+    allergens: ['Telur Ayam', 'Saus Tiram'],
+    image: 'https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=800&q=80',
+    ecoFriendly: true
+  },
+
+  {
+    id: 6,
+    day: 'Cadangan Operasional',
+    cat: 'cadangan',
+    catLabel: 'Ready-to-Deploy',
+    name: 'Paket Siaga Cadangan: Ayam Opor Suwir & Tahu Tempe',
+    desc: 'Nasi Pulen, Ayam Opor Suwir Higienis 80g, Bacem Tahu Tempe Kedelai Lokal, Apel Manis Fuji, Susu UHT',
+    kcal: 610,
+    carb: 76,
+    prot: 24,
+    fat: 15,
+    tags: [
+      ['ok', 'Hipoalergenik Ringan'],
+      ['warn', 'Mengandung Kedelai']
+    ],
+    active: true,
+    img: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=800&q=80',
+
+    code: 'Paket F',
+    calories: '610 kkal',
+    protein: '24g',
+    carbs: '76g',
+    fiber: '7g',
+    items: [
+      'Nasi Pulen',
+      'Ayam Opor Suwir Higienis 80g',
+      'Bacem Tahu Tempe Kedelai Lokal',
+      'Apel Manis Fuji',
+      'Susu UHT'
+    ],
+    allergens: ['Kedelai', 'Susu Sapi'],
+    image: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=800&q=80',
+    ecoFriendly: true
+  }
 ];
+
 
 function initMenuPage() {
   const grid = $('#menuGrid');
