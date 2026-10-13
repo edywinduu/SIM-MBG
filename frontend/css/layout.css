@@ -3,6 +3,19 @@
    Header, navigation, container, grid systems, and footer
    ========================================================================== */
 
+/* --------------------------------------------------------------------------
+   PAGE LAYOUT & STICKY FOOTER ARCHITECTURE
+   -------------------------------------------------------------------------- */
+body {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+main {
+  flex: 1 0 auto;
+}
+
 /* Main Containers */
 .container {
   width: 100%;
@@ -52,7 +65,10 @@
   height: 100%;
 }
 
-/* Logo Brand */
+/* Brand Logo & Title */
+.navbar-brand,
+.student-navbar-brand,
+.sppg-brand,
 .logo-nav {
   display: flex;
   align-items: center;
@@ -60,40 +76,80 @@
   text-decoration: none;
 }
 
+.navbar-brand img,
+.student-navbar-brand img,
+.sppg-brand img,
 .logo-nav img,
 .logo-nav svg {
-  height: 52px;
-  width: auto;
+  height: 48px;
+  width: 52px;
   object-fit: contain;
 }
 
+.brand-title,
+.student-brand-title,
+.sppg-brand-title,
 .logo-brand-text {
-  font-size: var(--font-size-2xl);
+  font-size: 26px;
   font-weight: 800;
   color: var(--color-primary);
   letter-spacing: -0.5px;
 }
 
-/* Navigation Links */
+/* Navigation Links Container */
 .nav-links {
   display: flex;
   align-items: center;
-  gap: var(--space-32);
+  gap: var(--space-16);
 }
 
+/* Navigation Menu List */
+.nav-menu,
+.student-nav-menu,
+.sppg-nav-menu {
+  display: flex;
+  align-items: center;
+  gap: var(--space-16);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* Navigation Pill Button Links (Gold standard from Siswa reference) */
+.nav-btn,
+.student-nav-btn,
+.sppg-nav-btn,
 .nav-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-8);
+  font-family: var(--font-family);
   font-size: var(--font-size-md);
-  font-weight: 600;
+  font-weight: 700;
   color: var(--color-text);
-  padding: 8px 12px;
-  border-radius: var(--radius-sm);
-  transition: color var(--transition-fast), background-color var(--transition-fast);
+  padding: 10px 18px;
+  border-radius: var(--radius-md);
+  text-decoration: none;
+  transition: all var(--transition-fast);
+  border: 1px solid transparent;
+  white-space: nowrap;
 }
 
-.nav-link:hover,
-.nav-link.active {
+.nav-btn:hover,
+.student-nav-btn:hover,
+.sppg-nav-btn:hover,
+.nav-link:hover {
   color: var(--color-primary);
-  background-color: rgba(41, 115, 115, 0.06);
+  background-color: rgba(41, 115, 115, 0.08);
+}
+
+.nav-btn.active,
+.student-nav-btn.active,
+.sppg-nav-btn.active,
+.nav-link.active {
+  color: var(--color-bg);
+  background-color: var(--color-primary);
+  box-shadow: 0 2px 6px rgba(41, 115, 115, 0.25);
 }
 
 /* Navigation Actions (Right Side) */
@@ -101,6 +157,80 @@
   display: flex;
   align-items: center;
   gap: var(--space-16);
+}
+
+/* User Profile Chip (Standardized from Siswa reference) */
+.user-chip,
+.student-user-chip,
+.sppg-user-chip {
+  display: flex;
+  align-items: center;
+  gap: var(--space-10);
+  padding: 6px 14px 6px 8px;
+  background-color: var(--color-white);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-pill);
+  box-shadow: var(--shadow-card);
+  text-decoration: none;
+  transition: all var(--transition-fast);
+  cursor: pointer;
+}
+
+.user-chip:hover,
+.student-user-chip:hover,
+.sppg-user-chip:hover {
+  border-color: var(--color-primary);
+  transform: translateY(-1px);
+}
+
+.user-avatar,
+.student-user-avatar,
+.sppg-user-avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--color-primary), #3b9b9b);
+  color: var(--color-white);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: var(--font-size-sm);
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.user-avatar img,
+.student-user-avatar img,
+.sppg-user-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.user-meta,
+.student-user-meta,
+.sppg-user-meta {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+}
+
+.user-name,
+.student-user-name,
+.sppg-user-name {
+  font-size: var(--font-size-sm);
+  font-weight: 700;
+  color: var(--color-heading);
+  line-height: 1.2;
+}
+
+.user-role,
+.student-user-role,
+.sppg-user-role {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--color-primary);
 }
 
 /* Profile Trigger (compatible with user initial template) */
@@ -231,11 +361,25 @@
    FOOTER
    -------------------------------------------------------------------------- */
 .main-footer {
+  margin-top: auto;
+  width: 100%;
+  flex-shrink: 0;
+  flex-grow: 0;
+  height: auto;
   background-color: var(--color-white);
   border-top: 1px solid var(--color-border);
   padding: var(--space-48) 0 var(--space-24) 0;
   position: relative;
   z-index: 1;
+}
+
+.main-footer .container {
+  height: auto;
+}
+
+/* Jika footer hanya berisi baris info/copyright tanpa grid tautan (halaman sub/portal) */
+.main-footer:not(:has(.footer-grid)) {
+  padding: var(--space-20) 0;
 }
 
 .footer-grid {
@@ -285,6 +429,12 @@
   color: var(--color-muted);
 }
 
+.main-footer:not(:has(.footer-grid)) .footer-bottom,
+.main-footer .container > .footer-bottom:only-child {
+  border-top: none;
+  padding-top: 0;
+}
+
 /* --------------------------------------------------------------------------
    RESPONSIVE BREAKPOINTS
    -------------------------------------------------------------------------- */
@@ -296,14 +446,32 @@
     width: 100%;
     background-color: var(--color-white);
     flex-direction: column;
-    padding: var(--space-24);
+    padding: var(--space-20) var(--space-24);
     box-shadow: 0 10px 15px rgba(0, 0, 0, 0.05);
     display: none;
     border-bottom: 1px solid var(--color-border);
+    z-index: 99;
   }
 
   .nav-links.open {
     display: flex;
+  }
+
+  .nav-menu,
+  .student-nav-menu,
+  .sppg-nav-menu {
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%;
+    gap: var(--space-8);
+  }
+
+  .nav-btn,
+  .student-nav-btn,
+  .sppg-nav-btn,
+  .nav-link {
+    width: 100%;
+    justify-content: flex-start;
   }
 
   .mobile-nav-toggle {
@@ -312,6 +480,32 @@
 
   .footer-grid {
     grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .user-meta,
+  .student-user-meta,
+  .sppg-user-meta {
+    display: none;
+  }
+
+  .user-chip,
+  .student-user-chip,
+  .sppg-user-chip {
+    padding: 3px;
+    border-radius: 50%;
+  }
+
+  .brand-title,
+  .student-brand-title,
+  .sppg-brand-title,
+  .logo-brand-text {
+    font-size: 22px;
+  }
+
+  .nav-actions {
+    gap: var(--space-8);
   }
 }
 

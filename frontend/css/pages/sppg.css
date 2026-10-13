@@ -7,32 +7,8 @@
 @keyframes spin { to { transform: rotate(360deg); } }
 
 /* --------------------------------------------------------------------------
-   1. HEADER (brand, nav, user chip)
+   1. HEADER (Centralized in layout.css following Siswa standard reference)
    -------------------------------------------------------------------------- */
-.sppg-brand { display: flex; align-items: center; gap: var(--space-12); }
-.sppg-brand-title { font-size: var(--font-size-3xl); font-weight: 800; color: var(--color-primary); letter-spacing: -0.5px; }
-
-.sppg-nav-menu { display: flex; align-items: center; gap: var(--space-32); }
-.sppg-nav-btn {
-  position: relative; display: inline-block; padding: 8px 4px;
-  font-size: var(--font-size-md); font-weight: 500; color: var(--color-muted);
-  transition: color var(--transition-fast);
-}
-.sppg-nav-btn:hover { color: var(--color-primary); }
-.sppg-nav-btn.active { color: var(--color-primary); font-weight: 700; }
-.sppg-nav-btn.active::after {
-  content: ''; position: absolute; left: 0; right: 0; bottom: -22px;
-  height: 2px; background: var(--color-primary); border-radius: 2px;
-}
-
-.sppg-user-chip { display: flex; align-items: center; gap: var(--space-10); }
-.sppg-user-avatar {
-  width: 40px; height: 40px; border-radius: 50%; background: var(--color-primary);
-  color: var(--color-white); font-weight: 700; display: flex; align-items: center; justify-content: center;
-}
-.sppg-user-meta { display: flex; flex-direction: column; text-align: right; line-height: 1.25; }
-.sppg-user-name { font-size: var(--font-size-sm); font-weight: 700; color: var(--color-heading); }
-.sppg-user-role { font-size: var(--font-size-xs); color: var(--color-muted); }
 
 /* --------------------------------------------------------------------------
    2. PAGE SHELL & HEADINGS
@@ -381,9 +357,6 @@
   .sppg-two-col, .sppg-review-grid { grid-template-columns: 1fr; }
 }
 @media (max-width: 992px) {
-  .sppg-nav-menu { flex-direction: column; align-items: flex-start; gap: var(--space-8); width: 100%; }
-  .sppg-nav-btn.active::after { bottom: 0; }
-  .sppg-user-meta { display: none; }
   .sppg-info-trio { grid-template-columns: 1fr; }
 }
 @media (max-width: 640px) {

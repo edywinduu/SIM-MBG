@@ -25,29 +25,32 @@
         <div class="ambient-ellipse-accent"></div>
     </div>
 
-    <!-- Header & Navigation (Figma: height 103px, logo, brand, tombol masuk) -->
+    <!-- Header & Navigation (Selaras dengan format Navigasi Siswa) -->
     <header class="main-header">
         <div class="container nav-container">
-            <a href="index.html" class="logo-nav" aria-label="SIM-MBG Beranda">
+            <a href="index.html" class="student-navbar-brand logo-nav" aria-label="SIM-MBG Beranda">
                 <img src="assets/icons/logo.svg" alt="Logo SIM-MBG" width="52" height="48">
-                <span class="logo-brand-text">SIM-MBG</span>
+                <span class="student-brand-title logo-brand-text">SIM-MBG</span>
             </a>
 
             <nav class="nav-links" id="mainNav">
-                <a href="#beranda" class="nav-link active">Beranda</a>
-                <a href="#alur" class="nav-link">Alur Pemesanan</a>
-                <a href="#menu-pilihan" class="nav-link">Pilihan Menu</a>
-                <a href="#fitur" class="nav-link">Keunggulan</a>
+                <ul class="student-nav-menu">
+                    <li><a href="#beranda" class="student-nav-btn nav-link active">Beranda</a></li>
+                    <li><a href="#alur" class="student-nav-btn nav-link">Alur Pemesanan</a></li>
+                    <li><a href="#menu-pilihan" class="student-nav-btn nav-link">Pilihan Menu</a></li>
+                    <li><a href="#fitur" class="student-nav-btn nav-link">Keunggulan</a></li>
+                </ul>
             </nav>
 
             <div class="nav-actions">
-
-                <!-- Profile & Role Selector Dropdown (Simulasi cepat role navigasi) -->
-                <a class="profile-widget" href="pages/auth/login.html">
-                    <button type="button" class="profile-trigger" aria-haspopup="true" aria-expanded="false" title="Menu Akun & Simulasi Role">
-                        <span class="material-symbols-outlined profile-icon">account_circle</span>
-                        <span class="profile-label">Login</span>
-                    </button>
+                <a href="pages/auth/login.html" class="student-user-chip" title="Masuk ke Akun SIM-MBG">
+                    <div class="student-user-avatar">
+                        <span class="material-symbols-outlined" style="font-size: 20px;">account_circle</span>
+                    </div>
+                    <div class="student-user-meta">
+                        <span class="student-user-name">Masuk</span>
+                        <span class="student-user-role">Portal MBG</span>
+                    </div>
                 </a>
 
                 <!-- Mobile Hamburger Toggle -->

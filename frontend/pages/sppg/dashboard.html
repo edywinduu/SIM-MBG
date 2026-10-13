@@ -22,33 +22,36 @@
         <div class="ambient-ellipse-accent"></div>
     </div>
 
+    <!-- Header & SPPG Navbar (Selaras dengan format Navigasi Siswa) -->
     <header class="main-header">
         <div class="container nav-container">
-            <a href="dashboard.html" class="sppg-brand" aria-label="SIM-MBG SPPG Beranda">
+            <a href="dashboard.html" class="student-navbar-brand sppg-brand" aria-label="SIM-MBG SPPG Dashboard">
                 <img src="../../assets/icons/logo.svg" alt="Logo SIM-MBG" width="52" height="48">
-                <span class="sppg-brand-title">SIM-MBG</span>
+                <span class="student-brand-title sppg-brand-title">SIM-MBG</span>
             </a>
             <nav class="nav-links" id="mainNav">
-                <ul class="sppg-nav-menu">
-                    <li><a href="dashboard.html" class="sppg-nav-btn active">Beranda</a></li>
-                    <li><a href="menu.html" class="sppg-nav-btn">Menu</a></li>
-                    <li><a href="pilihan.html" class="sppg-nav-btn">Pilihan Pengguna</a></li>
-                    <li><a href="review.html" class="sppg-nav-btn">Review</a></li>
+                <ul class="student-nav-menu sppg-nav-menu">
+                    <li><a href="dashboard.html" class="student-nav-btn sppg-nav-btn active">Dashboard</a></li>
+                    <li><a href="menu.html" class="student-nav-btn sppg-nav-btn">Menu</a></li>
+                    <li><a href="pilihan.html" class="student-nav-btn sppg-nav-btn">Pilihan Siswa</a></li>
+                    <li><a href="review.html" class="student-nav-btn sppg-nav-btn">Review</a></li>
                 </ul>
             </nav>
             <div class="nav-actions">
-                <div class="sppg-user-chip">
-                    <div class="sppg-user-avatar">A</div>
-                    <div class="sppg-user-meta">
-                        <span class="sppg-user-name">Pgw Alya</span>
-                        <span class="sppg-user-role">Pegawai SPPG</span>
+                <a href="dashboard.html" class="student-user-chip sppg-user-chip" title="Profil Pegawai SPPG">
+                    <div class="student-user-avatar sppg-user-avatar">A</div>
+                    <div class="student-user-meta sppg-user-meta">
+                        <span class="student-user-name sppg-user-name">Pgw Alya</span>
+                        <span class="student-user-role sppg-user-role">Pegawai SPPG</span>
                     </div>
-                </div>
+                </a>
                 <button type="button" class="btn btn-secondary btn-sm" id="logoutBtn" title="Keluar">
                     <span class="material-symbols-outlined" style="font-size: 18px;">logout</span>
                 </button>
                 <button type="button" class="mobile-nav-toggle" aria-controls="mainNav" aria-expanded="false" aria-label="Buka Menu Navigasi">
-                    <span></span><span></span><span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
                 </button>
             </div>
         </div>
