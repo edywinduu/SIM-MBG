@@ -9,6 +9,7 @@
 document.addEventListener('DOMContentLoaded', () => {
   init3DCoverflowCarousel();
   initMenuChips();
+  initLandingSmoothScroll();
 });
 
 /**
@@ -254,3 +255,155 @@ function initMenuChips() {
     });
   });
 }
+
+/**
+ * Smooth scrolling for landing page anchor links and scrollspy active state
+ */
+function initLandingSmoothScroll() {
+  const navLinks = document.querySelectorAll('.student-nav-menu .nav-link');
+  const allAnchorLinks = document.querySelectorAll('a[href^="#"]');
+  const header = document.querySelector('.main-header');
+
+  function getHeaderHeight() {
+    return header ? header.offsetHeight : 85;
+  }
+
+  function setActiveNavLink(targetHash) {
+    if (!navLinks || navLinks.length === 0) return;
+    navLinks.forEach((link) => {
+      const href = link.getAttribute('href');
+      if (href === targetHash) {
+        link.classList.add('active');
+      } else {
+        link.classList.remove('active');
+      }
+    });
+  }
+
+  // Smooth scroll handler for all internal anchor links (#beranda, #alur, #menu-pilihan, #fitur)
+  allAnchorLinks.forEach((anchor) => {
+    anchor.addEventListener('click', (e) => {
+      const href = anchor.getAttribute('href');
+      if (!href || href === '#' || !href.startsWith('#')) return;
+
+      const targetId = href.substring(1);
+      const targetElement = document.getElementById(targetId);
+
+      if (targetElement) {
+        e.preventDefault();
+
+        const headerHeight = getHeaderHeight();
+        let targetY = 0;
+
+        if (targetId === 'beranda') {
+          targetY = 0;
+        } else {
+          const rect = targetElement.getBoundingClientRect();
+          targetY = window.pageYOffset + rect.top - headerHeight - 16;
+          if (targetY < 0) targetY = 0;
+        }
+
+        window.scrollTo({
+          top: targetY,
+          behavior: 'smooth'
+        });
+
+        // Update URL hash without instant jump
+        if (window.history && window.history.pushState) {
+          window.history.pushState(null, '', href);
+        } else {
+          window.location.hash = href;
+        }
+
+        // Update active highlight in header nav
+        setActiveNavLink(href);
+
+        // Close mobile nav drawer if open
+        const navMenu = document.querySelector('.nav-links');
+        const toggleBtn = document.querySelector('.mobile-nav-toggle');
+        if (navMenu && navMenu.classList.contains('open')) {
+          navMenu.classList.remove('open');
+          if (toggleBtn) {
+            toggleBtn.setAttribute('aria-expanded', 'false');
+          }
+        }
+      }
+    });
+  });
+
+  // Scrollspy: update active nav link during manual scrolling
+  const sectionIds = ['beranda', 'alur', 'menu-pilihan', 'fitur'];
+  const sections = sectionIds
+    .map((id) => ({ id: `#${id}`, el: document.getElementById(id) }))
+    .filter((s) => s.el !== null);
+
+  let isTicking = false;
+  function handleScrollSpy() {
+    const scrollY = window.pageYOffset;
+    const headerHeight = getHeaderHeight();
+    const isMobile = window.innerWidth <= 1024;
+
+    // Bottom of the page: activate the last section (#fitur)
+    if (window.innerHeight + scrollY >= document.documentElement.scrollHeight - 60) {
+      setActiveNavLink('#fitur');
+      return;
+    }
+
+    // Very top of page: activate #beranda
+    if (scrollY < 120) {
+      setActiveNavLink('#beranda');
+      return;
+    }
+
+    let activeId = '#beranda';
+    for (let i = 0; i < sections.length; i++) {
+      const section = sections[i];
+      // On desktop, #alur is inside the hero side-by-side with #beranda,
+      // so keep #beranda active until reaching #menu-pilihan unless on mobile
+      if (!isMobile && section.id === '#alur') {
+        continue;
+      }
+      const topOffset = section.el.offsetTop - headerHeight - 80;
+      if (scrollY >= topOffset) {
+        activeId = section.id;
+      }
+    }
+
+    setActiveNavLink(activeId);
+  }
+
+  window.addEventListener('scroll', () => {
+    if (!isTicking) {
+      window.requestAnimationFrame(() => {
+        handleScrollSpy();
+        isTicking = false;
+      });
+      isTicking = true;
+    }
+  }, { passive: true });
+
+  // Handle initial page load if hash exists in URL
+  if (window.location.hash) {
+    const initialTarget = document.getElementById(window.location.hash.substring(1));
+    if (initialTarget) {
+      setTimeout(() => {
+        const headerHeight = getHeaderHeight();
+        const targetId = window.location.hash.substring(1);
+        let targetY = 0;
+        if (targetId === 'beranda') {
+          targetY = 0;
+        } else {
+          const rect = initialTarget.getBoundingClientRect();
+          targetY = window.pageYOffset + rect.top - headerHeight - 16;
+          if (targetY < 0) targetY = 0;
+        }
+        window.scrollTo({
+          top: targetY,
+          behavior: 'smooth'
+        });
+        setActiveNavLink(window.location.hash);
+      }, 100);
+    }
+  }
+}
+

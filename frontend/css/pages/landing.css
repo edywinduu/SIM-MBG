@@ -1,4 +1,14 @@
 
+/* --------------------------------------------------------------------------
+   0. SMOOTH SCROLL TARGET OFFSETS
+   Ensure section titles are not obscured by the sticky header
+   -------------------------------------------------------------------------- */
+#beranda,
+#alur,
+#menu-pilihan,
+#fitur {
+  scroll-margin-top: calc(var(--header-height, 85px) + 20px);
+}
 
 /* --------------------------------------------------------------------------
    1. HERO SECTION
