@@ -127,10 +127,16 @@ function initLoginModule() {
       }
     }
 
+    // Cek apakah akun yang masuk adalah Administrator
+    const isAdmin = activeUsername.toLowerCase().includes('admin') || activeUsername.toLowerCase() === 'atmind';
+    const targetRole = isAdmin ? 'admin' : 'siswa';
+    const targetPath = isAdmin ? '../admin/dashboard.html' : '../siswa/dashboard.html';
+    const targetLabel = isAdmin ? 'Dashboard Administrator' : 'Dashboard Siswa';
+
     // Simpan sesi autentikasi mock untuk simulasi Dashboard
     const mockSession = {
       username: activeUsername,
-      role: 'siswa',
+      role: targetRole,
       nis: rawUsername.match(/^\d+$/) ? rawUsername : '12345678',
       school: 'SMA Negeri 1 Denpasar',
       isLoggedIn: true,
@@ -153,11 +159,11 @@ function initLoginModule() {
     }
 
     // Tampilkan notifikasi feedback sukses
-    showAlert('success', `Login berhasil! Mengalihkan ke Dashboard Siswa...`);
+    showAlert('success', `Login berhasil! Mengalihkan ke ${targetLabel}...`);
 
-    // Redirect ke Dashboard Siswa
+    // Redirect ke Dashboard yang sesuai
     setTimeout(() => {
-      window.location.href = '../siswa/dashboard.html';
+      window.location.href = targetPath;
     }, 450);
   }
 
