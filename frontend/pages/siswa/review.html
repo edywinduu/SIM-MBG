@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
@@ -6,13 +6,13 @@
     <title>Profil Saya & Alergi — SIM-MBG Siswa</title>
     <link rel="icon" href="../../assets/icons/logo.svg">
 
-    <!-- Fonts & Icons -->
+    
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,600&display=swap">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
 
-    <!-- Style System CSS -->
+    
     <link rel="stylesheet" href="../../css/reset.css">
     <link rel="stylesheet" href="../../css/variables.css">
     <link rel="stylesheet" href="../../css/global.css">
@@ -21,13 +21,13 @@
     <link rel="stylesheet" href="../../css/pages/siswa.css">
 </head>
 <body id="profilePage">
-    <!-- Ambient Blur Background -->
+    
     <div class="ambient-decorations" aria-hidden="true">
         <div class="ambient-ellipse-secondary"></div>
         <div class="ambient-ellipse-accent"></div>
     </div>
 
-    <!-- Student Header & Navbar -->
+    
     <header class="main-header">
         <div class="container nav-container">
             <a href="dashboard.html" class="student-navbar-brand" aria-label="SIM-MBG Dashboard">
@@ -66,11 +66,11 @@
         </div>
     </header>
 
-    <!-- Main Content: Profil Saya & Alergi (Frame 107:6395) -->
+    
     <main class="student-main-content">
         <div class="container">
             <div class="profile-container-grid">
-                <!-- Sidebar Biodata Siswa -->
+                
                 <aside class="profile-card-sidebar">
                     <div class="profile-avatar-wrapper">
                         <div class="profile-big-avatar" id="profileAvatarDisplay">A</div>
@@ -112,7 +112,7 @@
                     </div>
                 </aside>
 
-                <!-- Konten Formulir Alergi & Pantangan Makanan -->
+                
                 <section class="profile-content-card">
                     <div class="profile-section-heading">
                         <h2>Alergi & Pantangan Makanan Siswa</h2>
@@ -120,9 +120,9 @@
                     </div>
 
                     <form id="profileAllergyForm" novalidate>
-                        <!-- Grid 5 Kategori Alergen Sesuai Figma Verified (107:6395) -->
+                        
                         <div class="allergy-checkbox-grid">
-                            <!-- 1. Kacang -->
+                            
                             <label class="allergy-checkbox-item">
                                 <input type="checkbox" value="Kacang" class="allergy-check-input">
                                 <div class="allergy-item-info">
@@ -131,7 +131,7 @@
                                 </div>
                             </label>
 
-                            <!-- 2. Seafood -->
+                            
                             <label class="allergy-checkbox-item">
                                 <input type="checkbox" value="Seafood" class="allergy-check-input">
                                 <div class="allergy-item-info">
@@ -140,7 +140,7 @@
                                 </div>
                             </label>
 
-                            <!-- 3. Telur -->
+                            
                             <label class="allergy-checkbox-item">
                                 <input type="checkbox" value="Telur" class="allergy-check-input">
                                 <div class="allergy-item-info">
@@ -149,7 +149,7 @@
                                 </div>
                             </label>
 
-                            <!-- 4. Laktosa / Susu -->
+                            
                             <label class="allergy-checkbox-item">
                                 <input type="checkbox" value="Laktosa" class="allergy-check-input">
                                 <div class="allergy-item-info">
@@ -158,7 +158,7 @@
                                 </div>
                             </label>
 
-                            <!-- 5. Vegetarian / Diet Khusus -->
+                            
                             <label class="allergy-checkbox-item" style="grid-column: span 2;">
                                 <input type="checkbox" value="Vegetarian" class="allergy-check-input">
                                 <div class="allergy-item-info">
@@ -168,13 +168,13 @@
                             </label>
                         </div>
 
-                        <!-- Catatan Medis Tambahan -->
+                        
                         <div class="form-group-medical">
                             <label for="medicalNotes">Catatan Tambahan Medis / Riwayat Khusus:</label>
                             <textarea id="medicalNotes" class="form-textarea" rows="3" placeholder="Tuliskan catatan medis jika ada alergi obat atau riwayat maag akut..."></textarea>
                         </div>
 
-                        <!-- Tombol Aksi Sesuai Figma Verified (Batalkan Perubahan & Perbarui Data Alergi) -->
+                        
                         <div class="profile-form-actions">
                             <button type="button" class="btn btn-secondary" id="cancelProfileBtn">Batalkan Perubahan</button>
                             <button type="submit" class="btn btn-primary" id="saveProfileBtn">
@@ -188,7 +188,7 @@
         </div>
     </main>
 
-    <!-- Modal Dialog: Ubah Profil / Nama Pengguna -->
+    
     <div class="student-modal-backdrop" id="editUsernameModal" role="dialog" aria-modal="true" aria-labelledby="modalUsernameTitle">
         <div class="student-modal-card">
             <div class="student-modal-header">
@@ -215,7 +215,7 @@
         </div>
     </div>
 
-    <!-- Global Footer -->
+    
     <footer class="main-footer">
         <div class="container">
             <div class="footer-bottom">
@@ -225,7 +225,7 @@
         </div>
     </footer>
 
-    <!-- Scripts -->
+    
     <script src="../../js/main.js"></script>
     <script src="../../js/pages/siswa.js"></script>
 </body>

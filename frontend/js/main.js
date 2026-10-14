@@ -1,25 +1,16 @@
-/**
- * ==========================================================================
- * MAIN JS - SIM-MBG
- * Global logic, navigation helpers, and shared UI interactions
- * Vanilla JS adhering to AGENTS.md rules
- * ==========================================================================
- */
+﻿
 
 document.addEventListener('DOMContentLoaded', () => {
   initNavbar();
   initProfileDropdown();
 });
 
-/**
- * Initializes navigation bar scroll behavior and mobile menu toggle
- */
 function initNavbar() {
   const header = document.querySelector('.main-header');
   const toggleBtn = document.querySelector('.mobile-nav-toggle');
   const navLinks = document.querySelector('.nav-links');
 
-  // Sticky header shadow on scroll
+  
   if (header) {
     window.addEventListener('scroll', () => {
       if (window.scrollY > 20) {
@@ -30,7 +21,7 @@ function initNavbar() {
     });
   }
 
-  // Mobile menu toggle
+  
   if (toggleBtn && navLinks) {
     toggleBtn.addEventListener('click', (e) => {
       e.stopPropagation();
@@ -39,7 +30,7 @@ function initNavbar() {
       toggleBtn.setAttribute('aria-expanded', isOpen);
     });
 
-    // Close when clicking a link inside mobile nav
+    
     navLinks.querySelectorAll('a').forEach((link) => {
       link.addEventListener('click', () => {
         navLinks.classList.remove('open');
@@ -47,7 +38,7 @@ function initNavbar() {
       });
     });
 
-    // Close when clicking outside
+    
     document.addEventListener('click', (e) => {
       if (!navLinks.contains(e.target) && !toggleBtn.contains(e.target)) {
         navLinks.classList.remove('open');
@@ -57,9 +48,6 @@ function initNavbar() {
   }
 }
 
-/**
- * Initializes the header profile/role-switch dropdown simulation
- */
 function initProfileDropdown() {
   const profileTrigger = document.querySelector('.profile-trigger');
   const profileDropdown = document.querySelector('.profile-dropdown');
@@ -76,7 +64,7 @@ function initProfileDropdown() {
       }
     });
 
-    // Close on Escape key
+    
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape' && profileDropdown.classList.contains('show')) {
         profileDropdown.classList.remove('show');

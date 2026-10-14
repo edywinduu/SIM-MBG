@@ -1,14 +1,5 @@
-/* ==========================================================================
-   SISWA CSS - SIM-MBG (Member 2: Siswa)
-   Strict adherence to DESIGN_SYSTEM.md & AGENTS.md
-   Colors: #297373 (primary), #FAFAF9 (bg), #FF8552 (accent), #85FFC7 (secondary)
-   Siswa Surface tokens: #FFFFFF, #EFF4FF, #E5EEFF, #BDCABA
-   Typography: Plus Jakarta Sans
-   ========================================================================== */
+﻿
 
-/* --------------------------------------------------------------------------
-   1. SISWA NAVBAR CUSTOMIZATION & USER CHIP
-   -------------------------------------------------------------------------- */
 .student-navbar-brand {
   display: flex;
   align-items: center;
@@ -120,9 +111,6 @@
   color: var(--color-primary);
 }
 
-/* --------------------------------------------------------------------------
-   2. MAIN WRAPPER & HEADER SECTION
-   -------------------------------------------------------------------------- */
 .student-main-content {
   padding-top: var(--space-32);
   padding-bottom: var(--space-64);
@@ -167,9 +155,6 @@
   font-size: var(--font-size-xs);
 }
 
-/* --------------------------------------------------------------------------
-   3. TOAST & NOTIFICATIONS
-   -------------------------------------------------------------------------- */
 .student-toast {
   position: fixed;
   bottom: 24px;
@@ -207,9 +192,6 @@
   background-color: var(--color-danger);
 }
 
-/* --------------------------------------------------------------------------
-   4. DASHBOARD PAGE SPECIFIC (Frame 97:1000)
-   -------------------------------------------------------------------------- */
 .dashboard-grid {
   display: grid;
   grid-template-columns: 1.4fr 1fr;
@@ -224,7 +206,6 @@
   gap: var(--space-24);
 }
 
-/* Schedule Card */
 .distribusi-card {
   background: var(--color-white);
   border-radius: var(--radius-lg);
@@ -330,7 +311,6 @@
   cursor: default;
 }
 
-/* Notice & Tomorrow banner */
 .notice-card {
   background: var(--color-white);
   border-radius: var(--radius-lg);
@@ -390,7 +370,6 @@
   margin: 0;
 }
 
-/* Right Col: Menu Hari Ini Card */
 .menu-today-card {
   background: var(--color-white);
   border-radius: var(--radius-lg);
@@ -456,7 +435,6 @@
   font-weight: 600;
 }
 
-/* Macro Bar (Protein, Karbo, Lemak, Serat) */
 .macro-bar-container {
   margin-bottom: var(--space-16);
 }
@@ -493,7 +471,6 @@
   background-color: #85FFC7;
 }
 
-/* Gizi Mini Grid */
 .nutrition-grid-4 {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -533,7 +510,6 @@
   font-weight: 700;
 }
 
-/* 3 Bottom KPI Stats */
 .dashboard-kpi-row {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -578,9 +554,6 @@
   margin: 0;
 }
 
-/* --------------------------------------------------------------------------
-   5. PILIH MENU PAGE (Frame 101:3408)
-   -------------------------------------------------------------------------- */
 .menu-selection-header {
   display: flex;
   flex-wrap: wrap;
@@ -637,7 +610,6 @@
   border-radius: var(--radius-pill);
 }
 
-/* Cut-off Countdown Banner */
 .cutoff-banner {
   background: linear-gradient(135deg, #FFDDB8 0%, #FFE9D1 100%);
   border: 1px solid rgba(133, 83, 0, 0.2);
@@ -704,7 +676,6 @@
   letter-spacing: 1px;
 }
 
-/* Day Tabs Selector (Senin - Jumat) - Full Width Flexible Layout */
 .day-tabs-nav {
   display: flex;
   align-items: stretch;
@@ -730,7 +701,6 @@
   min-width: 130px;
 }
 
-/* Hari yang dipilih membesar dan memanjang memenuhi sisa baris */
 .day-tab-btn.active {
   flex: 1 1 auto;
   background-color: var(--color-primary);
@@ -787,7 +757,6 @@
   color: var(--color-primary);
 }
 
-/* Hari yang telah berakhir: warna diredupkan, opacity turun, tidak bisa diklik */
 .day-tab-btn.past,
 .day-tab-btn:disabled {
   background-color: #F1F5F9;
@@ -812,7 +781,6 @@
   color: #64748B;
 }
 
-/* Section Title & Grid of 3 Menu Cards */
 .menu-grid-header {
   display: flex;
   align-items: center;
@@ -923,7 +891,6 @@
   line-height: 1.4;
 }
 
-/* Macro Pills */
 .package-macros-row {
   display: flex;
   gap: var(--space-6);
@@ -949,7 +916,6 @@
   color: #00594D;
 }
 
-/* Plate Details List */
 .plate-details-box {
   background-color: #F8FAFC;
   border: 1px solid var(--color-border-subtle);
@@ -989,7 +955,6 @@
   font-weight: bold;
 }
 
-/* Allergy Warning Box inside Card */
 .card-allergy-alert {
   background-color: #FFDAD6;
   border: 1px solid #ffb4ab;
@@ -1041,7 +1006,6 @@
   width: 100%;
 }
 
-/* Weekly Nutrition Balance Panel */
 .weekly-balance-panel {
   background: var(--color-white);
   border: 1px solid var(--color-border);
@@ -1097,9 +1061,6 @@
   font-weight: 700;
 }
 
-/* --------------------------------------------------------------------------
-   6. RIWAYAT & ULASAN PAGE (Frame 101:4971)
-   -------------------------------------------------------------------------- */
 .riwayat-ribbon-summary {
   background: linear-gradient(135deg, var(--color-primary) 0%, #174848 100%);
   border-radius: var(--radius-xl);
@@ -1143,7 +1104,6 @@
   color: rgba(255, 255, 255, 0.85);
 }
 
-/* Filter & Search Toolbar */
 .riwayat-toolbar {
   display: flex;
   flex-wrap: wrap;
@@ -1230,7 +1190,6 @@
   color: var(--color-heading);
 }
 
-/* Feed of 3 Riwayat Cards */
 .riwayat-cards-feed {
   display: flex;
   flex-direction: column;
@@ -1340,13 +1299,10 @@
   min-width: 140px;
 }
 
-/* --------------------------------------------------------------------------
-   7. PROFIL SAYA PAGE (Frame 107:6395)
-   -------------------------------------------------------------------------- */
 .profile-container-grid {
   display: grid;
   grid-template-columns: 360px 1fr;
-  gap: var(--space-40); /* Jarak lega antar card kiri dan kanan */
+  gap: var(--space-40); 
 }
 
 .profile-card-sidebar {
@@ -1389,7 +1345,6 @@
   object-fit: cover;
 }
 
-/* Tombol Ubah Foto Profil */
 .btn-change-avatar {
   position: absolute;
   bottom: 0;
@@ -1477,7 +1432,6 @@
   font-weight: 700;
 }
 
-/* Profile Right Content: Allergy & Health Form */
 .profile-content-card {
   background: var(--color-white);
   border-radius: var(--radius-xl);
@@ -1589,9 +1543,6 @@
   gap: var(--space-16);
 }
 
-/* --------------------------------------------------------------------------
-   8. REVIEW MODAL DIALOG
-   -------------------------------------------------------------------------- */
 .student-modal-backdrop {
   position: fixed;
   inset: 0;
@@ -1683,9 +1634,6 @@
   background-color: #F8FAFC;
 }
 
-/* --------------------------------------------------------------------------
-   9. RESPONSIVE MEDIA QUERIES
-   -------------------------------------------------------------------------- */
 @media (max-width: 1100px) {
   .dashboard-grid {
     grid-template-columns: 1fr;

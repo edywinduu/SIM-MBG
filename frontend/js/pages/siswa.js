@@ -1,19 +1,11 @@
-/**
- * ==========================================================================
- * SISWA JS - SIM-MBG (Member 2: Siswa)
- * State Management, Mock Data, Menu Selection, History, Reviews, and Profile
- * Compliant with AGENTS.md (Vanilla JS, camelCase, no external libraries)
- * ==========================================================================
- */
+﻿
 
-// Key Storage Constants
 const STORAGE_KEY_AUTH = 'sim_mbg_auth';
 const STORAGE_KEY_SELECTED_MENU = 'sim_mbg_student_selected_menu';
 const STORAGE_KEY_MEAL_PICKUP = 'sim_mbg_student_meal_pickup';
 const STORAGE_KEY_REVIEWS = 'sim_mbg_student_reviews';
 const STORAGE_KEY_PROFILE = 'sim_mbg_student_profile';
 
-// Mock Data Initializer
 const defaultStudentProfile = {
   id: 1,
   name: 'Alya MBG',
@@ -116,7 +108,6 @@ const defaultHistoryReviews = [
   }
 ];
 
-// Session-based state (Persisten antar halaman selama tab dibuka, otomatis reset saat tab ditutup)
 function getStoredProfile() {
   try {
     const raw = sessionStorage.getItem('sim_mbg_session_profile');
@@ -151,7 +142,6 @@ function saveStoredReviews(reviews) {
   memoryHistoryReviews = reviews;
 }
 
-// Global Toast Notification Helper
 function showStudentToast(message, type = 'success') {
   let toast = document.querySelector('#studentToast');
   if (!toast) {
@@ -172,11 +162,10 @@ function showStudentToast(message, type = 'success') {
   }, 3200);
 }
 
-// DOM Ready Handler
 document.addEventListener('DOMContentLoaded', () => {
   initStudentGlobalHeader();
   
-  // Page Specific Inits
+  
   if (document.querySelector('#dashboardPage')) {
     initDashboardPage();
   } else if (document.querySelector('#menuSelectionPage')) {
@@ -188,9 +177,6 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 
-/**
- * 1. Global Header Sync (User chip, logout simulation)
- */
 function initStudentGlobalHeader() {
   const profile = getStoredProfile();
   const userNameDisplay = document.querySelectorAll('.student-display-name');
@@ -202,7 +188,7 @@ function initStudentGlobalHeader() {
   userNisDisplay.forEach(el => el.textContent = profile.nis);
   userSchoolDisplay.forEach(el => el.textContent = profile.school);
 
-  // Sync gambar / avatar inisial pada chip pojok kanan atas di semua halaman
+  
   userChipAvatars.forEach(avatarEl => {
     if (profile.avatarImage) {
       avatarEl.innerHTML = `<img src="${profile.avatarImage}" alt="${profile.name}">`;
@@ -211,7 +197,7 @@ function initStudentGlobalHeader() {
     }
   });
 
-  // Logout button trigger
+  
   const logoutBtn = document.querySelector('#logoutBtn');
   if (logoutBtn) {
     logoutBtn.addEventListener('click', (e) => {
@@ -227,22 +213,19 @@ function initStudentGlobalHeader() {
   }
 }
 
-/**
- * 2. Dashboard Logic
- */
 function initDashboardPage() {
   const pickupBtn = document.querySelector('#pickupStatusBtn');
   const pickupStateText = document.querySelector('#pickupStateText');
   const selectedMenuId = getSelectedMenuId();
   const activePackage = defaultWeeklyMenus['rabu'].find(m => m.id === selectedMenuId) || defaultWeeklyMenus['rabu'][0];
 
-  // Update menu preview on dashboard
+  
   const todayMenuTitle = document.querySelector('#todayMenuTitle');
   if (todayMenuTitle) {
     todayMenuTitle.textContent = `${activePackage.code}: ${activePackage.name}`;
   }
 
-  // Pickup button toggle (In-Memory)
+  
   if (pickupBtn) {
     if (memoryIsClaimed) {
       setButtonClaimed(pickupBtn, pickupStateText);
@@ -267,14 +250,11 @@ function initDashboardPage() {
   }
 }
 
-/**
- * 3. Menu Selection Logic
- */
 function initMenuSelectionPage() {
   const profile = getStoredProfile();
   let currentSelectedMenuId = getSelectedMenuId();
 
-  // Render Allergy Tags in Header
+  
   const allergyTagsContainer = document.querySelector('#userAllergyTags');
   if (allergyTagsContainer) {
     allergyTagsContainer.innerHTML = profile.allergies.map(alg => `
@@ -282,14 +262,14 @@ function initMenuSelectionPage() {
     `).join('') || '<span style="font-size:12px; color:#62748E;">Tidak ada alergi terdaftar</span>';
   }
 
-  // Render 3 Menu Cards
+  
   renderMenuCards(currentSelectedMenuId, profile.allergies);
 
-  // Day Tab Navigation Switcher
+  
   const dayTabs = document.querySelectorAll('.day-tab-btn');
   dayTabs.forEach(tab => {
     tab.addEventListener('click', () => {
-      // Abaikan jika hari telah berakhir atau disabled
+      
       if (tab.disabled || tab.classList.contains('past')) return;
 
       dayTabs.forEach(t => t.classList.remove('active'));
@@ -301,7 +281,7 @@ function initMenuSelectionPage() {
     });
   });
 
-  // Countdown Cut-off Simulation
+  
   initCountdownTimer();
 }
 
@@ -369,7 +349,7 @@ function renderMenuCards(selectedId, userAllergies) {
     `;
   }).join('');
 
-  // Add click listeners to select buttons
+  
   const buttons = gridContainer.querySelectorAll('.select-menu-btn');
   buttons.forEach(btn => {
     btn.addEventListener('click', (e) => {
@@ -399,9 +379,6 @@ function initCountdownTimer() {
   }, 1000);
 }
 
-/**
- * 4. Riwayat & Ulasan Logic
- */
 let currentEditReviewId = null;
 
 function initRiwayatPage() {
@@ -481,7 +458,7 @@ function initRiwayatPage() {
       </article>
     `).join('');
 
-    // Attach actions
+    
     feedContainer.querySelectorAll('.edit-review-btn').forEach(btn => {
       btn.addEventListener('click', () => {
         const id = parseInt(btn.dataset.id, 10);
@@ -497,7 +474,7 @@ function initRiwayatPage() {
     });
   }
 
-  // Filter handlers
+  
   filterBtns.forEach(btn => {
     btn.addEventListener('click', () => {
       filterBtns.forEach(b => b.classList.remove('active'));
@@ -507,7 +484,7 @@ function initRiwayatPage() {
     });
   });
 
-  // Search input
+  
   if (searchInput) {
     searchInput.addEventListener('input', (e) => {
       searchQuery = e.target.value.trim();
@@ -515,7 +492,7 @@ function initRiwayatPage() {
     });
   }
 
-  // Modal interactions
+  
   function openEditReviewModal(id) {
     currentEditReviewId = id;
     const reviews = getStoredReviews();
@@ -587,21 +564,18 @@ function initRiwayatPage() {
   renderList();
 }
 
-/**
- * 5. Profil Saya Logic (Frame 107:6395)
- */
 function initProfilePage() {
   const profileForm = document.querySelector('#profileAllergyForm');
   const cancelBtn = document.querySelector('#cancelProfileBtn');
   const medicalNotesInput = document.querySelector('#medicalNotes');
   const profile = getStoredProfile();
 
-  // Populate data
+  
   if (medicalNotesInput) {
     medicalNotesInput.value = profile.medicalNotes || '';
   }
 
-  // Allergy Checkboxes setup
+  
   const allergyCheckboxes = document.querySelectorAll('.allergy-check-input');
   allergyCheckboxes.forEach(cb => {
     const category = cb.value;
@@ -620,7 +594,7 @@ function initProfilePage() {
     });
   });
 
-  // Handle Form Submission
+  
   if (profileForm) {
     profileForm.addEventListener('submit', (e) => {
       e.preventDefault();
@@ -639,7 +613,7 @@ function initProfilePage() {
     });
   }
 
-  // Inisialisasi tampilan avatar besar di halaman profil saat dibuka
+  
   if (profileAvatarDisplay) {
     if (profile.avatarImage) {
       profileAvatarDisplay.innerHTML = `<img src="${profile.avatarImage}" alt="${profile.name}">`;
@@ -648,7 +622,7 @@ function initProfilePage() {
     }
   }
 
-  // 1. Upload Foto Profil (Hanya dari Tombol Kamera)
+  
   const avatarFileInput = document.querySelector('#avatarFileInput');
   const triggerAvatarUpload = document.querySelector('#triggerAvatarUpload');
 
@@ -666,20 +640,20 @@ function initProfilePage() {
         reader.onload = function(evt) {
           const imgData = evt.target.result;
           
-          // Ambil referensi profile terbaru dari session
+          
           const currentProfile = getStoredProfile();
           currentProfile.avatarImage = imgData;
           saveStoredProfile(currentProfile);
 
-          // Update foto di card profil
+          
           profileAvatarDisplay.innerHTML = `<img src="${imgData}" alt="Foto Profil">`;
 
-          // Update foto di user chip pojok kanan atas navbar
+          
           document.querySelectorAll('.student-user-avatar').forEach(chip => {
             chip.innerHTML = `<img src="${imgData}" alt="${currentProfile.name}">`;
           });
 
-          // Reset nilai input agar memilih file yang sama atau file baru berturut-turut selalu memicu event change
+          
           avatarFileInput.value = '';
 
           showStudentToast('Foto profil terbaru berhasil disimpan!', 'success');
@@ -689,7 +663,7 @@ function initProfilePage() {
     });
   }
 
-  // 2. Ubah Profil / Username (Modal Interaktif)
+  
   const btnEditProfileTrigger = document.querySelector('#btnEditProfileTrigger');
   const editUsernameModal = document.querySelector('#editUsernameModal');
   const closeUsernameModalBtn = document.querySelector('#closeUsernameModalBtn');
@@ -724,12 +698,12 @@ function initProfilePage() {
         profile.name = newName;
         saveStoredProfile(profile);
 
-        // Update semua elemen teks nama siswa di halaman & chip pojok kanan secara instan
+        
         document.querySelectorAll('.student-display-name').forEach(el => {
           el.textContent = newName;
         });
 
-        // Update inisial avatar jika belum memakai foto
+        
         if (!profile.avatarImage) {
           const initial = newName.charAt(0).toUpperCase();
           if (profileAvatarDisplay) profileAvatarDisplay.textContent = initial;

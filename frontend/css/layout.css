@@ -1,11 +1,5 @@
-/* ==========================================================================
-   LAYOUT CSS - SIM-MBG
-   Header, navigation, container, grid systems, and footer
-   ========================================================================== */
+﻿
 
-/* --------------------------------------------------------------------------
-   PAGE LAYOUT & STICKY FOOTER ARCHITECTURE
-   -------------------------------------------------------------------------- */
 body {
   min-height: 100vh;
   display: flex;
@@ -16,7 +10,6 @@ main {
   flex: 1 0 auto;
 }
 
-/* Main Containers */
 .container {
   width: 100%;
   max-width: var(--container-max-width);
@@ -35,9 +28,6 @@ main {
   }
 }
 
-/* --------------------------------------------------------------------------
-   HEADER & NAVBAR (Figma: height 103px, desktop 1440px)
-   -------------------------------------------------------------------------- */
 .main-header {
   position: sticky;
   top: 0;
@@ -65,7 +55,6 @@ main {
   height: 100%;
 }
 
-/* Brand Logo & Title */
 .navbar-brand,
 .student-navbar-brand,
 .sppg-brand,
@@ -96,14 +85,12 @@ main {
   letter-spacing: -0.5px;
 }
 
-/* Navigation Links Container */
 .nav-links {
   display: flex;
   align-items: center;
   gap: var(--space-16);
 }
 
-/* Navigation Menu List */
 .nav-menu,
 .student-nav-menu,
 .sppg-nav-menu {
@@ -115,7 +102,6 @@ main {
   padding: 0;
 }
 
-/* Navigation Pill Button Links (Gold standard from Siswa reference) */
 .nav-btn,
 .student-nav-btn,
 .sppg-nav-btn,
@@ -152,14 +138,12 @@ main {
   box-shadow: 0 2px 6px rgba(41, 115, 115, 0.25);
 }
 
-/* Navigation Actions (Right Side) */
 .nav-actions {
   display: flex;
   align-items: center;
   gap: var(--space-16);
 }
 
-/* User Profile Chip (Standardized from Siswa reference) */
 .user-chip,
 .student-user-chip,
 .sppg-user-chip {
@@ -233,7 +217,6 @@ main {
   color: var(--color-primary);
 }
 
-/* Profile Trigger (compatible with user initial template) */
 .profile-widget {
   position: relative;
 }
@@ -266,7 +249,6 @@ main {
   color: var(--color-heading);
 }
 
-/* Dropdown Role Simulation */
 .profile-dropdown {
   position: absolute;
   top: calc(100% + 8px);
@@ -335,7 +317,6 @@ main {
   color: var(--color-primary);
 }
 
-/* Mobile Nav Toggle */
 .mobile-nav-toggle {
   display: none;
   flex-direction: column;
@@ -357,9 +338,6 @@ main {
   transition: all var(--transition-normal);
 }
 
-/* --------------------------------------------------------------------------
-   FOOTER
-   -------------------------------------------------------------------------- */
 .main-footer {
   margin-top: auto;
   width: 100%;
@@ -377,7 +355,6 @@ main {
   height: auto;
 }
 
-/* Jika footer hanya berisi baris info/copyright tanpa grid tautan (halaman sub/portal) */
 .main-footer:not(:has(.footer-grid)) {
   padding: var(--space-20) 0;
 }
@@ -435,9 +412,6 @@ main {
   padding-top: 0;
 }
 
-/* --------------------------------------------------------------------------
-   RESPONSIVE BREAKPOINTS
-   -------------------------------------------------------------------------- */
 @media (max-width: 992px) {
   .nav-links {
     position: fixed;

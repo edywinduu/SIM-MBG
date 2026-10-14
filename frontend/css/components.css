@@ -1,11 +1,5 @@
-/* ==========================================================================
-   COMPONENTS CSS - SIM-MBG
-   Reusable UI components (Buttons, Badges, Cards, Chips)
-   ========================================================================== */
+﻿
 
-/* --------------------------------------------------------------------------
-   1. BUTTONS (Figma Frame 2 & Frame 5 specs)
-   -------------------------------------------------------------------------- */
 .btn {
   display: inline-flex;
   align-items: center;
@@ -25,7 +19,6 @@
   white-space: nowrap;
 }
 
-/* Primary Button (Frame 2: #297373, text #FAFAF9, radius 8px) */
 .btn-primary {
   background-color: var(--color-primary);
   color: var(--color-bg);
@@ -43,7 +36,6 @@
   transform: translateY(0);
 }
 
-/* Secondary Button / Contact (Frame 5: #FAFAF9, text #39393A, shadow 0 0 4 @25%) */
 .btn-secondary {
   background-color: var(--color-bg);
   color: var(--color-text);
@@ -61,7 +53,6 @@
   transform: translateY(0);
 }
 
-/* Outline Button */
 .btn-outline {
   background-color: transparent;
   color: var(--color-primary);
@@ -73,7 +64,6 @@
   color: var(--color-bg);
 }
 
-/* Button Sizing */
 .btn-sm {
   padding: 8px 16px;
   font-size: var(--font-size-sm);
@@ -86,9 +76,6 @@
   border-radius: var(--radius-md);
 }
 
-/* --------------------------------------------------------------------------
-   2. BADGES & PILLS
-   -------------------------------------------------------------------------- */
 .badge {
   display: inline-flex;
   align-items: center;
@@ -120,9 +107,6 @@
   border: 1px solid rgba(133, 255, 199, 0.5);
 }
 
-/* --------------------------------------------------------------------------
-   3. CARDS
-   -------------------------------------------------------------------------- */
 .card {
   background-color: var(--color-white);
   border-radius: var(--radius-xl);
@@ -136,9 +120,6 @@
   box-shadow: var(--shadow-card-elevated);
 }
 
-/* --------------------------------------------------------------------------
-   4. CHIP MENU (Frame 6 Figma Spec: 201×60, bg #297373, radius 6px, shadow)
-   -------------------------------------------------------------------------- */
 .menu-chip {
   display: inline-flex;
   align-items: center;

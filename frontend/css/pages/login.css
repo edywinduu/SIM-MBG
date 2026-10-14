@@ -1,11 +1,5 @@
-/* ==========================================================================
-   LOGIN CSS - SIM-MBG
-   Authentication styling matching Figma Frame 34:655 & AGENTS.md guidelines
-   ========================================================================== */
+﻿
 
-/* --------------------------------------------------------------------------
-   1. AUTH BODY & LAYOUT
-   -------------------------------------------------------------------------- */
 .auth-body {
   min-height: 100vh;
   display: flex;
@@ -15,7 +9,6 @@
   overflow-x: hidden;
 }
 
-/* Ambient Blur Decorations (Sesuai Figma Landing & Auth) */
 .ambient-decorations {
   position: fixed;
   top: 0;
@@ -51,9 +44,6 @@
   filter: blur(150px);
 }
 
-/* --------------------------------------------------------------------------
-   2. AUTH HEADER
-   -------------------------------------------------------------------------- */
 .auth-header {
   position: relative;
   z-index: 10;
@@ -97,9 +87,6 @@
   font-size: 18px;
 }
 
-/* --------------------------------------------------------------------------
-   3. AUTH MAIN & CARD CONTAINER (Figma Frame 34:655)
-   -------------------------------------------------------------------------- */
 .auth-main {
   flex: 1;
   display: flex;
@@ -116,7 +103,6 @@
   margin: 0 auto;
 }
 
-/* Auth Elevated Card */
 .auth-card {
   background-color: var(--color-white);
   border-radius: 20px;
@@ -126,7 +112,6 @@
   transition: box-shadow var(--transition-normal);
 }
 
-/* Card Header & Brand Icon */
 .auth-card-header {
   text-align: center;
   margin-bottom: var(--space-24);
@@ -154,9 +139,6 @@
   line-height: 1.2;
 }
 
-/* --------------------------------------------------------------------------
-   4. ALERT FEEDBACK BOX
-   -------------------------------------------------------------------------- */
 .auth-alert {
   padding: 12px 16px;
   border-radius: var(--radius-md);
@@ -186,9 +168,6 @@
   flex-shrink: 0;
 }
 
-/* --------------------------------------------------------------------------
-   5. FORM INPUTS & LABELS
-   -------------------------------------------------------------------------- */
 .auth-form {
   display: flex;
   flex-direction: column;
@@ -227,7 +206,6 @@
   text-decoration: underline;
 }
 
-/* Input Wrapper & Icons */
 .input-wrapper {
   position: relative;
   display: flex;
@@ -274,7 +252,6 @@
   color: var(--color-primary);
 }
 
-/* Password Input With Toggle Button */
 .password-wrapper .form-input {
   padding-right: 46px;
 }
@@ -309,9 +286,6 @@
   font-size: 20px;
 }
 
-/* --------------------------------------------------------------------------
-   6. OPTIONS ROW: REMEMBER ME & DISPLAY PASSWORD CHECKBOX
-   -------------------------------------------------------------------------- */
 .form-options-row {
   display: flex;
   justify-content: space-between;
@@ -322,7 +296,6 @@
   margin-bottom: var(--space-24);
 }
 
-/* Custom Checkbox Design */
 .custom-checkbox-label {
   display: inline-flex;
   align-items: center;
@@ -388,9 +361,6 @@
   font-size: 13.5px;
 }
 
-/* --------------------------------------------------------------------------
-   7. SUBMIT BUTTON & DEMO BADGE
-   -------------------------------------------------------------------------- */
 .btn-auth-submit {
   width: 100%;
   height: 48px;
@@ -433,9 +403,6 @@
   transform: translateX(3px);
 }
 
-/* --------------------------------------------------------------------------
-   8. CARD FOOTER: REGISTER COLUMN
-   -------------------------------------------------------------------------- */
 .auth-card-footer {
   margin-top: var(--space-24);
   padding-top: var(--space-20);
@@ -462,9 +429,6 @@
   text-decoration: underline;
 }
 
-/* --------------------------------------------------------------------------
-   9. ANIMATIONS & RESPONSIVE QUERIES
-   -------------------------------------------------------------------------- */
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -476,9 +440,6 @@
   }
 }
 
-/* --------------------------------------------------------------------------
-   10. MULTI-STEP REGISTER & DROPDOWN STYLING
-   -------------------------------------------------------------------------- */
 .auth-stepper-pills {
   display: flex;
   align-items: center;
@@ -541,7 +502,6 @@
   border-radius: 1px;
 }
 
-/* Form Select Dropdown */
 .select-wrapper {
   position: relative;
   display: flex;
@@ -586,7 +546,6 @@
   color: var(--color-primary);
 }
 
-/* Multi-step Navigation Row */
 .auth-btn-row {
   display: flex;
   align-items: center;

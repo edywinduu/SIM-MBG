@@ -1,18 +1,7 @@
-/* ==========================================================================
-   SPPG CSS - SIM-MBG
-   Panel SPPG: Beranda, Menu, Pilihan Pengguna, Review
-   Hanya memakai token dari variables.css
-   ========================================================================== */
+﻿
 
 @keyframes spin { to { transform: rotate(360deg); } }
 
-/* --------------------------------------------------------------------------
-   1. HEADER (Centralized in layout.css following Siswa standard reference)
-   -------------------------------------------------------------------------- */
-
-/* --------------------------------------------------------------------------
-   2. PAGE SHELL & HEADINGS
-   -------------------------------------------------------------------------- */
 .sppg-main { padding: var(--space-32) 0 var(--space-48); position: relative; z-index: 1; }
 .sppg-main .container > * + * { margin-top: var(--space-24); }
 
@@ -26,9 +15,6 @@
 .sppg-actions { display: flex; align-items: center; gap: var(--space-12); flex-wrap: wrap; }
 .sppg-note { font-size: var(--font-size-sm); margin-top: var(--space-4); }
 
-/* --------------------------------------------------------------------------
-   3. SHARED BLOCKS: panel, icon box, pills, links, kpi
-   -------------------------------------------------------------------------- */
 .sppg-panel {
   background: var(--color-white); border: 1px solid var(--color-border);
   border-radius: var(--radius-xl); box-shadow: var(--shadow-card); padding: var(--space-24);
@@ -83,9 +69,6 @@
 
 .sppg-two-col { display: grid; grid-template-columns: 1.15fr 1fr; gap: var(--space-24); align-items: start; }
 
-/* --------------------------------------------------------------------------
-   4. FORM CONTROLS: search, select, tabs, chips, view toggle
-   -------------------------------------------------------------------------- */
 .sppg-search {
   position: relative; display: flex; align-items: center; min-width: 240px;
   background: var(--color-surface-soft); border-radius: var(--radius-md);
@@ -129,9 +112,6 @@
 .sppg-chip:hover { border-color: var(--color-primary); color: var(--color-primary); }
 .sppg-chip.active { background: var(--color-primary); border-color: var(--color-primary); color: var(--color-white); }
 
-/* --------------------------------------------------------------------------
-   5. BERANDA: announce, activity, today menu, help bar
-   -------------------------------------------------------------------------- */
 .sppg-announce { display: flex; align-items: flex-start; gap: var(--space-16); }
 .sppg-announce-body { flex: 1; display: flex; flex-direction: column; gap: var(--space-4); }
 .sppg-announce-body h3 { font-size: var(--font-size-md); font-weight: 600; }
@@ -170,9 +150,6 @@
 .sppg-help-bar > .material-symbols-outlined { color: var(--color-primary); }
 .sppg-help-bar .sppg-link { margin-left: auto; }
 
-/* --------------------------------------------------------------------------
-   6. TABLE & PAGINATION
-   -------------------------------------------------------------------------- */
 .sppg-table-wrap { overflow-x: auto; }
 .sppg-table { width: 100%; min-width: 820px; }
 .sppg-table thead th {
@@ -208,9 +185,6 @@
 .page-btn.active { background: var(--color-primary); color: var(--color-white); }
 .page-btn:disabled { opacity: 0.4; cursor: not-allowed; }
 
-/* --------------------------------------------------------------------------
-   7. MENU PAGE: cards, macro box, toggle
-   -------------------------------------------------------------------------- */
 .sppg-menu-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-24); }
 .sppg-menu-grid.list { grid-template-columns: 1fr; }
 
@@ -267,17 +241,11 @@
 .sppg-verify-body h3 { font-size: var(--font-size-lg); }
 .sppg-verify-body p { font-size: var(--font-size-sm); color: var(--color-muted); margin-top: var(--space-4); }
 
-/* --------------------------------------------------------------------------
-   8. PILIHAN PAGE: info trio
-   -------------------------------------------------------------------------- */
 .sppg-info-trio { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-24); }
 .sppg-info { display: flex; gap: var(--space-12); background: var(--color-white); border: 1px solid var(--color-border); border-radius: var(--radius-xl); padding: var(--space-16) var(--space-20); box-shadow: var(--shadow-card); }
 .sppg-info h4 { font-size: var(--font-size-md); }
 .sppg-info p { font-size: var(--font-size-sm); color: var(--color-muted); margin-top: var(--space-4); }
 
-/* --------------------------------------------------------------------------
-   9. REVIEW PAGE: feedback, rating, favorites, audit
-   -------------------------------------------------------------------------- */
 .sppg-review-grid { display: grid; grid-template-columns: 1fr 380px; gap: var(--space-24); align-items: start; }
 .sppg-panel-head h2 .pill { font-weight: 600; }
 .sppg-feedback-list { display: flex; flex-direction: column; gap: var(--space-20); }
@@ -321,9 +289,6 @@
 .sppg-audit-btn { width: 100%; background: var(--color-secondary); color: #00594D; font-weight: 700; padding: 10px 16px; border-radius: var(--radius-md); }
 .sppg-audit-btn:hover { filter: brightness(0.95); }
 
-/* --------------------------------------------------------------------------
-   10. MODAL & TOAST
-   -------------------------------------------------------------------------- */
 .sppg-modal { position: fixed; inset: 0; background: rgba(15, 23, 43, 0.5); backdrop-filter: blur(4px); display: none; align-items: center; justify-content: center; padding: var(--space-20); z-index: 200; }
 .sppg-modal.open { display: flex; animation: modalIn 0.2s ease; }
 @keyframes modalIn { from { opacity: 0; } to { opacity: 1; } }
@@ -348,9 +313,6 @@
 }
 .sppg-toast.show { opacity: 1; transform: translate(-50%, 0); }
 
-/* --------------------------------------------------------------------------
-   11. RESPONSIVE
-   -------------------------------------------------------------------------- */
 @media (max-width: 1200px) {
   .sppg-kpi-grid { grid-template-columns: repeat(2, 1fr); }
   .sppg-menu-grid { grid-template-columns: repeat(2, 1fr); }

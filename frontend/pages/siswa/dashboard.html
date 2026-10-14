@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
@@ -6,13 +6,13 @@
     <title>Dashboard Siswa — SIM-MBG</title>
     <link rel="icon" href="../../assets/icons/logo.svg">
 
-    <!-- Google Fonts Plus Jakarta Sans & Material Symbols -->
+    
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,600&display=swap">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
 
-    <!-- Style System CSS -->
+    
     <link rel="stylesheet" href="../../css/reset.css">
     <link rel="stylesheet" href="../../css/variables.css">
     <link rel="stylesheet" href="../../css/global.css">
@@ -21,13 +21,13 @@
     <link rel="stylesheet" href="../../css/pages/siswa.css">
 </head>
 <body id="dashboardPage">
-    <!-- Ambient Blur Background (Figma Verified 11.1) -->
+    
     <div class="ambient-decorations" aria-hidden="true">
         <div class="ambient-ellipse-secondary"></div>
         <div class="ambient-ellipse-accent"></div>
     </div>
 
-    <!-- Header & Student Navbar (Figma height 103px, Verified Navigation) -->
+    
     <header class="main-header">
         <div class="container nav-container">
             <a href="dashboard.html" class="student-navbar-brand" aria-label="SIM-MBG Dashboard">
@@ -35,7 +35,7 @@
                 <span class="student-brand-title">SIM-MBG</span>
             </a>
 
-            <!-- 4 Navigasi Utama Siswa Sesuai Figma & AGENTS.md -->
+            
             <nav class="nav-links" id="mainNav">
                 <ul class="student-nav-menu">
                     <li><a href="dashboard.html" class="student-nav-btn active">Dashboard</a></li>
@@ -45,7 +45,7 @@
                 </ul>
             </nav>
 
-            <!-- Profil User Chip (Figma Verified) -->
+            
             <div class="nav-actions">
                 <a href="review.html" class="student-user-chip" title="Lihat Profil Saya">
                     <div class="student-user-avatar">A</div>
@@ -59,7 +59,7 @@
                     <span class="material-symbols-outlined" style="font-size: 18px;">logout</span>
                 </button>
 
-                <!-- Mobile Hamburger Toggle -->
+                
                 <button type="button" class="mobile-nav-toggle" aria-controls="mainNav" aria-expanded="false" aria-label="Buka Menu Navigasi">
                     <span></span>
                     <span></span>
@@ -69,10 +69,10 @@
         </div>
     </header>
 
-    <!-- Main Content: Dashboard Siswa (Frame 97:1000) -->
+    
     <main class="student-main-content">
         <div class="container">
-            <!-- Sapaan Header & Subtitle -->
+            
             <section class="student-header-banner">
                 <h1 class="student-welcome-h1">Selamat Pagi, <span class="student-display-name">Alya MBG</span>! 👋</h1>
                 <div class="student-meta-subtitle">
@@ -88,11 +88,11 @@
                 </div>
             </section>
 
-            <!-- Grid 2 Kolom (Kiri: Distribusi & Notifikasi, Kanan: Menu Hari Ini) -->
+            
             <div class="dashboard-grid">
-                <!-- Kolom Kiri -->
+                
                 <div class="dashboard-left-col">
-                    <!-- Kartu Distribusi Makan Siang Hari Ini -->
+                    
                     <article class="distribusi-card">
                         <div class="card-top-title">
                             <h2 class="section-title-sm">
@@ -120,7 +120,7 @@
                         </button>
                     </article>
 
-                    <!-- Kartu Pemberitahuan SPPG & Pemilihan Menu Besok -->
+                    
                     <article class="notice-card">
                         <div class="sppg-notice-banner">
                             <span class="material-symbols-outlined">campaign</span>
@@ -143,7 +143,7 @@
                     </article>
                 </div>
 
-                <!-- Kolom Kanan: Card Menu Hari Ini -->
+                
                 <div class="dashboard-right-col">
                     <article class="menu-today-card">
                         <div class="menu-today-img-wrap">
@@ -165,7 +165,7 @@
                                 <span class="comp-chip">Semangka</span>
                             </div>
 
-                            <!-- Macro Nutrition Segment Bar -->
+                            
                             <div class="macro-bar-container">
                                 <div class="macro-bar-labels">
                                     <span>Protein 35%</span>
@@ -179,7 +179,7 @@
                                 </div>
                             </div>
 
-                            <!-- 4 Grid Nutrisi -->
+                            
                             <div class="nutrition-grid-4">
                                 <div class="nutri-cell">
                                     <div class="nutri-val">620</div>
@@ -208,7 +208,7 @@
                 </div>
             </div>
 
-            <!-- 3 Bottom KPI Stats (Figma: Total Kehadiran, Ulasan Diberikan, Rata-rata Skor) -->
+            
             <section class="dashboard-kpi-row">
                 <div class="kpi-stat-card">
                     <div class="kpi-icon-wrap">
@@ -243,7 +243,7 @@
         </div>
     </main>
 
-    <!-- Global Footer -->
+    
     <footer class="main-footer">
         <div class="container">
             <div class="footer-bottom">
@@ -253,7 +253,7 @@
         </div>
     </footer>
 
-    <!-- Scripts -->
+    
     <script src="../../js/main.js"></script>
     <script src="../../js/pages/siswa.js"></script>
 </body>

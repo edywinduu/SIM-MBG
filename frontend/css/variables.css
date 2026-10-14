@@ -1,10 +1,7 @@
-/* ==========================================================================
-   VARIABLES CSS - SIM-MBG DESIGN SYSTEM
-   Verified tokens from DESIGN_SYSTEM.md
-   ========================================================================== */
+﻿
 
 :root {
-  /* Core Brand Tokens (Figma verified) */
+  
   --color-primary: #297373;
   --color-primary-hover: #1f5c5c;
   --color-primary-active: #174848;
@@ -14,7 +11,7 @@
   --color-accent: #FF8552;
   --color-accent-hover: #e56f3d;
 
-  /* Surfaces & Neutrals */
+  
   --color-white: #FFFFFF;
   --color-surface-soft: #EFF4FF;
   --color-surface-subtle: #F8FAFC;
@@ -23,7 +20,7 @@
   --color-muted: #62748E;
   --color-heading: #0F172B;
 
-  /* Semantic Status */
+  
   --color-success: #007A55;
   --color-success-bg: #ECFDF5;
   --color-warning: #855300;
@@ -31,10 +28,10 @@
   --color-danger: #93000A;
   --color-danger-bg: #FFDAD6;
 
-  /* Typography */
+  
   --font-family: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   
-  /* Font Sizes */
+  
   --font-size-xs: 12px;
   --font-size-sm: 14px;
   --font-size-md: 16px;
@@ -45,7 +42,7 @@
   --font-size-4xl: 36px;
   --font-size-hero: 82px;
 
-  /* Spacing */
+  
   --space-2: 2px;
   --space-4: 4px;
   --space-6: 6px;
@@ -60,7 +57,7 @@
   --space-48: 48px;
   --space-64: 64px;
 
-  /* Border Radius (Figma verified) */
+  
   --radius-xs: 4px;
   --radius-sm: 6px;
   --radius-md: 8px;
@@ -68,7 +65,7 @@
   --radius-xl: 16px;
   --radius-pill: 9999px;
 
-  /* Shadows (Figma verified) */
+  
   --shadow-card: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
   --shadow-card-elevated: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.08);
   --shadow-chip: 0 0 6.3px rgba(0, 0, 0, 0.43);
@@ -76,12 +73,12 @@
   --shadow-glow: 0 0 24px rgba(41, 115, 115, 0.22);
   --shadow-dropdown: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.08);
 
-  /* Transitions */
+  
   --transition-fast: 0.15s ease;
   --transition-normal: 0.25s ease;
   --transition-slow: 0.35s ease;
 
-  /* Layout Constants */
+  
   --container-max-width: 100%;
   --header-height: 85px;
 }

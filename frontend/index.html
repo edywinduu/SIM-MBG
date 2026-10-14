@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
@@ -19,13 +19,13 @@
     <link rel="stylesheet" href="css/pages/landing.css">
 </head>
 <body>
-    <!-- Ambient Blur Background (Figma Verified 11.1: 2 Ellipse Blur) -->
+    
     <div class="ambient-decorations" aria-hidden="true">
         <div class="ambient-ellipse-secondary"></div>
         <div class="ambient-ellipse-accent"></div>
     </div>
 
-    <!-- Header & Navigation (Selaras dengan format Navigasi Siswa) -->
+    
     <header class="main-header">
         <div class="container nav-container">
             <a href="index.html" class="student-navbar-brand logo-nav" aria-label="SIM-MBG Beranda">
@@ -36,7 +36,6 @@
             <nav class="nav-links" id="mainNav">
                 <ul class="student-nav-menu">
                     <li><a href="#beranda" class="student-nav-btn nav-link active">Beranda</a></li>
-                    <li><a href="#alur" class="student-nav-btn nav-link">Alur Pemesanan</a></li>
                     <li><a href="#menu-pilihan" class="student-nav-btn nav-link">Pilihan Menu</a></li>
                     <li><a href="#fitur" class="student-nav-btn nav-link">Keunggulan</a></li>
                 </ul>
@@ -54,7 +53,7 @@
                 </a>
                 
 
-                <!-- Mobile Hamburger Toggle -->
+                
                 <button type="button" class="mobile-nav-toggle" aria-controls="mainNav" aria-expanded="false" aria-label="Buka Menu Navigasi">
                     <span></span>
                     <span></span>
@@ -93,18 +92,18 @@
                     </div>
                 </div>
 
-                <!-- Hero Right Column: Alur Pemesanan & Interactive Coverflow Carousel -->
+                
                 <div class="hero-carousel" id="alur">
                     <h2 class="carousel-section-title">Alur Pemesanan</h2>
 
-                    <!-- Timeline Stepper (3 Langkah) -->
+                    
                     <div class="timeline-container">
                         <div class="timeline-track" aria-hidden="true">
                             <div class="timeline-progress" id="timelineProgress"></div>
                         </div>
 
                         <div class="timeline-steps" role="tablist" aria-label="Alur Pemesanan">
-                            <!-- Langkah 1: Daftar -->
+                            
                             <button type="button" class="step-item active-done" data-step="1" role="tab" id="stepTab1" aria-controls="carouselCard1" aria-selected="false" title="Langkah 1: Daftar Akun">
                                 <div class="step-icon">
                                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -117,7 +116,7 @@
                                 <span class="step-label">Daftar</span>
                             </button>
 
-                            <!-- Langkah 2: Pilih (Default Aktif Sesuai Figma) -->
+                            
                             <button type="button" class="step-item active" data-step="2" role="tab" id="stepTab2" aria-controls="carouselCard2" aria-selected="true" title="Langkah 2: Pilih Menu">
                                 <div class="step-icon">
                                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -131,7 +130,7 @@
                                 <span class="step-label">Pilih</span>
                             </button>
 
-                            <!-- Langkah 3: Konfirmasi -->
+                            
                             <button type="button" class="step-item" data-step="3" role="tab" id="stepTab3" aria-controls="carouselCard3" aria-selected="false" title="Langkah 3: Konfirmasi & Ambil">
                                 <div class="step-icon">
                                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -144,18 +143,18 @@
                         </div>
                     </div>
 
-                    <!-- 3D Peek Carousel Stage (Mirip Gambar Figma) -->
+                    
                     <div class="carousel-stage-container" aria-roledescription="carousel" aria-label="Alur Pemesanan Interaktif">
-                        <!-- Tombol Kiri Lingkaran Putih -->
+                        
                         <button type="button" class="carousel-nav-btn prev-btn" id="prevBtn" aria-label="Langkah Sebelumnya">
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                                 <polyline points="15 18 9 12 15 6"></polyline>
                             </svg>
                         </button>
 
-                        <!-- Viewport Kartu 3D -->
+                        
                         <div class="carousel-viewport" id="carouselViewport">
-                            <!-- Kartu 1: Langkah 01 (Daftar Akun) -->
+                            
                             <div class="carousel-card card-step-1 card-left" id="carouselCard1" data-step="1" role="tabpanel" aria-labelledby="stepTab1" aria-hidden="true" tabindex="0">
                                 <div class="step-badge-pill">
                                     <span class="badge-dot" aria-hidden="true"></span>
@@ -164,7 +163,7 @@
                                 <img src="assets/images/card-daftar-akun.svg" alt="Langkah 01: Ilustrasi antarmuka pendaftaran akun siswa" class="card-hero-img" width="520" height="320" />
                             </div>
 
-                            <!-- Kartu 2: Langkah 02 (Pilih Menu Makanan - AKTIF UTAMA) -->
+                            
                             <div class="carousel-card card-step-2 active card-center" id="carouselCard2" data-step="2" role="tabpanel" aria-labelledby="stepTab2" aria-hidden="false" tabindex="0">
                                 <div class="step-badge-pill">
                                     <span class="badge-dot" aria-hidden="true"></span>
@@ -173,7 +172,7 @@
                                 <img src="assets/images/card-pilih-menu.svg" alt="Langkah 02: Ilustrasi antarmuka pemilihan menu makanan bergizi" class="card-hero-img" width="520" height="320" />
                             </div>
 
-                            <!-- Kartu 3: Langkah 03 (Konfirmasi Pesanan) -->
+                            
                             <div class="carousel-card card-step-3 card-right" id="carouselCard3" data-step="3" role="tabpanel" aria-labelledby="stepTab3" aria-hidden="true" tabindex="0">
                                 <div class="step-badge-pill">
                                     <span class="badge-dot" aria-hidden="true"></span>
@@ -183,7 +182,7 @@
                             </div>
                         </div>
 
-                        <!-- Tombol Kanan Lingkaran Putih -->
+                        
                         <button type="button" class="carousel-nav-btn next-btn" id="nextBtn" aria-label="Langkah Selanjutnya">
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                                 <polyline points="9 18 15 12 9 6"></polyline>
@@ -191,71 +190,71 @@
                         </button>
                     </div>
 
-                    <!-- Caption Bawah: Di Luar dan di Bawah Kartu Sesuai Gambar -->
+                    
                     <p class="carousel-bottom-caption" id="carouselCaption" aria-live="polite">Tekan Menu Makanan</p>
                 </div>
             </div>
         </section>
 
-        <!-- 2. MARQUEE STRIP "LIST-MENU SECTION" (Figma 11.1: 1440×128, 10 chips) -->
+        
         <section class="marquee-section" id="menu-pilihan">
             <div class="marquee-header">
                 <span class="marquee-subtitle">Variasi Menu Sehat Harian Penerima MBG</span>
             </div>
             <div class="marquee-container" aria-label="Daftar Variasi Menu Makanan">
                 <div class="marquee-content">
-                    <!-- Chip 1 -->
+                    
                     <div class="menu-chip" data-menu-name="Nasi Ayam Bakar Madu">
                         <div class="menu-chip-avatar">🍗</div>
                         <span class="menu-chip-name">Nasi Ayam Bakar Madu</span>
                     </div>
-                    <!-- Chip 2 -->
+                    
                     <div class="menu-chip" data-menu-name="Salmon Panggang">
                         <div class="menu-chip-avatar">🐟</div>
                         <span class="menu-chip-name">Salmon Panggang</span>
                     </div>
-                    <!-- Chip 3 -->
+                    
                     <div class="menu-chip" data-menu-name="Beef Teriyaki Bowl">
                         <div class="menu-chip-avatar">🥩</div>
                         <span class="menu-chip-name">Beef Teriyaki Bowl</span>
                     </div>
-                    <!-- Chip 4 -->
+                    
                     <div class="menu-chip" data-menu-name="Sup Ayam Jagung">
                         <div class="menu-chip-avatar">🥣</div>
                         <span class="menu-chip-name">Sup Ayam Jagung</span>
                     </div>
-                    <!-- Chip 5 -->
+                    
                     <div class="menu-chip" data-menu-name="Nasi Kuning Komplit">
                         <div class="menu-chip-avatar">🍚</div>
                         <span class="menu-chip-name">Nasi Kuning Komplit</span>
                     </div>
-                    <!-- Chip 6 -->
+                    
                     <div class="menu-chip" data-menu-name="Ayam Suwir Bali">
                         <div class="menu-chip-avatar">🍲</div>
                         <span class="menu-chip-name">Ayam Suwir Bali</span>
                     </div>
-                    <!-- Chip 7 -->
+                    
                     <div class="menu-chip" data-menu-name="Tahu Tempe Bacem Gizi">
                         <div class="menu-chip-avatar">🥗</div>
                         <span class="menu-chip-name">Tahu Tempe Bacem Gizi</span>
                     </div>
-                    <!-- Chip 8 -->
+                    
                     <div class="menu-chip" data-menu-name="Nasi Uduk Nutrisi">
                         <div class="menu-chip-avatar">🍛</div>
                         <span class="menu-chip-name">Nasi Uduk Nutrisi</span>
                     </div>
-                    <!-- Chip 9 -->
+                    
                     <div class="menu-chip" data-menu-name="Rolade Daging Sayur">
                         <div class="menu-chip-avatar">🧆</div>
                         <span class="menu-chip-name">Rolade Daging Sayur</span>
                     </div>
-                    <!-- Chip 10 -->
+                    
                     <div class="menu-chip" data-menu-name="Soto Ayam Kampung">
                         <div class="menu-chip-avatar">🍜</div>
                         <span class="menu-chip-name">Soto Ayam Kampung</span>
                     </div>
 
-                    <!-- Duplikasi untuk infinite marquee scroll -->
+                    
                     <div class="menu-chip" data-menu-name="Nasi Ayam Bakar Madu">
                         <div class="menu-chip-avatar">🍗</div>
                         <span class="menu-chip-name">Nasi Ayam Bakar Madu</span>
@@ -280,7 +279,7 @@
             </div>
         </section>
 
-        <!-- 3. KEUNGGULAN SISTEM SECTION -->
+        
         <section class="features-section" id="fitur">
             <div class="container">
                 <div class="section-title-center">
@@ -317,7 +316,7 @@
             </div>
         </section>
 
-        <!-- 4. CALL TO ACTION BANNER -->
+        
         <section class="cta-banner-section">
             <div class="container">
                 <div class="cta-banner">
@@ -334,7 +333,7 @@
         </section>
     </main>
 
-    <!-- Footer -->
+    
     <footer class="main-footer">
         <div class="container">
             <div class="footer-grid">
@@ -353,16 +352,6 @@
                         <li><a href="#alur">Alur Pemesanan</a></li>
                         <li><a href="#menu-pilihan">Pilihan Menu</a></li>
                         <li><a href="#fitur">Keunggulan</a></li>
-                    </ul>
-                </div>
-
-                <div class="footer-col">
-                    <h4>Portal Masuk</h4>
-                    <ul>
-                        <li><a href="pages/siswa/dashboard.html">Dashboard Siswa</a></li>
-                        <li><a href="pages/sppg/dashboard.html">Dashboard SPPG</a></li>
-                        <li><a href="pages/admin/dashboard.html">Dashboard Admin</a></li>
-                        <li><a href="pages/auth/login.html">Login Petugas/Siswa</a></li>
                     </ul>
                 </div>
 

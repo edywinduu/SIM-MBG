@@ -1,19 +1,8 @@
-/**
- * ==========================================================================
- * ADMIN JS - SIM-MBG (Member 4: Admin Panel)
- * Centralized State Management, Relational Mock Data, Filter, Search,
- * Pagination, Dynamic CRUD Modals, and Feedback Toasts.
- * Compliant with AGENTS.md (Vanilla JS, camelCase, no libraries)
- * ==========================================================================
- */
+﻿
 
-// Storage Keys
 const STORAGE_KEY_ADMIN_STORE = 'sim_mbg_admin_store';
 const STORAGE_KEY_AUTH = 'sim_mbg_auth';
 
-// --------------------------------------------------------------------------
-// 1. DEFAULT SEED DATA (Relational & Indonesian/Bali Context)
-// --------------------------------------------------------------------------
 const defaultAdminSeed = {
   sppg: [
     {
@@ -358,9 +347,6 @@ const defaultAdminSeed = {
   ]
 };
 
-// --------------------------------------------------------------------------
-// 2. STATE STORE CONTROLLER
-// --------------------------------------------------------------------------
 const AdminStore = {
   get() {
     try {
@@ -371,7 +357,7 @@ const AdminStore = {
     } catch (e) {
       console.warn('Gagal membaca admin store dari localStorage:', e);
     }
-    // Simpan data default awal
+    
     this.save(defaultAdminSeed);
     return defaultAdminSeed;
   },
@@ -384,7 +370,7 @@ const AdminStore = {
     }
   },
 
-  // Helper Relasional
+  
   getSchool(id) {
     const data = this.get();
     return data.schools.find((s) => s.id === Number(id));
@@ -421,9 +407,6 @@ const AdminStore = {
   }
 };
 
-// --------------------------------------------------------------------------
-// 3. COMMON UI UTILITIES (Toast, Modals, Session, Logout)
-// --------------------------------------------------------------------------
 function showToast(message, type = 'success') {
   let container = document.querySelector('.admin-toast-container');
   if (!container) {
@@ -469,7 +452,6 @@ function closeModal(modalId) {
   }
 }
 
-// Global modal close on click outside or press Escape
 document.addEventListener('click', (e) => {
   if (e.target.classList.contains('admin-modal-overlay')) {
     e.target.classList.remove('open');
@@ -485,12 +467,11 @@ document.addEventListener('keydown', (e) => {
   }
 });
 
-// Sync Admin Session & Logout Handling
 function initAdminAuthSync() {
   const adminNameDisplays = document.querySelectorAll('.admin-display-name');
   const logoutBtn = document.getElementById('adminLogoutBtn');
 
-  // Cek apakah ada sesi auth
+  
   let currentAuth = null;
   try {
     currentAuth = JSON.parse(sessionStorage.getItem(STORAGE_KEY_AUTH));
@@ -515,7 +496,7 @@ function initAdminAuthSync() {
     });
   }
 
-  // Mobile nav toggle
+  
   const mobileToggle = document.querySelector('.mobile-nav-toggle');
   const navMenu = document.querySelector('.admin-nav-menu');
   if (mobileToggle && navMenu) {
@@ -538,24 +519,21 @@ function initAdminAuthSync() {
   }
 }
 
-// --------------------------------------------------------------------------
-// 4. MODULE: DASHBOARD (dashboard.html)
-// --------------------------------------------------------------------------
 function initDashboardPage() {
   const store = AdminStore.get();
 
-  // Render KPI Metrik Realistis
+  
   const kpiSiswa = document.getElementById('kpiTotalSiswa');
   const kpiSekolah = document.getElementById('kpiTotalSekolah');
   const kpiSppg = document.getElementById('kpiTotalSppg');
   const kpiStaf = document.getElementById('kpiTotalStaf');
 
-  if (kpiSiswa) kpiSiswa.textContent = Number(12482).toLocaleString('id-ID'); // Angka makro Figma
+  if (kpiSiswa) kpiSiswa.textContent = Number(12482).toLocaleString('id-ID'); 
   if (kpiSekolah) kpiSekolah.textContent = store.schools.length;
   if (kpiSppg) kpiSppg.textContent = store.sppg.length;
   if (kpiStaf) kpiStaf.textContent = store.users.filter((u) => u.role === 'Admin').length + 20;
 
-  // Render Aktivitas Terbaru
+  
   const activityList = document.getElementById('dashboardActivityList');
   if (activityList) {
     activityList.innerHTML = store.activities
@@ -579,7 +557,7 @@ function initDashboardPage() {
       .join('');
   }
 
-  // Render Data Ringkas Sekolah
+  
   const tableBody = document.getElementById('dashboardSchoolsTableBody');
   if (tableBody) {
     tableBody.innerHTML = store.schools
@@ -620,9 +598,6 @@ function initDashboardPage() {
   }
 }
 
-// --------------------------------------------------------------------------
-// 5. MODULE: SISWA (students.html)
-// --------------------------------------------------------------------------
 function initStudentsPage() {
   let state = {
     search: '',
@@ -644,7 +619,7 @@ function initStudentsPage() {
   const modalForm = document.getElementById('studentForm');
   const deleteConfirmBtn = document.getElementById('btnConfirmDeleteStudent');
 
-  // Populate Pilihan Dropdown Sekolah dari Store (Relational)
+  
   function populateSchoolSelects() {
     const store = AdminStore.get();
     const options = store.schools
@@ -661,7 +636,7 @@ function initStudentsPage() {
     }
   }
 
-  // Update KPI Rekap Siswa
+  
   function updateRecapKPI() {
     const store = AdminStore.get();
     const total = store.students.length;
@@ -677,7 +652,7 @@ function initStudentsPage() {
     if (elKhusus) elKhusus.textContent = `${khusus} (${Math.round((khusus / (total || 1)) * 100)}%)`;
   }
 
-  // Render Table
+  
   function render() {
     const store = AdminStore.get();
     let filtered = store.students.filter((s) => {
@@ -754,7 +729,7 @@ function initStudentsPage() {
       }
     }
 
-    // Pagination info & buttons
+    
     if (paginationInfo) {
       const from = totalItems === 0 ? 0 : startIndex + 1;
       const to = Math.min(startIndex + state.pageSize, totalItems);
@@ -781,7 +756,7 @@ function initStudentsPage() {
     }
   }
 
-  // Event Listeners
+  
   if (searchInput) {
     searchInput.addEventListener('input', (e) => {
       state.search = e.target.value.trim();
@@ -830,7 +805,7 @@ function initStudentsPage() {
     });
   }
 
-  // Tambah Siswa Baru Modal
+  
   if (addBtn) {
     addBtn.addEventListener('click', () => {
       state.activeEditId = null;
@@ -841,7 +816,7 @@ function initStudentsPage() {
     });
   }
 
-  // Edit & Delete Button Delegation
+  
   if (tableBody) {
     tableBody.addEventListener('click', (e) => {
       const editBtn = e.target.closest('[data-edit-id]');
@@ -880,7 +855,7 @@ function initStudentsPage() {
     });
   }
 
-  // Submit Form Tambah / Edit Siswa
+  
   if (modalForm) {
     modalForm.addEventListener('submit', (e) => {
       e.preventDefault();
@@ -899,7 +874,7 @@ function initStudentsPage() {
 
       const store = AdminStore.get();
       if (state.activeEditId) {
-        // Mode Update
+        
         const idx = store.students.findIndex((s) => s.id === state.activeEditId);
         if (idx !== -1) {
           store.students[idx] = {
@@ -921,7 +896,7 @@ function initStudentsPage() {
           showToast(`Data siswa "${name}" berhasil diperbarui!`, 'success');
         }
       } else {
-        // Mode Create
+        
         const newStudent = {
           id: Date.now(),
           nisn,
@@ -948,7 +923,7 @@ function initStudentsPage() {
     });
   }
 
-  // Konfirmasi Delete Siswa
+  
   if (deleteConfirmBtn) {
     deleteConfirmBtn.addEventListener('click', () => {
       if (!state.deleteTargetId) return;
@@ -979,9 +954,6 @@ function initStudentsPage() {
   render();
 }
 
-// --------------------------------------------------------------------------
-// 6. MODULE: SEKOLAH (schools.html)
-// --------------------------------------------------------------------------
 function initSchoolsPage() {
   let state = {
     search: '',
@@ -1120,7 +1092,7 @@ function initSchoolsPage() {
     }
   }
 
-  // Events
+  
   if (searchInput) {
     searchInput.addEventListener('input', (e) => {
       state.search = e.target.value.trim();
@@ -1293,9 +1265,6 @@ function initSchoolsPage() {
   render();
 }
 
-// --------------------------------------------------------------------------
-// 7. MODULE: SPPG (sppg.html)
-// --------------------------------------------------------------------------
 function initSppgPage() {
   let state = {
     search: '',
@@ -1424,7 +1393,7 @@ function initSppgPage() {
     }
   }
 
-  // Events
+  
   if (searchInput) {
     searchInput.addEventListener('input', (e) => {
       state.search = e.target.value.trim();
@@ -1604,9 +1573,6 @@ function initSppgPage() {
   render();
 }
 
-// --------------------------------------------------------------------------
-// 8. MODULE: PENGGUNA (users.html)
-// --------------------------------------------------------------------------
 function initUsersPage() {
   let state = {
     search: '',
@@ -1742,7 +1708,7 @@ function initUsersPage() {
     }
   }
 
-  // Events
+  
   if (searchInput) {
     searchInput.addEventListener('input', (e) => {
       state.search = e.target.value.trim();
@@ -1914,9 +1880,6 @@ function initUsersPage() {
   render();
 }
 
-// --------------------------------------------------------------------------
-// 9. AUTOMATIC INITIALIZATION PER PAGE
-// --------------------------------------------------------------------------
 document.addEventListener('DOMContentLoaded', () => {
   initAdminAuthSync();
 

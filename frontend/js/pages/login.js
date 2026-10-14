@@ -1,11 +1,4 @@
-/**
- * ==========================================================================
- * LOGIN JS - SIM-MBG
- * Handles login formality flow, password visibility toggles,
- * remember me persistence, and redirection to Student Dashboard.
- * Vanilla JS adhering to AGENTS.md guidelines (no libraries)
- * ==========================================================================
- */
+﻿
 
 document.addEventListener('DOMContentLoaded', () => {
   initLoginModule();
@@ -25,18 +18,18 @@ function initLoginModule() {
   const alertIcon = document.querySelector('#alertIcon');
   const forgotPasswordBtn = document.querySelector('#forgotPasswordBtn');
 
-  // 1. Inisialisasi Fitur Remember Me
+  
   initRememberMe();
 
-  // 2. Inisialisasi Tampilan Display Password (Sinkronisasi Tombol Mata & Checkbox)
+  
   initPasswordVisibility();
 
-  // 3. Inisialisasi Pengiriman Form Login Formalitas
+  
   if (loginForm) {
     loginForm.addEventListener('submit', handleLoginSubmit);
   }
 
-  // 4. Inisialisasi Bantuan Lupa Kata Sandi
+  
   if (forgotPasswordBtn) {
     forgotPasswordBtn.addEventListener('click', (e) => {
       e.preventDefault();
@@ -44,9 +37,7 @@ function initLoginModule() {
     });
   }
 
-  /**
-   * Menangani simpanan Remember Me dari LocalStorage
-   */
+  
   function initRememberMe() {
     if (!usernameInput || !rememberMeCheck) return;
 
@@ -61,9 +52,7 @@ function initLoginModule() {
     }
   }
 
-  /**
-   * Mengatur interaksi Display Password dua arah (Eye button & Checkbox)
-   */
+  
   function initPasswordVisibility() {
     if (!passwordInput) return;
 
@@ -86,7 +75,7 @@ function initLoginModule() {
       }
     }
 
-    // Toggle dari tombol icon mata di dalam input
+    
     if (togglePasswordBtn) {
       togglePasswordBtn.addEventListener('click', () => {
         const isCurrentText = passwordInput.type === 'text';
@@ -94,7 +83,7 @@ function initLoginModule() {
       });
     }
 
-    // Toggle dari checkbox "Tampilkan sandi"
+    
     if (showPasswordCheck) {
       showPasswordCheck.addEventListener('change', () => {
         setPasswordVisibility(showPasswordCheck.checked);
@@ -102,17 +91,15 @@ function initLoginModule() {
     }
   }
 
-  /**
-   * Menangani submit form login sebagai formalitas ke Dashboard Siswa
-   */
+  
   function handleLoginSubmit(e) {
     e.preventDefault();
 
-    // Ambil data nama pengguna atau gunakan default ramah siswa
+    
     const rawUsername = usernameInput ? usernameInput.value.trim() : '';
     const activeUsername = rawUsername || 'Alya MBG';
 
-    // Kelola penyimpanan Remember Me
+    
     if (rememberMeCheck && rememberMeCheck.checked) {
       try {
         localStorage.setItem('sim_mbg_remembered_user', activeUsername);
@@ -127,13 +114,13 @@ function initLoginModule() {
       }
     }
 
-    // Cek apakah akun yang masuk adalah Administrator
+    
     const isAdmin = activeUsername.toLowerCase().includes('admin') || activeUsername.toLowerCase() === 'atmind';
     const targetRole = isAdmin ? 'admin' : 'siswa';
     const targetPath = isAdmin ? '../admin/dashboard.html' : '../siswa/dashboard.html';
     const targetLabel = isAdmin ? 'Dashboard Administrator' : 'Dashboard Siswa';
 
-    // Simpan sesi autentikasi mock untuk simulasi Dashboard
+    
     const mockSession = {
       username: activeUsername,
       role: targetRole,
@@ -149,7 +136,7 @@ function initLoginModule() {
       console.warn('SessionStorage tidak tersedia:', err);
     }
 
-    // Tampilkan status loading pada tombol
+    
     if (loginSubmitBtn) {
       loginSubmitBtn.disabled = true;
       loginSubmitBtn.innerHTML = `
@@ -158,18 +145,16 @@ function initLoginModule() {
       `;
     }
 
-    // Tampilkan notifikasi feedback sukses
+    
     showAlert('success', `Login berhasil! Mengalihkan ke ${targetLabel}...`);
 
-    // Redirect ke Dashboard yang sesuai
+    
     setTimeout(() => {
       window.location.href = targetPath;
     }, 450);
   }
 
-  /**
-   * Menampilkan pesan alert
-   */
+  
   function showAlert(type, message) {
     if (!authAlert || !alertText) return;
 

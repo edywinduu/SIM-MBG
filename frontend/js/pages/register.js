@@ -1,13 +1,4 @@
-/**
- * ==========================================================================
- * REGISTER JS - SIM-MBG
- * Handles 2-step registration workflow:
- * Step 1: School (SD/SMP/SMA), NIS, Class dropdowns
- * Step 2: Username, Email, Password, Confirm Password
- * Final: Direct redirection to Student Dashboard with active login session.
- * Vanilla JS adhering to AGENTS.md guidelines (no libraries)
- * ==========================================================================
- */
+﻿
 
 document.addEventListener('DOMContentLoaded', () => {
   initRegisterModule();
@@ -28,12 +19,12 @@ function initRegisterModule() {
   const regAlertText = document.querySelector('#regAlertText');
   const regAlertIcon = document.querySelector('#regAlertIcon');
 
-  // Input Step 1
+  
   const regSchool = document.querySelector('#regSchool');
   const regNis = document.querySelector('#regNis');
   const regClass = document.querySelector('#regClass');
 
-  // Input Step 2
+  
   const regUsername = document.querySelector('#regUsername');
   const regEmail = document.querySelector('#regEmail');
   const regPassword = document.querySelector('#regPassword');
@@ -44,7 +35,7 @@ function initRegisterModule() {
   const regEyeIcon2 = document.querySelector('#regEyeIcon2');
   const showRegPasswordCheck = document.querySelector('#showRegPasswordCheck');
 
-  // Data Pilihan Kelas Berdasarkan Jenjang Sekolah
+  
   const classOptionsByLevel = {
     'SD': [
       'Kelas 1', 'Kelas 2', 'Kelas 3', 'Kelas 4', 'Kelas 5', 'Kelas 6'
@@ -57,32 +48,30 @@ function initRegisterModule() {
     ]
   };
 
-  // 1. Inisialisasi Perubahan Dropdown Sekolah & Kelas
+  
   if (regSchool && regClass) {
     regSchool.addEventListener('change', updateClassDropdown);
   }
 
-  // 2. Inisialisasi Navigasi Langkah 1 ke Langkah 2
+  
   if (btnNextStep) {
     btnNextStep.addEventListener('click', handleGoToStep2);
   }
 
-  // 3. Inisialisasi Navigasi Kembali dari Langkah 2 ke Langkah 1
+  
   if (btnPrevStep) {
     btnPrevStep.addEventListener('click', handleGoBackToStep1);
   }
 
-  // 4. Inisialisasi Tampilan Display Password
+  
   initPasswordToggles();
 
-  // 5. Inisialisasi Submit Form Registrasi Selesai
+  
   if (registerForm) {
     registerForm.addEventListener('submit', handleRegisterSubmit);
   }
 
-  /**
-   * Mengupdate pilihan dropdown Kelas sesuai sekolah yang dipilih (SD / SMP / SMA)
-   */
+  
   function updateClassDropdown() {
     const selectedOption = regSchool.options[regSchool.selectedIndex];
     const level = selectedOption ? selectedOption.getAttribute('data-level') : '';
@@ -99,15 +88,13 @@ function initRegisterModule() {
       regClass.appendChild(opt);
     });
 
-    // Otomatis pilih opsi pertama yang relevan untuk kenyamanan
+    
     if (classes.length > 0) {
-      regClass.selectedIndex = level === 'SMA' ? 3 : 1; // Default XI IPA 1 untuk SMA
+      regClass.selectedIndex = level === 'SMA' ? 3 : 1; 
     }
   }
 
-  /**
-   * Validasi Tahap 1 dan beralih ke Tahap 2
-   */
+  
   function handleGoToStep2() {
     hideAlert();
 
@@ -115,7 +102,7 @@ function initRegisterModule() {
     const nisVal = regNis ? regNis.value.trim() : '';
     const classVal = regClass ? regClass.value.trim() : '';
 
-    // Validasi kelengkapan tahap 1
+    
     if (!schoolVal) {
       showAlert('error', 'Silakan pilih Asal Sekolah (SD, SMP, atau SMA) terlebih dahulu.');
       regSchool.focus();
@@ -134,11 +121,11 @@ function initRegisterModule() {
       return;
     }
 
-    // Beralih tampilan ke Tahap 2
+    
     step1Container.style.display = 'none';
     step2Container.style.display = 'block';
 
-    // Update Stepper Progress Pills
+    
     stepPill1.classList.remove('active');
     stepPill1.classList.add('done');
     stepPill2.classList.add('active');
@@ -152,9 +139,7 @@ function initRegisterModule() {
     }
   }
 
-  /**
-   * Kembali ke Tahap 1 dari Tahap 2
-   */
+  
   function handleGoBackToStep1() {
     hideAlert();
 
@@ -170,9 +155,7 @@ function initRegisterModule() {
     }
   }
 
-  /**
-   * Mengatur fitur display password untuk kata sandi & konfirmasi
-   */
+  
   function initPasswordToggles() {
     function setVisibility(inputEl, iconEl, isVisible) {
       if (!inputEl) return;
@@ -205,9 +188,7 @@ function initRegisterModule() {
     }
   }
 
-  /**
-   * Submit registrasi dan direct ke Dashboard Siswa dengan status login aktif
-   */
+  
   function handleRegisterSubmit(e) {
     e.preventDefault();
     hideAlert();
@@ -220,14 +201,14 @@ function initRegisterModule() {
     const passVal = regPassword ? regPassword.value : '';
     const confirmVal = regConfirmPassword ? regConfirmPassword.value : '';
 
-    // Cek kecocokan password jika diisi
+    
     if (passVal && confirmVal && passVal !== confirmVal) {
       showAlert('error', 'Konfirmasi kata sandi tidak cocok. Harap periksa kembali.');
       if (regConfirmPassword) regConfirmPassword.focus();
       return;
     }
 
-    // Buat data sesi siswa terlogin
+    
     const mockAuthSession = {
       username: usernameVal,
       school: schoolVal,
@@ -246,7 +227,7 @@ function initRegisterModule() {
       console.warn('Gagal menyimpan sesi registrasi:', err);
     }
 
-    // Tampilkan loading feedback pada tombol
+    
     if (btnRegisterSubmit) {
       btnRegisterSubmit.disabled = true;
       btnRegisterSubmit.innerHTML = `
@@ -257,7 +238,7 @@ function initRegisterModule() {
 
     showAlert('success', `Pendaftaran berhasil! Selamat datang, ${usernameVal}. Mengalihkan ke Dashboard...`);
 
-    // Redirect ke Dashboard Siswa sebagai siswa terlogin
+    
     setTimeout(() => {
       window.location.href = '../siswa/dashboard.html';
     }, 450);

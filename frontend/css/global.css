@@ -1,7 +1,4 @@
-/* ==========================================================================
-   GLOBAL CSS - SIM-MBG
-   Typography, base element styling, and utility classes
-   ========================================================================== */
+﻿
 
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,600&display=swap');
 
@@ -22,7 +19,6 @@ body {
   }
 }
 
-/* Headings */
 h1, h2, h3, h4, h5, h6 {
   color: var(--color-heading);
   font-weight: 700;
@@ -50,7 +46,6 @@ p {
   line-height: 1.6;
 }
 
-/* Text Utilities */
 .text-primary {
   color: var(--color-primary);
 }
@@ -75,7 +70,6 @@ p {
   font-weight: 800;
 }
 
-/* Accessibility Focus Outline */
 a:focus-visible,
 button:focus-visible,
 input:focus-visible,
@@ -84,7 +78,6 @@ select:focus-visible {
   outline-offset: 2px;
 }
 
-/* Decorative Ambient Blur Ellipses (Figma Verified 11.1) */
 .ambient-decorations {
   position: fixed;
   inset: 0;

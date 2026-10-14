@@ -1,10 +1,4 @@
-/**
- * ==========================================================================
- * SPPG JS - SIM-MBG
- * Panel SPPG: Beranda, Menu, Pilihan Pengguna, Review
- * Vanilla JS (mock data, tanpa library) sesuai AGENTS.md
- * ==========================================================================
- */
+﻿
 
 document.addEventListener('DOMContentLoaded', () => {
   initCommon();
@@ -15,9 +9,6 @@ document.addEventListener('DOMContentLoaded', () => {
   if (id === 'sppgReviewPage') initReviewPage();
 });
 
-/* ------------------------------------------------------------------ */
-/* HELPERS                                                             */
-/* ------------------------------------------------------------------ */
 const $ = (sel, root = document) => root.querySelector(sel);
 const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
 
@@ -62,7 +53,6 @@ function downloadCSV(filename, rows) {
   URL.revokeObjectURL(url);
 }
 
-/** Render pagination dengan ellipsis. onChange(page) dipanggil saat klik. */
 function renderPagination(container, page, totalPages, onChange) {
   if (!container) return;
   const pages = [];
@@ -80,9 +70,6 @@ function renderPagination(container, page, totalPages, onChange) {
     b.addEventListener('click', () => onChange(parseInt(b.dataset.p, 10))));
 }
 
-/* ------------------------------------------------------------------ */
-/* COMMON: logout, tanggal, data-toast                                 */
-/* ------------------------------------------------------------------ */
 function initCommon() {
   const logoutBtn = $('#logoutBtn');
   if (logoutBtn) {
@@ -103,9 +90,6 @@ function initCommon() {
   }
 }
 
-/* ------------------------------------------------------------------ */
-/* BERANDA                                                             */
-/* ------------------------------------------------------------------ */
 const ACTIVITIES = [
   { icon: 'task_alt', tone: 'ico-green', title: 'Penerimaan batch selesai • SMP Negeri 1 Denpasar', desc: '240 porsi diserahkan kepada Petugas UKS (Sdr. I Made Darmawan)', time: 'Hari ini, 09:12 WIB', pill: ['pill-green', 'Terkirim'] },
   { icon: 'directions_run', tone: 'ico-blue', title: 'Armada kurir menuju lokasi • SMP Negeri 2 Gianyar', desc: '180 porsi dalam box termal pengangkut SPPG Armada B-04', time: 'Hari ini, 08:45 WIB', pill: ['pill-blue', 'Diproses'] },
@@ -206,11 +190,7 @@ function initDashboard() {
   render();
 }
 
-/* ------------------------------------------------------------------ */
-/* MENU                                                                */
-/* ------------------------------------------------------------------ */
 const CAT_LABEL = { reguler: 'Reguler SD/SMP', khusus: 'Alergi Khusus', cadangan: 'Cadangan Operasional' };
-
 
 const MENUS = [
   {
@@ -230,7 +210,7 @@ const MENUS = [
     active: true,
     img: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=800&q=80',
 
-    // Properti kompatibel dengan siswa.js
+    
     code: 'Paket A',
     calories: '630 kkal',
     protein: '26g',
@@ -420,7 +400,6 @@ const MENUS = [
   }
 ];
 
-
 function initMenuPage() {
   const grid = $('#menuGrid');
   const info = $('#menuInfo');
@@ -541,9 +520,6 @@ function initMenuPage() {
   render();
 }
 
-/* ------------------------------------------------------------------ */
-/* PILIHAN PENGGUNA                                                    */
-/* ------------------------------------------------------------------ */
 const TYPE_META = {
   reguler: { cls: 'pill-green', icon: 'shield', label: 'Paket Reguler A', cat: 'reguler' },
   'reguler-b': { cls: 'pill-green', icon: 'shield', label: 'Paket Reguler B', cat: 'reguler' },
@@ -709,9 +685,6 @@ function initPilihanPage() {
   render();
 }
 
-/* ------------------------------------------------------------------ */
-/* REVIEW                                                              */
-/* ------------------------------------------------------------------ */
 const FEEDBACKS = [
   { code: 'D1', school: 'SMP Negeri 1 Denpasar', who: 'I Nyoman Sukra • Koordinator UKS & Gizi • Hari ini, 11:30 WITA', score: 5.0, text: '"Anak-anak sangat antusias dengan menu Ayam Panggang Madu dan Sayur Capcay. Kemasan tiba dalam boks termal higienis, suhu sup masih hangat, dan tidak ada wadah penyok. 542 porsi tuntas dibagikan tepat waktu."', tags: [['Suhu Wadah: Hangat (58°C)', 'green'], ['Sisa Porsi: < 1%', 'green']], kind: 'puas' },
   { code: 'G2', school: 'SMP Negeri 2 Gianyar', who: 'Ni Ketut Suartini • Pengawas Distribusi Sekolah • Hari ini, 10:45 WITA', score: 4.8, text: '"Kualitas nasi pulen dan tekstur daging sangat lembut untuk siswa. Catatan khusus: paket siswa alergi telur (Komang Aditya) terlabeli dengan segel peach sangat jelas sehingga tidak tertukar."', tags: [['Label Alergen: Akurat 100%', 'green'], ['Porsi Diterima: 765', 'gray']], kind: 'puas' },

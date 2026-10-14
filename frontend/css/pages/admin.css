@@ -1,11 +1,5 @@
-/* ==========================================================================
-   ADMIN CSS - SIM-MBG (Member 4: Admin Panel)
-   Design System Compliant (Plus Jakarta Sans, Palette, Reusable Components)
-   ========================================================================== */
+﻿
 
-/* --------------------------------------------------------------------------
-   1. ADMIN LAYOUT & NAVBAR
-   -------------------------------------------------------------------------- */
 .admin-body {
   background-color: var(--color-bg);
   color: var(--color-text);
@@ -22,7 +16,6 @@
   z-index: 1;
 }
 
-/* Admin Container aligned to Figma specs (1216px container) */
 .admin-container {
   width: 100%;
   max-width: 1216px;
@@ -32,7 +25,6 @@
   padding-right: var(--space-20);
 }
 
-/* Admin Brand & Navigation (Consistent with Student Navbar) */
 .admin-navbar-brand {
   display: flex;
   align-items: center;
@@ -87,7 +79,6 @@
   box-shadow: 0 2px 6px rgba(41, 115, 115, 0.25);
 }
 
-/* User Chip in Header (Consistent with Student Chip) */
 .admin-user-chip {
   display: flex;
   align-items: center;
@@ -139,9 +130,6 @@
   color: var(--color-primary);
 }
 
-/* --------------------------------------------------------------------------
-   2. HEADER BANNERS & PAGE TITLES
-   -------------------------------------------------------------------------- */
 .admin-page-header {
   display: flex;
   align-items: flex-start;
@@ -168,7 +156,6 @@
   flex-wrap: wrap;
 }
 
-/* Periodic Notice Banner (Orange Cut-Off Reference Style) */
 .admin-banner-notice {
   background: linear-gradient(135deg, #FFDDB8 0%, #FFE9D1 100%);
   border: 1px solid rgba(133, 83, 0, 0.2);
@@ -241,9 +228,6 @@
   color: #653E00;
 }
 
-/* --------------------------------------------------------------------------
-   3. KPI METRIC CARDS (Figma & Reference Verified: Teal Squircle + White Icon)
-   -------------------------------------------------------------------------- */
 .kpi-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -360,9 +344,6 @@
   color: #90A1B9;
 }
 
-/* --------------------------------------------------------------------------
-   4. TOOLBAR, SEARCH, FILTERS & ACTIONS
-   -------------------------------------------------------------------------- */
 .admin-card {
   background-color: var(--color-white);
   border: 1px solid var(--color-border);
@@ -470,9 +451,6 @@
   gap: var(--space-8);
 }
 
-/* --------------------------------------------------------------------------
-   5. DATA TABLES (Figma Verified Table Specs)
-   -------------------------------------------------------------------------- */
 .table-responsive {
   width: 100%;
   overflow-x: auto;
@@ -528,7 +506,6 @@
   width: 110px;
 }
 
-/* Table Cell Helpers */
 .cell-title {
   font-weight: 700;
   color: var(--color-heading);
@@ -539,7 +516,6 @@
   color: var(--color-muted);
 }
 
-/* Status Badges */
 .badge-status {
   display: inline-flex;
   align-items: center;
@@ -606,7 +582,6 @@
   font-size: 12px;
 }
 
-/* Action Icon Buttons */
 .btn-action-group {
   display: inline-flex;
   align-items: center;
@@ -640,9 +615,6 @@
   border-color: var(--color-danger);
 }
 
-/* --------------------------------------------------------------------------
-   6. PAGINATION
-   -------------------------------------------------------------------------- */
 .admin-pagination {
   padding: 16px 24px;
   border-top: 1px solid var(--color-border-subtle);
@@ -699,9 +671,6 @@
   cursor: not-allowed;
 }
 
-/* --------------------------------------------------------------------------
-   7. DASHBOARD GRID & RECENT ACTIVITIES
-   -------------------------------------------------------------------------- */
 .dashboard-admin-grid {
   display: grid;
   grid-template-columns: 1.6fr 1fr;
@@ -769,9 +738,6 @@
   gap: 4px;
 }
 
-/* --------------------------------------------------------------------------
-   8. MODAL DIALOGS (CRUD INTERFACE)
-   -------------------------------------------------------------------------- */
 .admin-modal-overlay {
   position: fixed;
   inset: 0;
@@ -860,7 +826,6 @@
   gap: var(--space-12);
 }
 
-/* Modal Form Controls */
 .form-grid-2 {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -920,9 +885,6 @@
   margin-top: 4px;
 }
 
-/* --------------------------------------------------------------------------
-   9. TOAST NOTIFICATIONS
-   -------------------------------------------------------------------------- */
 .admin-toast-container {
   position: fixed;
   bottom: 24px;
@@ -980,9 +942,6 @@
   color: var(--color-white);
 }
 
-/* --------------------------------------------------------------------------
-   10. RESPONSIVE DESIGN (Desktop 1440/1280, Tablet, Mobile)
-   -------------------------------------------------------------------------- */
 @media (max-width: 1024px) {
   .kpi-grid {
     grid-template-columns: repeat(2, 1fr);
@@ -1011,7 +970,7 @@
     width: 100%;
   }
   .admin-nav-menu {
-    display: none; /* Accessible via mobile hamburger toggle */
+    display: none; 
   }
 }
 
