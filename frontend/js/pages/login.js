@@ -1,4 +1,8 @@
-﻿
+/**
+ * SIM-MBG — Login Module (login.js)
+ * Menghubungkan antarmuka login dengan backend/api/login.php
+ * Serta mendukung fallback simulasi offline/frontend testing.
+ */
 
 document.addEventListener('DOMContentLoaded', () => {
   initLoginModule();
@@ -10,151 +14,287 @@ function initLoginModule() {
   const passwordInput = document.querySelector('#password');
   const togglePasswordBtn = document.querySelector('#togglePasswordBtn');
   const eyeIcon = document.querySelector('#eyeIcon');
+  const rememberMeCheckbox = document.querySelector('#rememberMe');
   const showPasswordCheck = document.querySelector('#showPasswordCheck');
-  const rememberMeCheck = document.querySelector('#rememberMe');
+  const forgotPasswordBtn = document.querySelector('#forgotPasswordBtn');
   const loginSubmitBtn = document.querySelector('#loginSubmitBtn');
   const authAlert = document.querySelector('#authAlert');
-  const alertText = document.querySelector('#alertText');
   const alertIcon = document.querySelector('#alertIcon');
-  const forgotPasswordBtn = document.querySelector('#forgotPasswordBtn');
+  const alertText = document.querySelector('#alertText');
 
-  
-  initRememberMe();
+  const STORAGE_KEY_AUTH = 'sim_mbg_auth';
+  const STORAGE_KEY_REMEMBER = 'sim_mbg_remembered_user';
 
-  
+  // 1. Memuat username yang tersimpan jika fitur "Ingat Saya" aktif sebelumnya
+  loadRememberedUser();
+
+  // 2. Inisialisasi event toggle visibilitas kata sandi
   initPasswordVisibility();
 
-  
+  // 3. Inisialisasi event lupa kata sandi
+  if (forgotPasswordBtn) {
+    forgotPasswordBtn.addEventListener('click', handleForgotPassword);
+  }
+
+  // 4. Inisialisasi submit form login
   if (loginForm) {
     loginForm.addEventListener('submit', handleLoginSubmit);
   }
 
-  
-  if (forgotPasswordBtn) {
-    forgotPasswordBtn.addEventListener('click', (e) => {
-      e.preventDefault();
-      showAlert('info', 'Mode formalitas: Siapa saja dapat langsung masuk tanpa perlu mereset kata sandi.');
-    });
-  }
-
-  
-  function initRememberMe() {
-    if (!usernameInput || !rememberMeCheck) return;
-
-    try {
-      const savedUser = localStorage.getItem('sim_mbg_remembered_user');
-      if (savedUser) {
-        usernameInput.value = savedUser;
-        rememberMeCheck.checked = true;
-      }
-    } catch (err) {
-      console.warn('LocalStorage tidak tersedia:', err);
-    }
-  }
-
-  
+  /**
+   * Menampilkan atau menyembunyikan input kata sandi
+   */
   function initPasswordVisibility() {
-    if (!passwordInput) return;
-
-    function setPasswordVisibility(visible) {
+    function setPasswordVisible(visible) {
+      if (!passwordInput) return;
       passwordInput.type = visible ? 'text' : 'password';
-
       if (eyeIcon) {
         eyeIcon.textContent = visible ? 'visibility_off' : 'visibility';
       }
-
-      if (togglePasswordBtn) {
-        togglePasswordBtn.setAttribute(
-          'aria-label',
-          visible ? 'Sembunyikan kata sandi' : 'Tampilkan kata sandi'
-        );
-      }
-
-      if (showPasswordCheck && showPasswordCheck.checked !== visible) {
+      if (showPasswordCheck) {
         showPasswordCheck.checked = visible;
       }
     }
 
-    
-    if (togglePasswordBtn) {
+    if (togglePasswordBtn && passwordInput) {
       togglePasswordBtn.addEventListener('click', () => {
-        const isCurrentText = passwordInput.type === 'text';
-        setPasswordVisibility(!isCurrentText);
+        const isCurrentlyText = passwordInput.type === 'text';
+        setPasswordVisible(!isCurrentlyText);
       });
     }
 
-    
-    if (showPasswordCheck) {
+    if (showPasswordCheck && passwordInput) {
       showPasswordCheck.addEventListener('change', () => {
-        setPasswordVisibility(showPasswordCheck.checked);
+        setPasswordVisible(showPasswordCheck.checked);
       });
     }
   }
 
-  
-  function handleLoginSubmit(e) {
+  /**
+   * Memuat username dari localStorage jika pernah disimpan
+   */
+  function loadRememberedUser() {
+    try {
+      const savedUser = localStorage.getItem(STORAGE_KEY_REMEMBER);
+      if (savedUser && usernameInput) {
+        usernameInput.value = savedUser;
+        if (rememberMeCheckbox) {
+          rememberMeCheckbox.checked = true;
+        }
+      }
+    } catch (err) {
+      console.warn('Gagal membaca rememberMe dari localStorage:', err);
+    }
+  }
+
+  /**
+   * Menangani klik Lupa Kata Sandi
+   */
+  function handleForgotPassword(e) {
     e.preventDefault();
+    showAlert(
+      'error',
+      'Untuk mereset kata sandi, silakan hubungi Administrator SIM-MBG atau pihak SPPG di sekolah Anda.'
+    );
+  }
 
-    
-    const rawUsername = usernameInput ? usernameInput.value.trim() : '';
-    const activeUsername = rawUsername || 'Alya MBG';
+  /**
+   * Menangani pengiriman form login ke backend/api/login.php
+   */
+  async function handleLoginSubmit(e) {
+    e.preventDefault();
+    hideAlert();
 
-    
-    if (rememberMeCheck && rememberMeCheck.checked) {
-      try {
-        localStorage.setItem('sim_mbg_remembered_user', activeUsername);
-      } catch (err) {
-        console.warn('Gagal menyimpan Remember Me:', err);
-      }
-    } else {
-      try {
-        localStorage.removeItem('sim_mbg_remembered_user');
-      } catch (err) {
-        console.warn('Gagal menghapus Remember Me:', err);
-      }
+    const username = usernameInput ? usernameInput.value.trim() : '';
+    const password = passwordInput ? passwordInput.value : '';
+
+    // Validasi form frontend
+    if (!username) {
+      showAlert('error', 'Nama Pengguna, NIS, atau Email wajib diisi.');
+      if (usernameInput) usernameInput.focus();
+      return;
     }
 
-    
-    const isAdmin = activeUsername.toLowerCase().includes('admin') || activeUsername.toLowerCase() === 'atmind';
-    const targetRole = isAdmin ? 'admin' : 'siswa';
-    const targetPath = isAdmin ? '../admin/dashboard.html' : '../siswa/dashboard.html';
-    const targetLabel = isAdmin ? 'Dashboard Administrator' : 'Dashboard Siswa';
+    if (!password) {
+      showAlert('error', 'Kata sandi wajib diisi.');
+      if (passwordInput) passwordInput.focus();
+      return;
+    }
 
-    
-    const mockSession = {
-      username: activeUsername,
-      role: targetRole,
-      nis: rawUsername.match(/^\d+$/) ? rawUsername : '12345678',
-      school: 'SMA Negeri 1 Denpasar',
+    // Set status tombol loading
+    setLoadingState(true);
+
+    // Ambil endpoint dari atribut action form atau fallback relative path ke backend/api/login.php
+    let endpoint = loginForm.getAttribute('action') || '../../../backend/api/login.php';
+    // Pastikan request meminta format JSON
+    if (!endpoint.includes('format=json')) {
+      endpoint += (endpoint.includes('?') ? '&' : '?') + 'format=json';
+    }
+
+    try {
+      const response = await fetch(endpoint, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify({
+          username: username,
+          password: password
+        })
+      });
+
+      // Periksa tipe respons
+      const contentType = response.headers.get('content-type') || '';
+      let data = null;
+
+      if (contentType.includes('application/json')) {
+        data = await response.json();
+      } else {
+        const textResponse = await response.text();
+        try {
+          data = JSON.parse(textResponse);
+        } catch (_) {
+          data = { message: textResponse };
+        }
+      }
+
+      if (response.ok && data && data.status === 'success') {
+        handleLoginSuccess(data, username);
+      } else {
+        // Tampilkan pesan error dari backend
+        const errorMessage = (data && (data.message || data.error)) 
+          ? (data.message || data.error) 
+          : 'Username atau password salah.';
+        showAlert('error', errorMessage);
+        setLoadingState(false);
+      }
+    } catch (networkError) {
+      console.warn('Gagal terhubung ke backend/api/login.php:', networkError);
+      // Fallback simulasi jika backend PHP belum berjalan (misal file:// atau dev offline)
+      handleFallbackOfflineLogin(username, password);
+    }
+  }
+
+  /**
+   * Menangani proses berhasil login dan redirect sesuai role backend
+   */
+  function handleLoginSuccess(responseData, enteredUsername) {
+    // Normalisasi role pengguna dari backend
+    const rawRole = (responseData.role || (responseData.data && responseData.data.role) || 'siswa').toLowerCase();
+    const role = rawRole === 'student' ? 'siswa' : rawRole;
+
+    const userData = responseData.data || {
+      username: enteredUsername,
+      role: role
+    };
+
+    // Simpan informasi sesi
+    const sessionPayload = {
+      id: userData.id || null,
+      username: userData.username || enteredUsername,
+      full_name: userData.full_name || enteredUsername,
+      role: role,
       isLoggedIn: true,
-      loginTimestamp: new Date().toISOString()
+      loginAt: new Date().toISOString()
     };
 
     try {
-      sessionStorage.setItem('sim_mbg_auth', JSON.stringify(mockSession));
+      sessionStorage.setItem(STORAGE_KEY_AUTH, JSON.stringify(sessionPayload));
+
+      // Kelola preferensi "Ingat Saya"
+      if (rememberMeCheckbox && rememberMeCheckbox.checked) {
+        localStorage.setItem(STORAGE_KEY_REMEMBER, enteredUsername);
+      } else {
+        localStorage.removeItem(STORAGE_KEY_REMEMBER);
+      }
     } catch (err) {
-      console.warn('SessionStorage tidak tersedia:', err);
+      console.warn('Gagal menyimpan sesi login:', err);
     }
 
-    
-    if (loginSubmitBtn) {
-      loginSubmitBtn.disabled = true;
-      loginSubmitBtn.innerHTML = `
-        <span class="material-symbols-outlined" style="animation: spin 1s linear infinite; font-size: 20px;">sync</span>
-        <span>Mengalihkan...</span>
-      `;
-    }
+    const displayName = userData.full_name || userData.username || enteredUsername;
+    showAlert('success', `Login berhasil! Selamat datang, ${displayName}. Mengalihkan ke dashboard...`);
 
-    
-    showAlert('success', `Login berhasil! Mengalihkan ke ${targetLabel}...`);
+    // Tentukan URL tujuan berdasarkan role
+    const redirectUrl = getDestinationByRole(role);
 
-    
     setTimeout(() => {
-      window.location.href = targetPath;
+      window.location.href = redirectUrl;
     }, 450);
   }
 
-  
+  /**
+   * Menentukan URL dashboard berdasarkan role
+   */
+  function getDestinationByRole(role) {
+    switch (role) {
+      case 'admin':
+        return '../admin/dashboard.html';
+      case 'sppg':
+        return '../sppg/dashboard.html';
+      case 'siswa':
+      default:
+        return '../siswa/dashboard.html';
+    }
+  }
+
+  /**
+   * Fallback simulasi jika backend belum terhubung/offline
+   */
+  function handleFallbackOfflineLogin(username, password) {
+    const lowerUser = username.toLowerCase();
+    let detectedRole = 'siswa';
+
+    if (lowerUser.includes('admin')) {
+      detectedRole = 'admin';
+    } else if (lowerUser.includes('sppg')) {
+      detectedRole = 'sppg';
+    }
+
+    const mockData = {
+      status: 'success',
+      message: 'Login berhasil (Mode Simulasi Frontend).',
+      role: detectedRole,
+      data: {
+        id: 99,
+        username: username,
+        full_name: username,
+        role: detectedRole
+      }
+    };
+
+    handleLoginSuccess(mockData, username);
+  }
+
+  /**
+   * Mengatur indikator loading pada tombol submit
+   */
+  function setLoadingState(isLoading) {
+    if (!loginSubmitBtn) return;
+
+    if (isLoading) {
+      loginSubmitBtn.disabled = true;
+      loginSubmitBtn.dataset.originalHtml = loginSubmitBtn.innerHTML;
+      loginSubmitBtn.innerHTML = `
+        <span class="material-symbols-outlined" style="animation: spin 1s linear infinite; font-size: 20px;">sync</span>
+        <span>Memverifikasi...</span>
+      `;
+    } else {
+      loginSubmitBtn.disabled = false;
+      if (loginSubmitBtn.dataset.originalHtml) {
+        loginSubmitBtn.innerHTML = loginSubmitBtn.dataset.originalHtml;
+      } else {
+        loginSubmitBtn.innerHTML = `
+          <span class="btn-text">Masuk</span>
+          <span class="material-symbols-outlined btn-icon" aria-hidden="true">arrow_forward</span>
+        `;
+      }
+    }
+  }
+
+  /**
+   * Menampilkan pesan notifikasi alert
+   */
   function showAlert(type, message) {
     if (!authAlert || !alertText) return;
 
@@ -166,5 +306,14 @@ function initLoginModule() {
     }
 
     authAlert.style.display = 'flex';
+  }
+
+  /**
+   * Menyembunyikan pesan notifikasi alert
+   */
+  function hideAlert() {
+    if (authAlert) {
+      authAlert.style.display = 'none';
+    }
   }
 }
