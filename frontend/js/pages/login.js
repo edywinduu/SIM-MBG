@@ -192,6 +192,11 @@ function initLoginModule() {
     // Simpan informasi sesi
     const sessionPayload = {
       id: userData.id || null,
+      student_id: userData.student_id || null,
+      school: userData.school || '',
+      nis: userData.nis || userData.nisn || '',
+      class: userData.class || '',
+      email: userData.email || '',
       username: userData.username || enteredUsername,
       full_name: userData.full_name || enteredUsername,
       role: role,

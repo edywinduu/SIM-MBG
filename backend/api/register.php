@@ -6,7 +6,9 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 
 // Header CORS agar dapat diakses dari browser/frontend dan Postman
-header("Access-Control-Allow-Origin: *");
+$origin = $_SERVER['HTTP_ORIGIN'] ?? '*';
+header("Access-Control-Allow-Origin: $origin");
+header("Access-Control-Allow-Credentials: true");
 header("Access-Control-Allow-Methods: POST, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With");
 
@@ -253,6 +255,7 @@ try {
 session_regenerate_id(true);
 
 $_SESSION["user_id"] = $newUserId;
+$_SESSION["student_id"] = $newStudentId;
 $_SESSION["username"] = $username;
 $_SESSION["full_name"] = $fullName;
 $_SESSION["role"] = "siswa";

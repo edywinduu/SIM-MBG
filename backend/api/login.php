@@ -6,7 +6,9 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 
 // Header CORS agar dapat diakses dari browser/frontend dan Postman
-header("Access-Control-Allow-Origin: *");
+$origin = $_SERVER['HTTP_ORIGIN'] ?? '*';
+header("Access-Control-Allow-Origin: $origin");
+header("Access-Control-Allow-Credentials: true");
 header("Access-Control-Allow-Methods: POST, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With");
 
@@ -47,9 +49,12 @@ if ($username === "" || $password === "") {
 
 // 4. Mencari pengguna berdasarkan username, email, atau NISN (via tabel students)
 $stmt = $conn->prepare(
-    "SELECT u.id, u.username, u.email, u.password_hash, u.full_name, u.role, u.status
+    "SELECT u.id, u.username, u.email, u.password_hash, u.full_name, u.role, u.status,
+            s.id AS student_id, s.nisn, s.class_name, s.recipient_status, s.profile_picture,
+            sc.id AS school_id, sc.name AS school_name
      FROM users u
      LEFT JOIN students s ON s.user_id = u.id
+     LEFT JOIN schools sc ON sc.id = s.school_id
      WHERE u.username = ? OR u.email = ? OR s.nisn = ?
      LIMIT 1"
 );
@@ -65,8 +70,17 @@ $stmt->execute();
 $result = $stmt->get_result();
 $user = $result->fetch_assoc();
 
-// 5. Memeriksa password secara langsung (tanpa hashing untuk testing)
-if (!$user || $password !== $user["password_hash"]) {
+// 5. Memeriksa password (mendukung bcrypt hash maupun plain-text untuk testing dan seed data)
+$passwordMatches = false;
+if ($user) {
+    if (password_verify($password, $user["password_hash"])) {
+        $passwordMatches = true;
+    } else if ($password === $user["password_hash"]) {
+        $passwordMatches = true;
+    }
+}
+
+if (!$user || !$passwordMatches) {
     http_response_code(401);
     $stmt->close();
     $conn->close();
@@ -101,6 +115,9 @@ $_SESSION["user_id"] = $user["id"];
 $_SESSION["username"] = $user["username"];
 $_SESSION["full_name"] = $user["full_name"] ?? $user["username"];
 $_SESSION["role"] = $role;
+if (!empty($user["student_id"])) {
+    $_SESSION["student_id"] = (int)$user["student_id"];
+}
 
 // 8. Menutup koneksi
 $stmt->close();
@@ -120,9 +137,17 @@ if ($isJsonRequest) {
         "role" => $role,
         "data" => [
             "id" => $user["id"],
+            "student_id" => !empty($user["student_id"]) ? (int)$user["student_id"] : null,
             "username" => $user["username"],
             "full_name" => $user["full_name"] ?? $user["username"],
-            "role" => $role
+            "email" => $user["email"],
+            "role" => $role,
+            "nis" => $user["nisn"] ?? "",
+            "nisn" => $user["nisn"] ?? "",
+            "school" => $user["school_name"] ?? "",
+            "school_id" => $user["school_id"] ?? null,
+            "class" => $user["class_name"] ?? "",
+            "profile_picture" => $user["profile_picture"] ?? ""
         ]
     ]);
 } else {
