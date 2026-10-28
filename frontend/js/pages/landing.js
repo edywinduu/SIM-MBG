@@ -1,9 +1,8 @@
-﻿
-
 document.addEventListener('DOMContentLoaded', () => {
   init3DCoverflowCarousel();
   initMenuChips();
   initLandingSmoothScroll();
+  loadProfile();
 });
 
 function init3DCoverflowCarousel() {
@@ -27,19 +26,19 @@ function init3DCoverflowCarousel() {
     3: 'Konfirmasi Pesanan'
   };
 
-  
+
   function renderCarousel(step) {
     currentStep = step;
 
-    
+
     const leftStep = ((currentStep - 2 + totalSteps) % totalSteps) + 1;
     const rightStep = (currentStep % totalSteps) + 1;
 
-    
+
     cards.forEach((card) => {
       const cardStep = parseInt(card.getAttribute('data-step'), 10);
 
-      
+
       card.classList.remove('active', 'card-center', 'card-left', 'card-right', 'card-hidden');
 
       if (cardStep === currentStep) {
@@ -57,13 +56,13 @@ function init3DCoverflowCarousel() {
       }
     });
 
-    
+
     if (progressLine) {
       const progressPercent = ((currentStep - 1) / (totalSteps - 1)) * 100;
       progressLine.style.width = `${progressPercent}%`;
     }
 
-    
+
     if (stepItems && stepItems.length > 0) {
       stepItems.forEach((item) => {
         const itemStep = parseInt(item.getAttribute('data-step'), 10);
@@ -81,7 +80,7 @@ function init3DCoverflowCarousel() {
       });
     }
 
-    
+
     if (captionEl) {
       captionEl.style.opacity = '0';
       captionEl.style.transform = 'translateY(4px)';
@@ -93,7 +92,7 @@ function init3DCoverflowCarousel() {
     }
   }
 
-  
+
   function goNext() {
     const next = (currentStep % totalSteps) + 1;
     renderCarousel(next);
@@ -104,7 +103,7 @@ function init3DCoverflowCarousel() {
     renderCarousel(prev);
   }
 
-  
+
   const AUTO_INTERVAL = 8000;
   let autoTimer = setInterval(goNext, AUTO_INTERVAL);
 
@@ -129,7 +128,7 @@ function init3DCoverflowCarousel() {
     });
   }
 
-  
+
   cards.forEach((card) => {
     card.addEventListener('click', () => {
       const cardStep = parseInt(card.getAttribute('data-step'), 10);
@@ -139,7 +138,7 @@ function init3DCoverflowCarousel() {
       }
     });
 
-    
+
     card.addEventListener('keydown', (e) => {
       if (e.key === 'Enter' || e.key === ' ') {
         e.preventDefault();
@@ -152,7 +151,7 @@ function init3DCoverflowCarousel() {
     });
   });
 
-  
+
   if (stepItems && stepItems.length > 0) {
     stepItems.forEach((item) => {
       item.addEventListener('click', () => {
@@ -165,7 +164,7 @@ function init3DCoverflowCarousel() {
     });
   }
 
-  
+
   if (viewport) {
     let touchStartX = 0;
     let touchEndX = 0;
@@ -192,7 +191,7 @@ function init3DCoverflowCarousel() {
     }, { passive: true });
   }
 
-  
+
   document.addEventListener('keydown', (e) => {
     const alurSection = document.querySelector('#alur');
     if (!alurSection) return;
@@ -209,7 +208,7 @@ function init3DCoverflowCarousel() {
     }
   });
 
-  
+
   if (carouselContainer) {
     carouselContainer.addEventListener('mouseenter', () => clearInterval(autoTimer));
     carouselContainer.addEventListener('mouseleave', resetAutoTimer);
@@ -217,7 +216,7 @@ function init3DCoverflowCarousel() {
     carouselContainer.addEventListener('focusout', resetAutoTimer);
   }
 
-  
+
   renderCarousel(currentStep);
 }
 
@@ -227,13 +226,13 @@ function initMenuChips() {
 
   chips.forEach((chip) => {
     chip.addEventListener('click', () => {
-      
+
       chip.style.transform = 'scale(0.96)';
       setTimeout(() => {
         chip.style.transform = '';
       }, 150);
 
-      
+
       const alurSection = document.querySelector('#alur');
       if (alurSection) {
         alurSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -263,7 +262,7 @@ function initLandingSmoothScroll() {
     });
   }
 
-  
+
   allAnchorLinks.forEach((anchor) => {
     anchor.addEventListener('click', (e) => {
       const href = anchor.getAttribute('href');
@@ -291,17 +290,17 @@ function initLandingSmoothScroll() {
           behavior: 'smooth'
         });
 
-        
+
         if (window.history && window.history.pushState) {
           window.history.pushState(null, '', href);
         } else {
           window.location.hash = href;
         }
 
-        
+
         setActiveNavLink(href);
 
-        
+
         const navMenu = document.querySelector('.nav-links');
         const toggleBtn = document.querySelector('.mobile-nav-toggle');
         if (navMenu && navMenu.classList.contains('open')) {
@@ -314,7 +313,7 @@ function initLandingSmoothScroll() {
     });
   });
 
-  
+
   const sectionIds = ['beranda', 'alur', 'menu-pilihan', 'fitur'];
   const sections = sectionIds
     .map((id) => ({ id: `#${id}`, el: document.getElementById(id) }))
@@ -326,13 +325,13 @@ function initLandingSmoothScroll() {
     const headerHeight = getHeaderHeight();
     const isMobile = window.innerWidth <= 1024;
 
-    
+
     if (window.innerHeight + scrollY >= document.documentElement.scrollHeight - 60) {
       setActiveNavLink('#fitur');
       return;
     }
 
-    
+
     if (scrollY < 120) {
       setActiveNavLink('#beranda');
       return;
@@ -341,8 +340,8 @@ function initLandingSmoothScroll() {
     let activeId = '#beranda';
     for (let i = 0; i < sections.length; i++) {
       const section = sections[i];
-      
-      
+
+
       if (!isMobile && section.id === '#alur') {
         continue;
       }
@@ -365,7 +364,7 @@ function initLandingSmoothScroll() {
     }
   }, { passive: true });
 
-  
+
   if (window.location.hash) {
     const initialTarget = document.getElementById(window.location.hash.substring(1));
     if (initialTarget) {
@@ -390,3 +389,74 @@ function initLandingSmoothScroll() {
   }
 }
 
+async function loadProfile() {
+  const nameElement = document.getElementById("student-user-name") || document.querySelector(".student-user-name");
+  const roleElement = document.getElementById("student-user-role") || document.querySelector(".student-user-role");
+  const userChip = document.querySelector(".student-user-chip");
+
+  if (!nameElement || !roleElement) return;
+
+  function applyUserData(name, role) {
+    if (!name) return;
+    nameElement.textContent = name;
+    const displayRole = (role || "siswa").toLowerCase();
+    roleElement.textContent = displayRole === "student" || displayRole === "siswa"
+      ? "Siswa"
+      : displayRole === "sppg"
+      ? "Petugas SPPG"
+      : displayRole === "admin"
+      ? "Administrator"
+      : displayRole.toUpperCase();
+
+    if (userChip) {
+      let targetDashboard = "pages/siswa/dashboard.html";
+      if (displayRole === "admin") {
+        targetDashboard = "pages/admin/dashboard.html";
+      } else if (displayRole === "sppg") {
+        targetDashboard = "pages/sppg/dashboard.html";
+      }
+      userChip.setAttribute("href", targetDashboard);
+      userChip.setAttribute("title", `Akun Masuk: ${name} (Buka Dashboard)`);
+    }
+  }
+
+  // 1. Cek sesi lokal dari sessionStorage terlebih dahulu
+  try {
+    const rawAuth = sessionStorage.getItem("sim_mbg_auth");
+    if (rawAuth) {
+      const localUser = JSON.parse(rawAuth);
+      if (localUser && (localUser.isLoggedIn || localUser.username)) {
+        applyUserData(localUser.full_name || localUser.username, localUser.role);
+        return;
+      }
+    }
+  } catch (storageErr) {
+    console.warn("Gagal membaca sessionStorage:", storageErr);
+  }
+
+  // 2. Jika tidak ada di sessionStorage, coba panggil API backend
+  try {
+    const response = await fetch("../backend/api/landing.php", {
+      credentials: "include"
+    });
+
+    if (response.status === 401) {
+      nameElement.textContent = "Masuk";
+      roleElement.textContent = "Portal MBG";
+      return;
+    }
+
+    if (!response.ok) {
+      return;
+    }
+
+    const result = await response.json();
+    if (result && result.success && result.data) {
+      const user = result.data;
+      const displayName = user.full_name || user.nama || user.username;
+      applyUserData(displayName, user.role);
+    }
+  } catch (error) {
+    console.debug("Info sesi backend tidak dapat diakses:", error);
+  }
+}
