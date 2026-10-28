@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manajemen SPPG — SIM-MBG Admin</title>
+    <link rel="icon" href="{{ asset('assets/icons/logo.svg') }}">
+
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,600&display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
+
+    
+    <link rel="stylesheet" href="{{ asset('css/reset.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/variables.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/global.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/components.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/layout.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/pages/admin.css') }}">
+</head>
+<body class="admin-body" id="adminSppgPage">
+    
+    <div class="ambient-decorations" aria-hidden="true">
+        <div class="ambient-ellipse-secondary"></div>
+        <div class="ambient-ellipse-accent"></div>
+    </div>
+
+    
+    <header class="main-header">
+        <div class="container nav-container">
+            <a href="dashboard.html" class="admin-navbar-brand" aria-label="SIM-MBG Admin Dashboard">
+                <img src="{{ asset('assets/icons/logo.svg') }}" alt="Logo SIM-MBG" width="52" height="48">
+                <span class="admin-brand-title">SIM-MBG</span>
+            </a>
+
+            
+            <nav class="nav-links" id="adminMainNav">
+                <ul class="admin-nav-menu">
+                    <li><a href="dashboard.html" class="admin-nav-btn">Dashboard</a></li>
+                    <li><a href="students.html" class="admin-nav-btn">Siswa</a></li>
+                    <li><a href="schools.html" class="admin-nav-btn">Sekolah</a></li>
+                    <li><a href="sppg.html" class="admin-nav-btn active">SPPG</a></li>
+                    <li><a href="users.html" class="admin-nav-btn">Pengguna</a></li>
+                </ul>
+            </nav>
+
+            
+            <div class="nav-actions">
+                <div class="admin-user-chip">
+                    <div class="admin-user-avatar">A</div>
+                    <div class="admin-user-meta">
+                        <span class="admin-user-name admin-display-name">Atmind Admin</span>
+                        <span class="admin-user-role">Administrator</span>
+                    </div>
+                </div>
+
+                <button type="button" class="btn btn-secondary btn-sm" id="adminLogoutBtn" title="Keluar dari Admin Panel">
+                    <span class="material-symbols-outlined" style="font-size: 18px;">logout</span>
+                </button>
+
+                
+                <button type="button" class="mobile-nav-toggle" aria-controls="adminMainNav" aria-expanded="false" aria-label="Buka Menu Navigasi">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    
+    <main class="admin-main-content">
+        <div class="admin-container">
+            
+            <section class="admin-page-header">
+                <div class="admin-page-title-group">
+                    <h1>Sentra Pelayanan Pangan Bergizi (SPPG)</h1>
+                    <div class="admin-page-subtitle">
+                        Kelola dapur pusat SPPG, kapasitas porsi higienis per hari, penanggung jawab, dan distribusi sekolah.
+                    </div>
+                </div>
+                <div class="toolbar-actions">
+                    <button type="button" class="btn btn-primary" id="btnAddSppg">
+                        <span class="material-symbols-outlined" style="font-size: 20px;">add</span>
+                        <span>Tambah SPPG</span>
+                    </button>
+                </div>
+            </section>
+
+            
+            <section class="kpi-grid-3" style="grid-template-columns: repeat(2, 1fr);" aria-label="Ringkasan SPPG">
+                <article class="kpi-card">
+                    <div class="kpi-top">
+                        <div class="kpi-squircle">
+                            <span class="material-symbols-outlined">kitchen</span>
+                        </div>
+                        <div class="kpi-meta">
+                            <span class="kpi-label">Total Unit Sentra SPPG</span>
+                            <div class="kpi-value" id="kpiTotalSppgPage">0</div>
+                        </div>
+                    </div>
+                    <div class="kpi-divider"></div>
+                    <div class="kpi-footer">
+                        <span class="kpi-footer-text">Pusat pengolahan dan distribusi gizi</span>
+                    </div>
+                </article>
+
+                <article class="kpi-card">
+                    <div class="kpi-top">
+                        <div class="kpi-squircle">
+                            <span class="material-symbols-outlined">inventory_2</span>
+                        </div>
+                        <div class="kpi-meta">
+                            <span class="kpi-label">Total Kapasitas Produksi</span>
+                            <div class="kpi-value" id="kpiKapasitasPorsi">0 Porsi/Hari</div>
+                        </div>
+                    </div>
+                    <div class="kpi-divider"></div>
+                    <div class="kpi-footer">
+                        <span class="kpi-badge kpi-badge-up">&uarr; Standar</span>
+                        <span class="kpi-footer-text">Kesiapan Distribusi MBG</span>
+                    </div>
+                </article>
+            </section>
+
+            
+            <section class="admin-card">
+                
+                <div class="admin-toolbar">
+                    <div class="toolbar-filters">
+                        
+                        <div class="search-box">
+                            <span class="material-symbols-outlined search-icon">search</span>
+                            <input
+                                type="text"
+                                class="search-input"
+                                id="sppgSearchInput"
+                                placeholder="Cari nama unit SPPG, kode, atau alamat..."
+                            >
+                        </div>
+
+                        
+                        <select class="filter-select" id="sppgRegencyFilter" aria-label="Filter berdasarkan Wilayah">
+                            <option value="">Semua Wilayah</option>
+                            <option value="Kota Denpasar">Kota Denpasar</option>
+                            <option value="Kab. Badung">Kab. Badung</option>
+                        </select>
+
+                        
+                        <select class="filter-select" id="sppgStatusFilter" aria-label="Filter berdasarkan Status">
+                            <option value="">Semua Status</option>
+                            <option value="Aktif">Aktif</option>
+                            <option value="Pemeliharaan">Pemeliharaan</option>
+                        </select>
+                    </div>
+                </div>
+
+                
+                <div class="table-responsive">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th class="col-no">NO</th>
+                                <th>NAMA SPPG &amp; PENANGGUNG JAWAB</th>
+                                <th>WILAYAH</th>
+                                <th>ALAMAT LENGKAP</th>
+                                <th>KAPASITAS</th>
+                                <th>SEKOLAH BINAAN</th>
+                                <th>STATUS</th>
+                                <th class="col-actions">AKSI</th>
+                            </tr>
+                        </thead>
+                        <tbody id="sppgTableBody">
+                            
+                        </tbody>
+                    </table>
+                </div>
+
+                
+                <div class="admin-pagination">
+                    <div class="pagination-info" id="sppgPaginationInfo">
+                        Menampilkan 0–0 dari 0 unit SPPG
+                    </div>
+                    <div class="pagination-controls" id="sppgPaginationControls">
+                        
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    
+    <div class="admin-modal-overlay" id="modalSppg" role="dialog" aria-modal="true" aria-labelledby="modalSppgTitle">
+        <div class="admin-modal">
+            <div class="admin-modal-header">
+                <h3 class="admin-modal-title" id="modalSppgTitle">Tambah Unit SPPG</h3>
+                <button type="button" class="btn-close-modal" onclick="closeModal('modalSppg')" aria-label="Tutup Modal">
+                    <span class="material-symbols-outlined">close</span>
+                </button>
+            </div>
+            <form id="sppgForm">
+                <input type="hidden" id="sppgFormId">
+                <div class="admin-modal-body">
+                    <div class="form-grid-2">
+                        <div class="admin-form-group">
+                            <label for="sppgFormCode" class="admin-form-label">Kode SPPG <span class="required">*</span></label>
+                            <input type="text" id="sppgFormCode" class="admin-form-input" placeholder="Contoh: SPPG-DPS-01" required>
+                        </div>
+                        <div class="admin-form-group">
+                            <label for="sppgFormName" class="admin-form-label">Nama Sentra SPPG <span class="required">*</span></label>
+                            <input type="text" id="sppgFormName" class="admin-form-input" placeholder="Contoh: SPPG Denpasar Barat 01" required>
+                        </div>
+                    </div>
+
+                    <div class="form-grid-2">
+                        <div class="admin-form-group">
+                            <label for="sppgFormRegency" class="admin-form-label">Kabupaten / Wilayah <span class="required">*</span></label>
+                            <select id="sppgFormRegency" class="admin-form-select" required>
+                                <option value="" disabled selected>Pilih Wilayah</option>
+                                <option value="Kota Denpasar">Kota Denpasar</option>
+                                <option value="Kab. Badung">Kab. Badung</option>
+                                <option value="Kab. Bangli">Kab. Bangli</option>
+                                <option value="Kab. Buleleng">Kab. Buleleng</option>
+                                <option value="Kab. Gianyar">Kab. Gianyar</option>
+                                <option value="Kab. Jembrana">Kab. Jembrana</option>
+                                <option value="Kab. Karangasem">Kab. Karangasem</option>
+                                <option value="Kab. Klungkung">Kab. Klungkung</option>
+                                <option value="Kab. Tabanan">Kab. Tabanan</option>
+
+                            </select>
+                        </div>
+                        <div class="admin-form-group">
+                            <label for="sppgFormCapacity" class="admin-form-label">Kapasitas Produksi (Porsi/Hari) <span class="required">*</span></label>
+                            <input type="number" id="sppgFormCapacity" class="admin-form-input" placeholder="Contoh: 3500" required min="100">
+                        </div>
+                    </div>
+
+                    <div class="form-grid-2">
+                        <div class="admin-form-group">
+                            <label for="sppgFormContact" class="admin-form-label">Nama Penanggung Jawab</label>
+                            <input type="text" id="sppgFormContact" class="admin-form-input" placeholder="Contoh: I Wayan Sudarma">
+                        </div>
+                        <div class="admin-form-group">
+                            <label for="sppgFormPhone" class="admin-form-label">No. Telepon / WhatsApp</label>
+                            <input type="tel" id="sppgFormPhone" class="admin-form-input" placeholder="Contoh: 081234567890">
+                        </div>
+                    </div>
+
+                    <div class="admin-form-group">
+                        <label for="sppgFormAddress" class="admin-form-label">Alamat Lengkap Dapur SPPG <span class="required">*</span></label>
+                        <input type="text" id="sppgFormAddress" class="admin-form-input" placeholder="Contoh: Jl. Gunung Agung No. 45, Denpasar" required>
+                    </div>
+
+                    <div class="admin-form-group">
+                        <label for="sppgFormStatus" class="admin-form-label">Status Operasional <span class="required">*</span></label>
+                        <select id="sppgFormStatus" class="admin-form-select" required>
+                            <option value="Aktif">Aktif</option>
+                            <option value="Pemeliharaan">Pemeliharaan / Audit</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="admin-modal-footer">
+                    <button type="button" class="btn btn-secondary btn-sm" onclick="closeModal('modalSppg')">Batal</button>
+                    <button type="submit" class="btn btn-primary btn-sm">
+                        <span class="material-symbols-outlined" style="font-size: 18px;">save</span>
+                        <span>Simpan SPPG</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    
+    <div class="admin-modal-overlay" id="modalDeleteSppg" role="dialog" aria-modal="true" aria-labelledby="modalDeleteSppgTitle">
+        <div class="admin-modal" style="max-width: 440px;">
+            <div class="admin-modal-header">
+                <h3 class="admin-modal-title" id="modalDeleteSppgTitle">Konfirmasi Hapus SPPG</h3>
+                <button type="button" class="btn-close-modal" onclick="closeModal('modalDeleteSppg')" aria-label="Tutup">
+                    <span class="material-symbols-outlined">close</span>
+                </button>
+            </div>
+            <div class="admin-modal-body" style="text-align: center; padding: 24px;">
+                <span class="material-symbols-outlined" style="color: var(--color-danger); font-size: 48px; margin-bottom: 12px;">warning</span>
+                <p style="font-size: 15px; font-weight: 700; color: var(--color-heading); margin-bottom: 6px;">Apakah Anda yakin ingin menghapus unit SPPG ini?</p>
+                <p style="font-size: 13px; color: var(--color-muted); margin-bottom: 0;" id="deleteSppgName">-</p>
+                <p style="font-size: 12px; color: var(--color-danger); margin-top: 10px;">Pastikan sekolah mitra yang terhubung telah dialihkan ke sentra lain.</p>
+            </div>
+            <div class="admin-modal-footer" style="justify-content: center;">
+                <button type="button" class="btn btn-secondary btn-sm" onclick="closeModal('modalDeleteSppg')">Batal</button>
+                <button type="button" class="btn btn-primary btn-sm" style="background-color: var(--color-danger); border-color: var(--color-danger);" id="btnConfirmDeleteSppg">
+                    <span class="material-symbols-outlined" style="font-size: 18px;">delete</span>
+                    <span>Ya, Hapus</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    
+<footer class="main-footer">
+    <div class="admin-container">
+        <div class="admin-footer-content">
+            <div>
+                © 2026 SIM-MBG — Sistem Informasi
+                Manajemen Makan Bergizi Gratis.
+            </div>
+
+            <div>
+                Kementerian Pendidikan &amp; Badan Gizi Nasional
+            </div>
+        </div>
+    </div>
+</footer>
+
+    
+    <script src="{{ asset('js/pages/admin.js') }}"></script>
+</body>
+</html>
