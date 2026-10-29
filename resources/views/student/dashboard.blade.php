@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard Siswa — SIM-MBG</title>
+    <title>Dashboard Siswa ï¿½ SIM-MBG</title>
     <link rel="icon" href="{{ asset('assets/icons/logo.svg') }}">
 
     
@@ -55,9 +55,12 @@
                     </div>
                 </a>
 
-                <button type="button" class="btn btn-secondary btn-sm" id="logoutBtn" title="Keluar">
-                    <span class="material-symbols-outlined" style="font-size: 18px;">logout</span>
-                </button>
+                <form action="{{ route('logout') }}" method="POST" style="display: contents;">
+                    @csrf
+                    <button type="submit" class="btn btn-secondary btn-sm" id="logoutBtn" title="Keluar">
+                        <span class="material-symbols-outlined" style="font-size: 18px;">logout</span>
+                    </button>
+                </form>
 
                 
                 <button type="button" class="mobile-nav-toggle" aria-controls="mainNav" aria-expanded="false" aria-label="Buka Menu Navigasi">
@@ -108,7 +111,7 @@
                                     <span class="material-symbols-outlined">schedule</span>
                                 </div>
                                 <div>
-                                    <div class="time-val">11:30 – 13:00 WITA</div>
+                                    <div class="time-val">11:30 ï¿½ 13:00 WITA</div>
                                     <div class="time-loc">Lokasi: Kantin Sekolah / Ruang Makan Kelas</div>
                                 </div>
                             </div>
@@ -247,7 +250,7 @@
     <footer class="main-footer">
         <div class="container">
             <div class="footer-bottom">
-                <p>&copy; 2026 SIM-MBG — Sistem Informasi Manajemen Makan Bergizi Gratis.</p>
+                <p>&copy; 2026 SIM-MBG ï¿½ Sistem Informasi Manajemen Makan Bergizi Gratis.</p>
                 <p>Kementerian Pendidikan & Badan Gizi Nasional</p>
             </div>
         </div>

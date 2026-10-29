@@ -33,7 +33,7 @@
                 <img src="{{ asset('assets/icons/logo.svg') }}" alt="Logo SIM-MBG" width="52" height="48">
                 <span class="student-brand-title logo-brand-text">SIM-MBG</span>
             </a>
-            <a href="../../index.html" class="auth-back-link">
+            <a href="{{ route('home')}}" class="auth-back-link">
                 <span class="material-symbols-outlined" aria-hidden="true">arrow_back</span>
                 <span>Kembali ke Beranda</span>
             </a>

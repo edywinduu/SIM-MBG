@@ -16,18 +16,13 @@ class DatabaseSeeder extends Seeder
         // 1. Users
         $defaultPasswordHash = Hash::make('password');
 
+        $this->call([
+            AdminSeeder::class,
+            SppgSeeder::class,
+            // Tambahkan seeder lain nantinya di sini jika ada (misal: SppgSeeder, SiswaSeeder)
+        ]);
+
         DB::table('users')->insert([
-            [
-                'id' => 1,
-                'username' => 'admin',
-                'email' => 'admin@mbg.go.id',
-                'password_hash' => $defaultPasswordHash,
-                'full_name' => 'Atmind Administrator',
-                'role' => 'admin',
-                'institution' => 'Dinas Pendidikan & Gizi Provinsi',
-                'status' => 'active',
-                'created_at' => now(),
-            ],
             [
                 'id' => 2,
                 'username' => 'pgw.alya',
