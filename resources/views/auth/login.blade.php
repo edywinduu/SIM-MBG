@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Masuk — SIM-MBG</title>
+    <title>Masuk SIM-MBG</title>
     <link rel="icon" href="{{ asset('assets/icons/logo.svg') }}">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -58,7 +59,8 @@
                 </div>
 
                 
-                <form action="../../../backend/api/login.php" id="loginForm" class="auth-form" novalidate method="post">
+                <form action="{{ route('login') }}" id="loginForm" class="auth-form" novalidate method="post">
+                    @csrf
                     
                     <div class="form-group">
                         <label for="username" class="form-label">Nama Pengguna / NIS / Email</label>

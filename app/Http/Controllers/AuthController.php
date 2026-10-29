@@ -37,6 +37,15 @@ class AuthController extends Controller
             ->orWhere('email', $identifier)
             ->first();
 
+        if (!$user) {
+            $studentUserId = \Illuminate\Support\Facades\DB::table('students')
+                ->where('nisn', $identifier)
+                ->value('user_id');
+            if ($studentUserId) {
+                $user = User::find($studentUserId);
+            }
+        }
+
         $passwordMatches = false;
         if ($user && !empty($user->password_hash)) {
             if (Hash::check($credentials['password'], $user->password_hash)) {
@@ -65,7 +74,14 @@ class AuthController extends Controller
                     'status' => 'success',
                     'message' => 'Login berhasil.',
                     'role' => $user->role,
-                    'redirect' => route('dashboard')
+                    'redirect' => route('dashboard'),
+                    'data' => [
+                        'id' => $user->id,
+                        'username' => $user->username,
+                        'full_name' => $user->full_name,
+                        'role' => $user->role,
+                        'institution' => $user->institution,
+                    ],
                 ]);
             }
 
