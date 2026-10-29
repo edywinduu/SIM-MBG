@@ -1,58 +1,141 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# SIM-MBG (Sistem Informasi Manajemen Makan Bergizi Gratis)
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Aplikasi web berbasis **Laravel 13 (PHP 8.5)** untuk pengelolaan distribusi, pemilihan menu harian, pemantauan alergi siswa, dan evaluasi program **Makan Bergizi Gratis (MBG)** yang menghubungkan **Siswa**, **Satuan Pelayanan Pemenuhan Gizi (SPPG)**, dan **Administrator**.
 
-## About Laravel
+---
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Fitur Utama Berdasarkan Peran
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+### 1. Publik & Autentikasi
+- **Landing Page (`/`)**: Informasi program MBG, alur pemesanan 3 langkah, dan katalog paket menu bergizi.
+- **Autentikasi Terpadu (`/login`, `/register`, `/logout`)**: Mendukung login menggunakan `username`, `email`, atau `NISN` siswa, dilengkapi pengalihan otomatis (*single gateway redirect* `/dashboard`) sesuai peran pengguna.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+### 2. Siswa (`/student/*`)
+- **Dashboard Siswa (`/student/dashboard`)**: Ringkasan jadwal distribusi makan siang hari ini, status pengambilan, pengumuman SPPG, dan detail gizi menu harian.
+- **Pilih Menu (`/student/menu`)**: Pemilihan paket menu harian (Paket A/B/C) dengan indikator batas waktu (*cut-off*), peringatan alergen otomatis sesuai profil siswa, dan ringkasan keseimbangan gizi mingguan.
+- **Riwayat & Ulasan (`/student/history`, `/student/review`)**: Riwayat pengambilan makanan dan pemberian rating/ulasan terhadap menu yang telah diterima.
+- **Profil Saya (`/student/profile`)**: Pengelolaan data diri serta pengaturan alergi dan pantangan makanan.
 
-## Learning Laravel
+### 3. Petugas SPPG (`/sppg/*`)
+- **Dashboard SPPG (`/sppg/dashboard`)**: Ringkasan total porsi harian, jumlah sekolah mitra, aktivitas distribusi & verifikasi, serta rekap pengiriman per sekolah.
+- **Manajemen Siklus Menu (`/sppg/menu`)**: Pengelolaan daftar menu reguler, menu khusus alergi, dan menu cadangan beserta kandungan makronutrisi.
+- **Preferensi & Pilihan Siswa (`/sppg/selections`)**: Rekapitulasi pilihan menu siswa per sekolah dan pemetaan kebutuhan diet khusus/alergi.
+- **Review & Evaluasi (`/sppg/review`)**: Pemantauan tingkat kepuasan siswa, umpan balik sekolah, dan audit gizi dapur.
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+### 4. Administrator (`/admin/*`)
+- **Dashboard Admin (`/admin/dashboard`)**: Ikhtisar KPI seluruh ekosistem (total siswa, sekolah, unit SPPG, staf), log aktivitas terbaru, dan data ringkas sekolah.
+- **Manajemen Siswa (`/admin/students`)**: Data penerima MBG, status menu reguler vs khusus, dan catatan alergi.
+- **Manajemen Sekolah (`/admin/schools`)**: Daftar sekolah penerima manfaat, kuota siswa, dan pemetaan unit SPPG.
+- **Manajemen SPPG (`/admin/sppg`)**: Data unit dapur SPPG, kapasitas produksi harian, dan cakupan wilayah.
+- **Manajemen Pengguna (`/admin/users`)**: Pengelolaan akun seluruh peran (`admin`, `sppg`, `student`).
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+---
 
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
+## Teknologi yang Digunakan
 
-## Agentic Development
+- **Backend**: PHP 8.5, Laravel 13
+- **Frontend**: Blade Templates, CSS3 (Custom Design System sesuai audit Figma), Vanilla JavaScript
+- **Database**: MySQL / MariaDB / SQLite (melalui Laravel Migrations & Seeders)
+- **Tooling**: Composer, Vite, Laravel Pint, PHPUnit, Laravel Boost
 
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+---
 
-```bash
-composer require laravel/boost --dev
+## Struktur Direktori Utama
 
-php artisan boost:install
+```text
+SIM-MBG/
+├── app/
+│   ├── Http/
+│   │   ├── Controllers/
+│   │   │   ├── AuthController.php
+│   │   │   ├── DashboardController.php
+│   │   │   ├── StudentDashboardController.php
+│   │   │   ├── SPPGDashboardController.php
+│   │   │   └── AdminDashboardController.php
+│   │   └── Middleware/
+│   │       └── CheckRole.php
+│   └── Models/
+│       └── User.php
+├── database/
+│   ├── migrations/          # Skema tabel SIM-MBG (users, schools, students, menus, sppg_units, dll.)
+│   └── seeders/             # Data awal lengkap untuk demo seluruh role
+├── public/
+│   ├── assets/              # Ikon SVG dan gambar ilustrasi/menu
+│   ├── css/                 # Stylesheet modular (reset, variables, global, components, layout, pages/*)
+│   └── js/                  # Script interaktivitas per halaman (main.js, pages/*)
+├── resources/
+│   └── views/
+│       ├── index.blade.php  # Landing page publik
+│       ├── auth/            # Halaman login & register
+│       ├── student/         # Halaman modul Siswa
+│       ├── sppg/            # Halaman modul SPPG
+│       └── admin/           # Halaman modul Admin
+├── routes/
+│   └── web.php              # Definisi rute web, middleware role, dan redirect kompatibilitas
+├── AGENTS.md                # Panduan pengembangan tim & AI Agent (Laravel + Frontend)
+├── CLAUDE.md                # Aturan Laravel Boost & konteks arsitektur proyek
+└── DESIGN_SYSTEM.md         # Dokumentasi hasil audit desain Figma SIM-MBG
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+---
 
-## Contributing
+## Panduan Instalasi & Menjalankan Proyek
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+### 1. Prasyarat
+- PHP >= 8.3 (direkomendasikan PHP 8.5)
+- Composer
+- Database (MySQL / MariaDB atau SQLite)
+- Node.js & NPM (opsional, untuk asset bundling Vite)
 
-## Code of Conduct
+### 2. Langkah Setup
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+```bash
+# 1. Install dependensi PHP
+composer install
 
-## Security Vulnerabilities
+# 2. Salin konfigurasi environment & buat application key
+cp .env.example .env
+php artisan key:generate
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+# 3. Sesuaikan konfigurasi database di file .env, lalu jalankan migrasi beserta seeder
+php artisan migrate --seed
 
-## License
+# 4. Jalankan server pengembangan Laravel
+php artisan serve
+```
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+Aplikasi dapat diakses di `http://localhost:8000`.
+
+---
+
+## Akun Demo Default (Hasil Seeder)
+
+Setelah menjalankan `php artisan db:seed` (atau `php artisan migrate:fresh --seed`), Anda dapat masuk menggunakan akun berikut:
+
+| Peran | Username / Email | Password | Keterangan |
+|---|---|---|---|
+| **Admin** | `admin` / `admin@mbg.go.id` | `password` | Mengakses `/admin/dashboard` (atau sesuai variabel `.env` `ADMIN_USERNAME` & `ADMIN_PASSWORD`) |
+| **Petugas SPPG** | `pgw.alya` / `sppg.dps01@mbg.go.id` | `embegeh` | SPPG Denpasar Barat 01 (`/sppg/dashboard`) |
+| **Siswa** | `alya` / `alya@sekolah.id` | `password` | Siswa SMA Negeri 1 Denpasar (`/student/dashboard`) |
+| **Siswa** | `aditya` / `aditya@sekolah.id` | `password` | Siswa SMP Negeri 1 Denpasar (`/student/dashboard`) |
+| **Siswa** | `gita` / `gita@sekolah.id` | `password` | Siswa SMP Negeri 2 Denpasar (`/student/dashboard`) |
+
+---
+
+## Daftar Rute Utama
+
+| Grup | URL | Nama Rute | Controller / View |
+|---|---|---|---|
+| **Publik** | `/` | `home` | `index.blade.php` |
+| **Auth** | `/login`, `/register`, `/logout` | `login`, `register`, `logout` | `AuthController` |
+| **Gateway** | `/dashboard` | `dashboard` | `DashboardController@index` (Auto-redirect per role) |
+| **Siswa** | `/student/dashboard`, `/student/menu`, `/student/history`, `/student/profile`, `/student/review` | `student.*` | `StudentDashboardController` |
+| **SPPG** | `/sppg/dashboard`, `/sppg/menu`, `/sppg/selections`, `/sppg/review` | `sppg.*` | `SPPGDashboardController` |
+| **Admin** | `/admin/dashboard`, `/admin/students`, `/admin/schools`, `/admin/sppg`, `/admin/users` | `admin.*` | `AdminDashboardController` |
+
+---
+
+## Dokumentasi Terkait
+- [`AGENTS.md`](AGENTS.md) — Standar kode, pembagian modul tim, struktur Laravel + Blade + CSS/JS, dan aturan kolaborasi Git.
+- [`DESIGN_SYSTEM.md`](DESIGN_SYSTEM.md) — Spesifikasi token warna, tipografi, komponen, dan hasil audit file Figma SIM-MBG.
+- [`CLAUDE.md`](CLAUDE.md) — Panduan Laravel Boost untuk AI Coding Assistant.

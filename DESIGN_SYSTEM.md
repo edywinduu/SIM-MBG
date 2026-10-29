@@ -1,11 +1,11 @@
 # DESIGN_SYSTEM.md — SIM-MBG
  
-Sistem Informasi Manajemen Makan Bergizi Gratis (proyek mata kuliah, frontend HTML/CSS/JS murni).
-Dokumen ini adalah hasil audit file Figma, bukan spesifikasi baru. Tidak ada nilai desain yang dikarang.
+Sistem Informasi Manajemen Makan Bergizi Gratis (terintegrasi dengan **Laravel 13**, Blade Views di `resources/views/`, dan stylesheet/script modular di `public/css/` serta `public/js/`).
+Dokumen ini adalah hasil audit file Figma sebagai acuan utama (*source of truth*) sistem desain. Tidak ada nilai desain yang dikarang.
  
 - File Figma: `AyeVi6PzuIt0uSUzJeoZZ6` (SIM-MBG)
 - Tanggal audit: 9 Oktober 2026
-- Kode belum ditulis (sesuai permintaan).
+- Status implementasi: Terintegrasi ke dalam aplikasi Laravel (lihat `README.md` dan `AGENTS.md` untuk pemetaan Blade view & rute).
 ## 0. Cara membaca dokumen
  
 Setiap fakta diberi label:

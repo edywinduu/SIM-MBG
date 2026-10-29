@@ -2,10 +2,8 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\User;
 use Illuminate\Database\Seeder;
-
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
 class AdminSeeder extends Seeder
@@ -15,22 +13,36 @@ class AdminSeeder extends Seeder
      */
     public function run(): void
     {
-        // Ambil kredensial dari file config/auth.php yang membaca .env
         $adminConfig = config('auth.admin_seed');
 
-        // Gunakan updateOrCreate untuk mencegah error duplikasi data jika seeder dijalankan berulang
         User::updateOrCreate(
             [
-                // Kunci pencarian: cari user dengan email ini
-                'email' => $adminConfig['email']
+                'email' => $adminConfig['email'],
             ],
             [
-                // Kolom yang dibuat atau diperbarui
-                'name'     => $adminConfig['name'],
                 'username' => $adminConfig['username'],
-                'password' => Hash::make($adminConfig['password']),
-                'role'     => 'admin',
+                'password_hash' => Hash::make($adminConfig['password']),
+                'full_name' => $adminConfig['name'],
+                'role' => 'admin',
+                'institution' => 'Dinas Pendidikan & Gizi Provinsi',
+                'status' => 'active',
             ]
         );
+
+        if ($adminConfig['username'] !== 'admin' && $adminConfig['email'] !== 'admin@mbg.go.id') {
+            User::updateOrCreate(
+                [
+                    'username' => 'admin',
+                ],
+                [
+                    'email' => 'admin@mbg.go.id',
+                    'password_hash' => Hash::make('password'),
+                    'full_name' => 'Atmind Administrator',
+                    'role' => 'admin',
+                    'institution' => 'Dinas Pendidikan & Gizi Provinsi',
+                    'status' => 'active',
+                ]
+            );
+        }
     }
 }
