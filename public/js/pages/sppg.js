@@ -1,4 +1,4 @@
-﻿
+
 
 document.addEventListener('DOMContentLoaded', () => {
   initCommon();
@@ -73,9 +73,30 @@ function renderPagination(container, page, totalPages, onChange) {
 function initCommon() {
   const logoutBtn = $('#logoutBtn');
   if (logoutBtn) {
-    logoutBtn.addEventListener('click', () => {
+    logoutBtn.addEventListener('click', (e) => {
       try { sessionStorage.removeItem('sim_mbg_auth'); } catch (err) { console.warn(err); }
-      window.location.href = '../auth/login.html';
+
+      const form = logoutBtn.closest('form');
+      if (form) {
+        // Biarkan form POST ke route('logout') dieksekusi normal oleh browser
+        return;
+      }
+
+      // Fallback jika tidak dibungkus form
+      e.preventDefault();
+      const fallbackForm = document.createElement('form');
+      fallbackForm.method = 'POST';
+      fallbackForm.action = '/logout';
+      const csrfMeta = document.querySelector('meta[name="csrf-token"]');
+      if (csrfMeta) {
+        const csrfInput = document.createElement('input');
+        csrfInput.type = 'hidden';
+        csrfInput.name = '_token';
+        csrfInput.value = csrfMeta.content;
+        fallbackForm.appendChild(csrfInput);
+      }
+      document.body.appendChild(fallbackForm);
+      fallbackForm.submit();
     });
   }
 

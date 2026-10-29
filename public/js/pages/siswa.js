@@ -205,15 +205,32 @@ async function initStudentGlobalHeader() {
   if (logoutBtn && !logoutBtn.dataset.bound) {
     logoutBtn.dataset.bound = 'true';
     logoutBtn.addEventListener('click', (e) => {
-      e.preventDefault();
       try {
         sessionStorage.removeItem(STORAGE_KEY_AUTH);
         sessionStorage.removeItem(STORAGE_KEY_PROFILE);
       } catch (err) {}
-      showStudentToast('Berhasil keluar. Mengalihkan ke halaman masuk...', 'info');
-      setTimeout(() => {
-        window.location.href = '../auth/login.html';
-      }, 500);
+
+      const form = logoutBtn.closest('form');
+      if (form) {
+        // Biarkan form POST ke route('logout') dieksekusi normal oleh browser
+        return;
+      }
+
+      // Fallback jika tidak dibungkus form
+      e.preventDefault();
+      const fallbackForm = document.createElement('form');
+      fallbackForm.method = 'POST';
+      fallbackForm.action = '/logout';
+      const csrfMeta = document.querySelector('meta[name="csrf-token"]');
+      if (csrfMeta) {
+        const csrfInput = document.createElement('input');
+        csrfInput.type = 'hidden';
+        csrfInput.name = '_token';
+        csrfInput.value = csrfMeta.content;
+        fallbackForm.appendChild(csrfInput);
+      }
+      document.body.appendChild(fallbackForm);
+      fallbackForm.submit();
     });
   }
 }

@@ -15,8 +15,8 @@ class SppgSeeder extends Seeder
     {
         $sppgUsers = [
             [
-                'username' => 'pgw.alya',
-                'email' => 'sppg.dps01@mbg.go.id',
+                'username' => 'pgw.dhio',
+                'email' => 'dhio@mbg.go.id',
                 'password_hash' => Hash::make('embegeh'),
                 'full_name' => 'Alisa Mikhailovna Kujou',
                 'role' => 'sppg',

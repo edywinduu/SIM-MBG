@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Review — SIM-MBG SPPG</title>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <title>Review â€” SIM-MBG SPPG</title>
     <link rel="icon" href="{{ asset('assets/icons/logo.svg') }}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -45,9 +46,15 @@
                         <span class="student-user-role sppg-user-role">Pegawai SPPG</span>
                     </div>
                 </a>
-                <button type="button" class="btn btn-secondary btn-sm" id="logoutBtn" title="Keluar">
-                    <span class="material-symbols-outlined" style="font-size: 18px;">logout</span>
-                </button>
+                <a href="{{ route('home') }}" class="btn btn-secondary btn-sm" title="Beranda">
+                    <span class="material-symbols-outlined" style="font-size: 18px;">home</span>
+                </a>
+                <form action="{{ route('logout') }}" method="POST" style="display: contents;">
+                    @csrf
+                    <button type="submit" class="btn btn-secondary btn-sm" id="logoutBtn" title="Keluar">
+                        <span class="material-symbols-outlined" style="font-size: 18px;">logout</span>
+                    </button>
+                </form>
                 <button type="button" class="mobile-nav-toggle" aria-controls="mainNav" aria-expanded="false" aria-label="Buka Menu Navigasi">
                     <span></span>
                     <span></span>
@@ -61,7 +68,7 @@
         <div class="container">
             <section class="sppg-page-head">
                 <div>
-                    <div class="sppg-eyebrow"><span class="pill pill-green">? Layer 3 • Modul SPPG</span><span>Periode Distribusi: Oktober 2026</span></div>
+                    <div class="sppg-eyebrow"><span class="pill pill-green">? Layer 3 â€¢ Modul SPPG</span><span>Periode Distribusi: Oktober 2026</span></div>
                     <h1 class="sppg-title">Review & Evaluasi Kepuasan Menu MBG</h1>
                     <p class="sppg-sub">Umpan balik komprehensif dari sekolah mitra, pengawas UKS, dan audit konsumsi gizi harian.</p>
                 </div>
@@ -119,7 +126,7 @@
     <footer class="main-footer">
         <div class="container">
             <div class="footer-bottom">
-                <p>&copy; 2026 SIM-MBG — Sistem Informasi Manajemen Makan Bergizi Gratis.</p>
+                <p>&copy; 2026 SIM-MBG â€” Sistem Informasi Manajemen Makan Bergizi Gratis.</p>
                 <p>Kementerian Pendidikan & Badan Gizi Nasional</p>
             </div>
         </div>

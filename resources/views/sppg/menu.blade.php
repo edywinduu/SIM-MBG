@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Menu — SIM-MBG SPPG</title>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <title>Menu â€” SIM-MBG SPPG</title>
     <link rel="icon" href="{{ asset('assets/icons/logo.svg') }}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -45,9 +46,15 @@
                         <span class="student-user-role sppg-user-role">Pegawai SPPG</span>
                     </div>
                 </a>
-                <button type="button" class="btn btn-secondary btn-sm" id="logoutBtn" title="Keluar">
-                    <span class="material-symbols-outlined" style="font-size: 18px;">logout</span>
-                </button>
+                <a href="{{ route('home') }}" class="btn btn-secondary btn-sm" title="Beranda">
+                    <span class="material-symbols-outlined" style="font-size: 18px;">home</span>
+                </a>
+                <form action="{{ route('logout') }}" method="POST" style="display: contents;">
+                    @csrf
+                    <button type="submit" class="btn btn-secondary btn-sm" id="logoutBtn" title="Keluar">
+                        <span class="material-symbols-outlined" style="font-size: 18px;">logout</span>
+                    </button>
+                </form>
                 <button type="button" class="mobile-nav-toggle" aria-controls="mainNav" aria-expanded="false" aria-label="Buka Menu Navigasi">
                     <span></span>
                     <span></span>
@@ -104,7 +111,7 @@
                 <div class="sppg-ico ico-green lg"><span class="material-symbols-outlined">verified_user</span></div>
                 <div class="sppg-verify-body">
                     <h3>Verifikasi Ahli Gizi SPPG Terpenuhi</h3>
-                    <p>Semua paket menu di atas telah diaudit memenuhi Angka Kecukupan Gizi (AKG) 2025: kecukupan protein hewani = 22g dan mikronutrien esensial bagi usia 7–15 tahun.</p>
+                    <p>Semua paket menu di atas telah diaudit memenuhi Angka Kecukupan Gizi (AKG) 2025: kecukupan protein hewani = 22g dan mikronutrien esensial bagi usia 7â€“15 tahun.</p>
                 </div>
                 <div class="sppg-actions">
                     <button type="button" class="btn btn-secondary btn-sm" data-toast="Membuka riwayat audit gizi..."><span class="material-symbols-outlined" style="font-size:18px;">history</span><span>Riwayat Audit Gizi</span></button>
@@ -145,7 +152,7 @@
     <footer class="main-footer">
         <div class="container">
             <div class="footer-bottom">
-                <p>&copy; 2026 SIM-MBG — Sistem Informasi Manajemen Makan Bergizi Gratis.</p>
+                <p>&copy; 2026 SIM-MBG â€” Sistem Informasi Manajemen Makan Bergizi Gratis.</p>
                 <p>Kementerian Pendidikan & Badan Gizi Nasional</p>
             </div>
         </div>

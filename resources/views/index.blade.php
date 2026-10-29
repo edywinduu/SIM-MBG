@@ -1,9 +1,10 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SIM-MBG � Sistem Informasi Manajemen Makan Bergizi Gratis</title>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <title>SIM-MBG — Sistem Informasi Manajemen Makan Bergizi Gratis</title>
     <link rel="icon" href="{{ asset('assets/icons/logo.svg') }}">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -28,7 +29,7 @@
     
     <header class="main-header">
         <div class="container nav-container">
-            <a href="index.html" class="student-navbar-brand logo-nav" aria-label="SIM-MBG Beranda">
+            <a href="{{ url('/') }}" class="student-navbar-brand logo-nav" aria-label="SIM-MBG Beranda">
                 <img src="{{ asset('assets/icons/logo.svg') }}" alt="Logo SIM-MBG" width="52" height="48">
                 <span class="student-brand-title logo-brand-text">SIM-MBG</span>
             </a>
@@ -42,15 +43,53 @@
             </nav>
 
             <div class="nav-actions">
-                <a href="{{ route('login') }}" class="student-user-chip" title="Masuk ke Akun SIM-MBG">
-                    <div class="student-user-avatar">
-                        <span class="material-symbols-outlined" style="font-size: 20px;">account_circle</span>
-                    </div>
-                    <div class="student-user-meta">
-                        <span class="student-user-name">Masuk</span>
-                        <span class="student-user-role">Portal MBG</span>
-                    </div>
-                </a>                
+                @auth
+                    @php
+                        $authUser = Auth::user();
+                        $roleLabel = match(strtolower($authUser->role ?? '')) {
+                            'admin' => 'Administrator',
+                            'sppg' => 'Petugas SPPG',
+                            'student', 'siswa' => 'Siswa',
+                            default => ucfirst($authUser->role ?? 'Pengguna'),
+                        };
+                        $displayName = $authUser->full_name ?: $authUser->username;
+                        $initial = strtoupper(substr($displayName, 0, 1));
+                    @endphp
+                    <a href="{{ route('dashboard') }}" class="student-user-chip" title="Buka Dashboard">
+                        <div class="student-user-avatar">
+                            @if(!empty($authUser->avatar) && file_exists(public_path($authUser->avatar)))
+                                <img src="{{ asset($authUser->avatar) }}" alt="{{ $displayName }}">
+                            @else
+                                <img src="https://ui-avatars.com/api/?name={{ urlencode($displayName) }}&background=297373&color=ffffff&bold=true" alt="{{ $displayName }}" onerror="this.onerror=null; this.parentElement.innerText='{{ $initial }}';">
+                            @endif
+                        </div>
+                        <div class="student-user-meta">
+                            <span class="student-user-name">{{ $displayName }}</span>
+                            <span class="student-user-role">{{ $roleLabel }}</span>
+                        </div>
+                    </a>
+
+                    <a href="{{ route('home') }}" class="btn btn-secondary btn-sm" title="Beranda">
+                        <span class="material-symbols-outlined" style="font-size: 18px;">home</span>
+                    </a>
+
+                    <form action="{{ route('logout') }}" method="POST" style="display: contents;">
+                        @csrf
+                        <button type="submit" class="btn btn-secondary btn-sm" id="logoutBtn" title="Keluar">
+                            <span class="material-symbols-outlined" style="font-size: 18px;">logout</span>
+                        </button>
+                    </form>
+                @else
+                    <a href="{{ route('login') }}" class="student-user-chip" title="Masuk ke Akun SIM-MBG">
+                        <div class="student-user-avatar">
+                            <span class="material-symbols-outlined" style="font-size: 20px;">account_circle</span>
+                        </div>
+                        <div class="student-user-meta">
+                            <span class="student-user-name">Masuk</span>
+                            <span class="student-user-role">Portal MBG</span>
+                        </div>
+                    </a>
+                @endauth
                 <button type="button" class="mobile-nav-toggle" aria-controls="mainNav" aria-expanded="false" aria-label="Buka Menu Navigasi">
                     <span></span>
                     <span></span>
@@ -82,10 +121,17 @@
                             <img src="{{ asset('assets/icons/whatsapp.svg') }}" alt="WhatsApp Icon" width="20" height="20">
                             <span>Hubungi Kami</span>
                         </a>
-                        <a href="pages/auth/login.html" class="btn btn-primary">
-                            <span>Mulai Sekarang</span>
-                            <span class="material-symbols-outlined" style="font-size: 20px;">arrow_forward</span>
-                        </a>
+                        @auth
+                            <a href="{{ route('dashboard') }}" class="btn btn-primary">
+                                <span>Buka Dashboard</span>
+                                <span class="material-symbols-outlined" style="font-size: 20px;">arrow_forward</span>
+                            </a>
+                        @else
+                            <a href="{{ route('login') }}" class="btn btn-primary">
+                                <span>Mulai Sekarang</span>
+                                <span class="material-symbols-outlined" style="font-size: 20px;">arrow_forward</span>
+                            </a>
+                        @endauth
                     </div>
                 </div>
 
@@ -364,7 +410,7 @@
 
             <div class="footer-bottom">
                 <p>&copy; 2026 SIM-MBG. Hak Cipta Dilindungi Undang-Undang.</p>
-                <p>Frontend Vanilla HTML5 � CSS3 � JavaScript (Tanpa Framework)</p>
+                <p>Frontend Vanilla HTML5 • CSS3 • JavaScript (Tanpa Framework)</p>
             </div>
         </div>
     </footer>

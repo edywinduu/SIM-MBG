@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard Admin — SIM-MBG</title>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <title>Dashboard Admin â€” SIM-MBG</title>
     <link rel="icon" href="{{ asset('assets/icons/logo.svg') }}">
 
     
@@ -57,9 +58,15 @@
                     </div>
                 </div>
 
-                <button type="button" class="btn btn-secondary btn-sm" id="adminLogoutBtn" title="Keluar dari Admin Panel">
-                    <span class="material-symbols-outlined" style="font-size: 18px;">logout</span>
-                </button>
+                <a href="{{ route('home') }}" class="btn btn-secondary btn-sm" title="Beranda">
+                    <span class="material-symbols-outlined" style="font-size: 18px;">home</span>
+                </a>
+                <form action="{{ route('logout') }}" method="POST" style="display: contents;">
+                    @csrf
+                    <button type="submit" class="btn btn-secondary btn-sm" id="adminLogoutBtn" title="Keluar dari Admin Panel">
+                        <span class="material-symbols-outlined" style="font-size: 18px;">logout</span>
+                    </button>
+                </form>
 
                 
                 <button type="button" class="mobile-nav-toggle" aria-controls="adminMainNav" aria-expanded="false" aria-label="Buka Menu Navigasi">
@@ -251,7 +258,7 @@
     <div class="admin-container">
         <div class="admin-footer-content">
             <div>
-                © 2026 SIM-MBG — Sistem Informasi
+                Â© 2026 SIM-MBG â€” Sistem Informasi
                 Manajemen Makan Bergizi Gratis.
             </div>
 
