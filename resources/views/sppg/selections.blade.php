@@ -26,24 +26,29 @@
     
     <header class="main-header">
         <div class="container nav-container">
-            <a href="dashboard.html" class="student-navbar-brand sppg-brand" aria-label="SIM-MBG SPPG Dashboard">
+            <a href="{{ route('sppg.dashboard') }}" class="student-navbar-brand sppg-brand" aria-label="SIM-MBG SPPG Dashboard">
                 <img src="{{ asset('assets/icons/logo.svg') }}" alt="Logo SIM-MBG" width="52" height="48">
                 <span class="student-brand-title sppg-brand-title">SIM-MBG</span>
             </a>
             <nav class="nav-links" id="mainNav">
                 <ul class="student-nav-menu sppg-nav-menu">
-                    <li><a href="dashboard.html" class="student-nav-btn sppg-nav-btn">Dashboard</a></li>
-                    <li><a href="menu.html" class="student-nav-btn sppg-nav-btn">Menu</a></li>
-                    <li><a href="selections.blade.php" class="student-nav-btn sppg-nav-btn active">Pilihan Siswa</a></li>
-                    <li><a href="review.html" class="student-nav-btn sppg-nav-btn">Review</a></li>
+                    <li><a href="{{ route('sppg.dashboard') }}" class="student-nav-btn sppg-nav-btn">Dashboard</a></li>
+                    <li><a href="{{ route('sppg.menu') }}" class="student-nav-btn sppg-nav-btn">Menu</a></li>
+                    <li><a href="{{ route('sppg.selections') }}" class="student-nav-btn sppg-nav-btn active">Pilihan Siswa</a></li>
+                    <li><a href="{{ route('sppg.review') }}" class="student-nav-btn sppg-nav-btn">Review</a></li>
                 </ul>
             </nav>
             <div class="nav-actions">
-                <a href="dashboard.html" class="student-user-chip sppg-user-chip" title="Profil Pegawai SPPG">
-                    <div class="student-user-avatar sppg-user-avatar">A</div>
+                @php
+                    $sppgUser = Auth::user();
+                    $displayName = $sppgUser?->full_name ?: ($sppgUser?->username ?? 'Petugas SPPG');
+                    $initial = strtoupper(substr($displayName, 0, 1));
+                @endphp
+                <a href="{{ route('sppg.dashboard') }}" class="student-user-chip sppg-user-chip" title="Profil Pegawai SPPG">
+                    <div class="student-user-avatar sppg-user-avatar">{{ $initial }}</div>
                     <div class="student-user-meta sppg-user-meta">
-                        <span class="student-user-name sppg-user-name">Pgw Alya</span>
-                        <span class="student-user-role sppg-user-role">Pegawai SPPG</span>
+                        <span class="student-user-name sppg-user-name">{{ $displayName }}</span>
+                        <span class="student-user-role sppg-user-role">{{ $sppgUser?->institution ?? 'Pegawai SPPG' }}</span>
                     </div>
                 </a>
                 <a href="{{ route('home') }}" class="btn btn-secondary btn-sm" title="Beranda">

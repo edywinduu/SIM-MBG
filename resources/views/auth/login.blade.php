@@ -29,11 +29,11 @@
     
     <header class="auth-header">
         <div class="container auth-nav-container">
-            <a href="../../index.html" class="student-navbar-brand logo-nav" aria-label="SIM-MBG Beranda">
+            <a href="{{ route('home') }}" class="student-navbar-brand logo-nav" aria-label="SIM-MBG Beranda">
                 <img src="{{ asset('assets/icons/logo.svg') }}" alt="Logo SIM-MBG" width="52" height="48">
                 <span class="student-brand-title logo-brand-text">SIM-MBG</span>
             </a>
-            <a href="{{ route('home')}}" class="auth-back-link">
+            <a href="{{ route('home') }}" class="auth-back-link">
                 <span class="material-symbols-outlined" aria-hidden="true">arrow_back</span>
                 <span>Kembali ke Beranda</span>
             </a>
@@ -49,7 +49,7 @@
                     <div class="auth-logo-badge">
                         <img src="{{ asset('assets/icons/logo.svg') }}" alt="Logo SIM-MBG" width="56" height="52">
                     </div>
-                    <h1 class="auth-title">Masuk</h1>
+                    <h1 class="auth-title">{{ request()->is('sppg*') || request('role') === 'sppg' ? 'Masuk SPPG' : 'Masuk' }}</h1>
                 </div>
 
                 
@@ -70,6 +70,7 @@
                                 type="text" 
                                 id="username" 
                                 name="username" 
+                                value="{{ old('username', $rememberedUser ?? '') }}"
                                 class="form-input" 
                                 placeholder="Masukkan nama pengguna, NIS, atau email" 
                                 autocomplete="username"
@@ -110,7 +111,7 @@
                     <div class="form-options-row">
                         
                         <label class="custom-checkbox-label" for="rememberMe">
-                            <input type="checkbox" id="rememberMe" name="rememberMe" class="custom-checkbox-input">
+                            <input type="checkbox" id="rememberMe" name="rememberMe" value="1" class="custom-checkbox-input" {{ old('rememberMe', !empty($rememberedUser)) ? 'checked' : '' }}>
                             <span class="custom-checkbox-box">
                                 <span class="material-symbols-outlined check-icon">check</span>
                             </span>
@@ -133,7 +134,11 @@
 
                 
                 <div class="auth-card-footer">
-                    <p class="auth-register-text">Belum ada akun? <a href="register.html" class="auth-register-link">Daftar Sekarang!</a></p>   
+                    @if(request()->is('sppg*') || request('role') === 'sppg')
+                        <p class="auth-register-text" style="color: var(--color-muted);">Portal Khusus Petugas Sentra SPPG SIM-MBG</p>
+                    @else
+                        <p class="auth-register-text">Belum ada akun? <a href="{{ route('register') }}" class="auth-register-link">Daftar Sekarang!</a></p>
+                    @endif
                 </div>
             </div>
         </div>

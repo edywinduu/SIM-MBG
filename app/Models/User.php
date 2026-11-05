@@ -20,12 +20,21 @@ class User extends Authenticatable
         'role',
         'institution',
         'status',
+        'remember_token',
     ];
 
     protected $hidden = [
         'password_hash',
         'remember_token',
     ];
+
+    /**
+     * Get the name of the password attribute for authentication.
+     */
+    public function getAuthPasswordName(): string
+    {
+        return 'password_hash';
+    }
 
     /**
      * Get the password for authentication.
@@ -57,6 +66,7 @@ class User extends Authenticatable
     public function isStudent(): bool
     {
         $role = strtolower($this->role ?? '');
+
         return in_array($role, ['student', 'siswa'], true);
     }
 }

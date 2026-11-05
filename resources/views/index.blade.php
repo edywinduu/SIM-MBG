@@ -69,10 +69,6 @@
                         </div>
                     </a>
 
-                    <a href="{{ route('home') }}" class="btn btn-secondary btn-sm" title="Beranda">
-                        <span class="material-symbols-outlined" style="font-size: 18px;">home</span>
-                    </a>
-
                     <form action="{{ route('logout') }}" method="POST" style="display: contents;">
                         @csrf
                         <button type="submit" class="btn btn-secondary btn-sm" id="logoutBtn" title="Keluar">
@@ -246,78 +242,21 @@
             </div>
             <div class="marquee-container" aria-label="Daftar Variasi Menu Makanan">
                 <div class="marquee-content">
-                    
-                    <div class="menu-chip" data-menu-name="Nasi Ayam Bakar Madu">
-                        <div class="menu-chip-avatar">??</div>
-                        <span class="menu-chip-name">Nasi Ayam Bakar Madu</span>
-                    </div>
-                    
-                    <div class="menu-chip" data-menu-name="Salmon Panggang">
-                        <div class="menu-chip-avatar">??</div>
-                        <span class="menu-chip-name">Salmon Panggang</span>
-                    </div>
-                    
-                    <div class="menu-chip" data-menu-name="Beef Teriyaki Bowl">
-                        <div class="menu-chip-avatar">??</div>
-                        <span class="menu-chip-name">Beef Teriyaki Bowl</span>
-                    </div>
-                    
-                    <div class="menu-chip" data-menu-name="Sup Ayam Jagung">
-                        <div class="menu-chip-avatar">??</div>
-                        <span class="menu-chip-name">Sup Ayam Jagung</span>
-                    </div>
-                    
-                    <div class="menu-chip" data-menu-name="Nasi Kuning Komplit">
-                        <div class="menu-chip-avatar">??</div>
-                        <span class="menu-chip-name">Nasi Kuning Komplit</span>
-                    </div>
-                    
-                    <div class="menu-chip" data-menu-name="Ayam Suwir Bali">
-                        <div class="menu-chip-avatar">??</div>
-                        <span class="menu-chip-name">Ayam Suwir Bali</span>
-                    </div>
-                    
-                    <div class="menu-chip" data-menu-name="Tahu Tempe Bacem Gizi">
-                        <div class="menu-chip-avatar">??</div>
-                        <span class="menu-chip-name">Tahu Tempe Bacem Gizi</span>
-                    </div>
-                    
-                    <div class="menu-chip" data-menu-name="Nasi Uduk Nutrisi">
-                        <div class="menu-chip-avatar">??</div>
-                        <span class="menu-chip-name">Nasi Uduk Nutrisi</span>
-                    </div>
-                    
-                    <div class="menu-chip" data-menu-name="Rolade Daging Sayur">
-                        <div class="menu-chip-avatar">??</div>
-                        <span class="menu-chip-name">Rolade Daging Sayur</span>
-                    </div>
-                    
-                    <div class="menu-chip" data-menu-name="Soto Ayam Kampung">
-                        <div class="menu-chip-avatar">??</div>
-                        <span class="menu-chip-name">Soto Ayam Kampung</span>
-                    </div>
-
-                    
-                    <div class="menu-chip" data-menu-name="Nasi Ayam Bakar Madu">
-                        <div class="menu-chip-avatar">??</div>
-                        <span class="menu-chip-name">Nasi Ayam Bakar Madu</span>
-                    </div>
-                    <div class="menu-chip" data-menu-name="Salmon Panggang">
-                        <div class="menu-chip-avatar">??</div>
-                        <span class="menu-chip-name">Salmon Panggang</span>
-                    </div>
-                    <div class="menu-chip" data-menu-name="Beef Teriyaki Bowl">
-                        <div class="menu-chip-avatar">??</div>
-                        <span class="menu-chip-name">Beef Teriyaki Bowl</span>
-                    </div>
-                    <div class="menu-chip" data-menu-name="Sup Ayam Jagung">
-                        <div class="menu-chip-avatar">??</div>
-                        <span class="menu-chip-name">Sup Ayam Jagung</span>
-                    </div>
-                    <div class="menu-chip" data-menu-name="Nasi Kuning Komplit">
-                        <div class="menu-chip-avatar">??</div>
-                        <span class="menu-chip-name">Nasi Kuning Komplit</span>
-                    </div>
+                    @if(isset($menus) && $menus->count() > 0)
+                        @foreach([1, 2] as $repeat)
+                            @foreach($menus as $menuItem)
+                                <div class="menu-chip"
+                                     data-menu-name="{{ $menuItem->name }}"
+                                     data-menu-desc="{{ $menuItem->description }}"
+                                     data-menu-calories="{{ $menuItem->calories }}"
+                                     role="button"
+                                     tabindex="0"
+                                     aria-label="{{ $menuItem->name }}: {{ $menuItem->description }}">
+                                    <span class="menu-chip-name">{{ $menuItem->name }}</span>
+                                </div>
+                            @endforeach
+                        @endforeach
+                    @endif
                 </div>
             </div>
         </section>
@@ -368,8 +307,8 @@
                         <p>Dukung pemenuhan nutrisi anak bangsa setiap hari sekolah. Masuk ke akun Anda sekarang untuk memilih menu bergizi esok hari.</p>
                     </div>
                     <div class="cta-actions">
-                        <a href="pages/auth/register.html" class="btn btn-primary">Daftar Akun Siswa</a>
-                        <a href="pages/auth/login.html" class="btn btn-secondary">Masuk Portal</a>
+                        <a href="{{ route('register') }}" class="btn btn-primary">Daftar Akun Siswa</a>
+                        <a href="{{ route('login') }}" class="btn btn-secondary">Masuk Portal</a>
                     </div>
                 </div>
             </div>
@@ -410,7 +349,6 @@
 
             <div class="footer-bottom">
                 <p>&copy; 2026 SIM-MBG. Hak Cipta Dilindungi Undang-Undang.</p>
-                <p>Frontend Vanilla HTML5 • CSS3 • JavaScript (Tanpa Framework)</p>
             </div>
         </div>
     </footer>

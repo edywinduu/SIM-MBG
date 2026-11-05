@@ -1,4 +1,4 @@
-﻿
+
 
 document.addEventListener('DOMContentLoaded', () => {
   init3DCoverflowCarousel();
@@ -225,21 +225,109 @@ function initMenuChips() {
   const chips = document.querySelectorAll('.menu-chip');
   if (!chips || chips.length === 0) return;
 
+  // Inisialisasi floating tooltip tunggal di body untuk performa optimal
+  let tooltip = document.querySelector('#menuFloatingTooltip');
+  if (!tooltip) {
+    tooltip = document.createElement('div');
+    tooltip.id = 'menuFloatingTooltip';
+    tooltip.className = 'menu-floating-tooltip arrow-bottom';
+    tooltip.setAttribute('role', 'tooltip');
+    tooltip.setAttribute('aria-hidden', 'true');
+    tooltip.innerHTML = `
+      <div class="tooltip-arrow"></div>
+      <div class="tooltip-title">
+        <span class="tooltip-name"></span>
+        <span class="tooltip-badge"></span>
+      </div>
+      <div class="tooltip-desc"></div>
+    `;
+    document.body.appendChild(tooltip);
+  }
+
+  const tooltipName = tooltip.querySelector('.tooltip-name');
+  const tooltipBadge = tooltip.querySelector('.tooltip-badge');
+  const tooltipDesc = tooltip.querySelector('.tooltip-desc');
+  const tooltipArrow = tooltip.querySelector('.tooltip-arrow');
+
+  function updateTooltipPosition(chip) {
+    const rect = chip.getBoundingClientRect();
+    const tooltipWidth = 320;
+    const tooltipHeight = tooltip.offsetHeight || 90;
+
+    let arrowClass = 'arrow-bottom';
+    // Posisikan di atas chip secara default
+    let top = rect.top - tooltipHeight - 12;
+
+    // Jika ruang di atas terlalu sempit (misal dekat top viewport), posisikan di bawah chip
+    if (top < 12) {
+      top = rect.bottom + 12;
+      arrowClass = 'arrow-top';
+    }
+
+    // Pusatkan secara horizontal terhadap chip
+    let left = rect.left + rect.width / 2 - tooltipWidth / 2;
+
+    // Batasi horizontal agar selalu di dalam viewport
+    const maxLeft = window.innerWidth - tooltipWidth - 16;
+    if (left < 16) left = 16;
+    if (left > maxLeft) left = maxLeft;
+
+    tooltip.className = `menu-floating-tooltip ${arrowClass} is-visible`;
+    tooltip.style.top = `${top}px`;
+    tooltip.style.left = `${left}px`;
+
+    // Arahkan panah ke tengah chip
+    if (tooltipArrow) {
+      const arrowLeft = rect.left + rect.width / 2 - left;
+      const boundedArrowLeft = Math.max(16, Math.min(arrowLeft, tooltipWidth - 16));
+      tooltipArrow.style.left = `${boundedArrowLeft}px`;
+    }
+  }
+
+  function showTooltip(chip) {
+    const name = chip.getAttribute('data-menu-name') || '';
+    const desc = chip.getAttribute('data-menu-desc') || '';
+    const calories = chip.getAttribute('data-menu-calories') || '';
+
+    if (!desc && !name) return;
+
+    tooltipName.textContent = name;
+    if (calories) {
+      tooltipBadge.textContent = `${calories} kkal`;
+      tooltipBadge.style.display = 'inline-block';
+    } else {
+      tooltipBadge.style.display = 'none';
+    }
+    tooltipDesc.textContent = desc;
+    tooltip.setAttribute('aria-hidden', 'false');
+
+    updateTooltipPosition(chip);
+  }
+
+  function hideTooltip() {
+    tooltip.classList.remove('is-visible');
+    tooltip.setAttribute('aria-hidden', 'true');
+  }
+
   chips.forEach((chip) => {
+    chip.addEventListener('mouseenter', () => showTooltip(chip));
+    chip.addEventListener('mouseleave', hideTooltip);
+
     chip.addEventListener('click', () => {
-      
+      hideTooltip();
       chip.style.transform = 'scale(0.96)';
       setTimeout(() => {
         chip.style.transform = '';
       }, 150);
 
-      
       const alurSection = document.querySelector('#alur');
       if (alurSection) {
         alurSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
       }
     });
   });
+
+  window.addEventListener('scroll', hideTooltip, { passive: true });
 }
 
 function initLandingSmoothScroll() {

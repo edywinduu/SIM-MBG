@@ -1,11 +1,12 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AdminDashboardController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\AdminDashboardController;
+use App\Http\Controllers\LandingController;
 use App\Http\Controllers\SPPGDashboardController;
 use App\Http\Controllers\StudentDashboardController;
+use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
@@ -18,9 +19,8 @@ use App\Http\Controllers\StudentDashboardController;
 // ==========================================
 
 // Landing Page / Beranda
-Route::get('/', function () {
-    return view('index');
-})->name('home');
+Route::get('/', [LandingController::class, 'index'])->name('home');
+Route::get('/landing', [LandingController::class, 'index'])->name('landing');
 
 // Autentikasi (Login & Register)
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
@@ -28,10 +28,6 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
-
-// ==========================================
-// 2. RUTE TERAUTENTIKASI (Wajib Login)
-// ==========================================
 Route::middleware(['auth'])->group(function () {
 
     // Gerbang Tunggal Redirect (Semua role diarahkan ke dashboard masing-masing setelah login)
@@ -83,12 +79,9 @@ Route::middleware(['auth'])->group(function () {
 
 });
 
-
-// ==========================================
-// 3. ALIAS & KOMPATIBILITAS NAVIGASI LAMA
-// ==========================================
 Route::get('/siswa/{page?}', function ($page = 'dashboard') {
     $cleanPage = str_replace('.html', '', $page);
+
     return redirect("/student/{$cleanPage}");
 });
 
@@ -97,8 +90,16 @@ Route::get('/admin/{page}.html', function ($page) {
 });
 
 Route::get('/sppg/{page}.html', function ($page) {
+    if ($page === 'login') {
+        return redirect()->route('login');
+    }
     $cleanPage = ($page === 'pilihan') ? 'selections' : $page;
+
     return redirect("/sppg/{$cleanPage}");
+});
+
+Route::get('/sppg/{page}.blade.php', function ($page) {
+    return redirect("/sppg/{$page}");
 });
 
 Route::get('/student/{page}.html', function ($page) {

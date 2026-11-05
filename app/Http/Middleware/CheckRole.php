@@ -11,11 +11,11 @@ class CheckRole
     /**
      * Handle an incoming request.
      *
-     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
+     * @param  Closure(Request): (Response)  $next
      */
     public function handle(Request $request, Closure $next, string ...$roles): Response
     {
-        if (!auth()->check()) {
+        if (! auth()->check()) {
             return redirect()->route('login');
         }
 
@@ -23,13 +23,16 @@ class CheckRole
         if ($userRole === 'siswa') {
             $userRole = 'student';
         }
+        if ($userRole === 'guru' || $userRole === 'petugas' || $userRole === 'petugas_sppg') {
+            $userRole = 'sppg';
+        }
 
         foreach ($roles as $role) {
             $check = strtolower($role);
             if ($check === 'siswa') {
                 $check = 'student';
             }
-            if ($check === 'guru') {
+            if ($check === 'guru' || $check === 'petugas' || $check === 'petugas_sppg') {
                 $check = 'sppg';
             }
 

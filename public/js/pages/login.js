@@ -1,7 +1,6 @@
 /**
  * SIM-MBG — Login Module (login.js)
- * Menghubungkan antarmuka login dengan backend/api/login.php
- * Serta mendukung fallback simulasi offline/frontend testing.
+ * Terintegrasi penuh dengan backend Laravel menggunakan Fetch API.
  */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -22,11 +21,19 @@ function initLoginModule() {
   const alertIcon = document.querySelector('#alertIcon');
   const alertText = document.querySelector('#alertText');
 
-  const STORAGE_KEY_AUTH = 'sim_mbg_auth';
   const STORAGE_KEY_REMEMBER = 'sim_mbg_remembered_user';
 
-  // 1. Memuat username yang tersimpan jika fitur "Ingat Saya" aktif sebelumnya
+  // 1. Muat username yang tersimpan jika fitur "Ingat Saya" aktif sebelumnya
   loadRememberedUser();
+
+  // Bersihkan storage lokal seketika jika pengguna mencopot centang "Ingat Saya"
+  if (rememberMeCheckbox) {
+    rememberMeCheckbox.addEventListener('change', () => {
+      if (!rememberMeCheckbox.checked) {
+        localStorage.removeItem(STORAGE_KEY_REMEMBER);
+      }
+    });
+  }
 
   // 2. Inisialisasi event toggle visibilitas kata sandi
   initPasswordVisibility();
@@ -36,7 +43,7 @@ function initLoginModule() {
     forgotPasswordBtn.addEventListener('click', handleForgotPassword);
   }
 
-  // 4. Inisialisasi submit form login
+  // 4. Inisialisasi submit form login via Fetch API
   if (loginForm) {
     loginForm.addEventListener('submit', handleLoginSubmit);
   }
@@ -71,10 +78,18 @@ function initLoginModule() {
   }
 
   /**
-   * Memuat username dari localStorage jika pernah disimpan
+   * Memuat username dari server cookie / localStorage jika pernah disimpan
    */
   function loadRememberedUser() {
     try {
+      if (usernameInput && usernameInput.value.trim()) {
+        if (rememberMeCheckbox) {
+          rememberMeCheckbox.checked = true;
+        }
+        localStorage.setItem(STORAGE_KEY_REMEMBER, usernameInput.value.trim());
+        return;
+      }
+
       const savedUser = localStorage.getItem(STORAGE_KEY_REMEMBER);
       if (savedUser && usernameInput) {
         usernameInput.value = savedUser;
@@ -99,7 +114,7 @@ function initLoginModule() {
   }
 
   /**
-   * Menangani pengiriman form login ke backend/api/login.php
+   * Menangani pengiriman form login ke Laravel via Fetch API (AJAX)
    */
   async function handleLoginSubmit(e) {
     e.preventDefault();
@@ -107,8 +122,9 @@ function initLoginModule() {
 
     const username = usernameInput ? usernameInput.value.trim() : '';
     const password = passwordInput ? passwordInput.value : '';
+    const remember = rememberMeCheckbox ? rememberMeCheckbox.checked : false;
 
-    // Validasi form frontend
+    // Validasi awal frontend
     if (!username) {
       showAlert('error', 'Nama Pengguna, NIS, atau Email wajib diisi.');
       if (usernameInput) usernameInput.focus();
@@ -121,154 +137,63 @@ function initLoginModule() {
       return;
     }
 
-    // Set status tombol loading
+    // Aktifkan status loading pada tombol submit
     setLoadingState(true);
 
-    // Ambil endpoint dari atribut action form atau fallback relative path ke backend/api/login.php
-    let endpoint = loginForm.getAttribute('action') || '../../../backend/api/login.php';
-    // Pastikan request meminta format JSON
-    if (!endpoint.includes('format=json')) {
-      endpoint += (endpoint.includes('?') ? '&' : '?') + 'format=json';
-    }
+    // Ambil URL target langsung dari atribut action pada tag form
+    const endpoint = loginForm.getAttribute('action') || loginForm.action || '/login';
+    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
 
     try {
       const response = await fetch(endpoint, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Accept': 'application/json'
+          'Accept': 'application/json',
+          ...(csrfToken ? { 'X-CSRF-TOKEN': csrfToken } : {})
         },
         body: JSON.stringify({
           username: username,
-          password: password
+          password: password,
+          remember: remember,
+          rememberMe: remember
         })
       });
 
-      // Periksa tipe respons
-      const contentType = response.headers.get('content-type') || '';
-      let data = null;
+      const data = await response.json();
 
-      if (contentType.includes('application/json')) {
-        data = await response.json();
-      } else {
-        const textResponse = await response.text();
-        try {
-          data = JSON.parse(textResponse);
-        } catch (_) {
-          data = { message: textResponse };
+      if (response.ok && data.status === 'success') {
+        // Kelola penyimpanan teks username untuk fitur "Ingat Saya"
+        if (remember) {
+          localStorage.setItem(STORAGE_KEY_REMEMBER, username);
+        } else {
+          localStorage.removeItem(STORAGE_KEY_REMEMBER);
         }
-      }
 
-      if (response.ok && data && data.status === 'success') {
-        handleLoginSuccess(data, username);
+        showAlert('success', data.message || 'Login berhasil! Mengalihkan...');
+
+        // Redirect sesuai respons dari controller Laravel
+        const redirectUrl = data.redirect_url || data.redirect || '/dashboard';
+        setTimeout(() => {
+          window.location.href = redirectUrl;
+        }, 500);
       } else {
-        // Tampilkan pesan error dari backend
-        const errorMessage = (data && (data.message || data.error)) 
-          ? (data.message || data.error) 
-          : 'Username atau password salah.';
+        // Ekstraksi pesan error dari respons Laravel (validasi 422 atau kredensial salah 401/403)
+        let errorMessage = data.message || 'Username atau password salah.';
+        if (data.errors) {
+          const firstErrorKey = Object.keys(data.errors)[0];
+          if (firstErrorKey && data.errors[firstErrorKey].length > 0) {
+            errorMessage = data.errors[firstErrorKey][0];
+          }
+        }
         showAlert('error', errorMessage);
         setLoadingState(false);
       }
     } catch (networkError) {
-      console.warn('Gagal terhubung ke backend/api/login.php:', networkError);
-      // Fallback simulasi jika backend PHP belum berjalan (misal file:// atau dev offline)
-      handleFallbackOfflineLogin(username, password);
+      console.error('Fetch error:', networkError);
+      showAlert('error', 'Gagal terhubung ke server. Periksa koneksi Anda.');
+      setLoadingState(false);
     }
-  }
-
-  /**
-   * Menangani proses berhasil login dan redirect sesuai role backend
-   */
-  function handleLoginSuccess(responseData, enteredUsername) {
-    // Normalisasi role pengguna dari backend
-    const rawRole = (responseData.role || (responseData.data && responseData.data.role) || 'siswa').toLowerCase();
-    const role = rawRole === 'student' ? 'siswa' : rawRole;
-
-    const userData = responseData.data || {
-      username: enteredUsername,
-      role: role
-    };
-
-    // Simpan informasi sesi
-    const sessionPayload = {
-      id: userData.id || null,
-      student_id: userData.student_id || null,
-      school: userData.school || '',
-      nis: userData.nis || userData.nisn || '',
-      class: userData.class || '',
-      email: userData.email || '',
-      username: userData.username || enteredUsername,
-      full_name: userData.full_name || enteredUsername,
-      role: role,
-      isLoggedIn: true,
-      loginAt: new Date().toISOString()
-    };
-
-    try {
-      sessionStorage.setItem(STORAGE_KEY_AUTH, JSON.stringify(sessionPayload));
-
-      // Kelola preferensi "Ingat Saya"
-      if (rememberMeCheckbox && rememberMeCheckbox.checked) {
-        localStorage.setItem(STORAGE_KEY_REMEMBER, enteredUsername);
-      } else {
-        localStorage.removeItem(STORAGE_KEY_REMEMBER);
-      }
-    } catch (err) {
-      console.warn('Gagal menyimpan sesi login:', err);
-    }
-
-    const displayName = userData.full_name || userData.username || enteredUsername;
-    showAlert('success', `Login berhasil! Selamat datang, ${displayName}. Mengalihkan ke dashboard...`);
-
-    // Tentukan URL tujuan berdasarkan role
-    const redirectUrl = getDestinationByRole(role);
-
-    setTimeout(() => {
-      window.location.href = redirectUrl;
-    }, 450);
-  }
-
-  /**
-   * Menentukan URL dashboard berdasarkan role
-   */
-  function getDestinationByRole(role) {
-    switch (role) {
-      case 'admin':
-        return '../admin/dashboard.html';
-      case 'sppg':
-        return '../sppg/dashboard.html';
-      case 'siswa':
-      default:
-        return '../siswa/dashboard.html';
-    }
-  }
-
-  /**
-   * Fallback simulasi jika backend belum terhubung/offline
-   */
-  function handleFallbackOfflineLogin(username, password) {
-    const lowerUser = username.toLowerCase();
-    let detectedRole = 'siswa';
-
-    if (lowerUser.includes('admin')) {
-      detectedRole = 'admin';
-    } else if (lowerUser.includes('sppg')) {
-      detectedRole = 'sppg';
-    }
-
-    const mockData = {
-      status: 'success',
-      message: 'Login berhasil (Mode Simulasi Frontend).',
-      role: detectedRole,
-      data: {
-        id: 99,
-        username: username,
-        full_name: username,
-        role: detectedRole
-      }
-    };
-
-    handleLoginSuccess(mockData, username);
   }
 
   /**

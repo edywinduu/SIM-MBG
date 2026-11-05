@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class DashboardController extends Controller
@@ -12,12 +11,16 @@ class DashboardController extends Controller
      */
     public function index()
     {
-        if (!Auth::check()) {
+        if (! Auth::check()) {
             return redirect()->route('login');
         }
 
         $rawRole = strtolower(Auth::user()->role ?? 'student');
-        $role = ($rawRole === 'siswa') ? 'student' : $rawRole;
+        $role = match ($rawRole) {
+            'siswa' => 'student',
+            'guru', 'petugas', 'petugas_sppg' => 'sppg',
+            default => $rawRole,
+        };
 
         return match ($role) {
             'admin' => redirect()->route('admin.dashboard'),

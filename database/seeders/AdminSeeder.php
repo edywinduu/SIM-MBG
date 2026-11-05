@@ -37,7 +37,7 @@ class AdminSeeder extends Seeder
                 [
                     'email' => 'admin@mbg.go.id',
                     'password_hash' => Hash::make('password'),
-                    'full_name' => 'Atmind Administrator',
+                    'full_name' => 'Admin',
                     'role' => 'admin',
                     'institution' => 'Dinas Pendidikan & Gizi Provinsi',
                     'status' => 'active',
