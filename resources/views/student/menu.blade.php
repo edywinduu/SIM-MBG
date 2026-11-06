@@ -54,7 +54,7 @@
                     </div>
                 </a>
 
-                <a href="{{ route('home') }}" class="btn btn-secondary btn-sm" title="Beranda">
+                <a href="{{ route('landing') }}" class="btn btn-secondary btn-sm" title="Beranda">
                     <span class="material-symbols-outlined" style="font-size: 18px;">home</span>
                 </a>
                 <form action="{{ route('logout') }}" method="POST" style="display: contents;">

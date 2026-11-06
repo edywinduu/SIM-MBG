@@ -56,7 +56,7 @@
                     </div>
                 </a>
 
-                <a href="{{ route('home') }}" class="btn btn-secondary btn-sm" title="Beranda">
+                <a href="{{ route('landing') }}" class="btn btn-secondary btn-sm" title="Beranda">
                     <span class="material-symbols-outlined" style="font-size: 18px;">home</span>
                 </a>
                 <form action="{{ route('logout') }}" method="POST" style="display: contents;">
@@ -81,15 +81,15 @@
         <div class="container">
             
             <section class="student-header-banner">
-                <h1 class="student-welcome-h1">Selamat Pagi, <span class="student-display-name">Alya MBG</span>! ??</h1>
+                <h1 class="student-welcome-h1">Selamat Pagi, <span class="student-display-name">{{ auth()->user()->full_name }}</span></h1>
                 <div class="student-meta-subtitle">
                     <div class="student-meta-item">
                         <span class="material-symbols-outlined" style="color: var(--color-primary); font-size: 18px;">calendar_today</span>
-                        <span>Rabu, 8 Oktober 2026</span>
+                        <span>{{ now()-> translatedFormat('l, d F Y')}}</span>
                     </div>
                     <div class="student-meta-item">
                         <span class="material-symbols-outlined" style="color: var(--color-primary); font-size: 18px;">school</span>
-                        <span class="student-display-school">SMA Negeri 1 Denpasar</span>
+                        <span class="student-display-school">{{ auth()->user()->institusion}}</span>
                     </div>
                     <span class="student-meta-badge">Kelas XI IPA 1</span>
                 </div>

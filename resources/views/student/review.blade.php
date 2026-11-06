@@ -49,12 +49,12 @@
                 <a href="review.html" class="student-user-chip" title="Lihat Profil Saya">
                     <div class="student-user-avatar">A</div>
                     <div class="student-user-meta">
-                        <span class="student-user-name student-display-name">Alya MBG</span>
-                        <span class="student-user-role">Siswa</span>
+                        <span class="student-user-name student-display-name">{{ auth()->user()->full_name}}</span>
+                        <span class="student-user-role">{{ auth()->user()->role}}</span>
                     </div>
                 </a>
 
-                <a href="{{ route('home') }}" class="btn btn-secondary btn-sm" title="Beranda">
+                <a href="{{ route('landing') }}" class="btn btn-secondary btn-sm" title="Beranda">
                     <span class="material-symbols-outlined" style="font-size: 18px;">home</span>
                 </a>
                 <form action="{{ route('logout') }}" method="POST" style="display: contents;">

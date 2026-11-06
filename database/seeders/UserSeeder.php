@@ -17,18 +17,7 @@ class UserSeeder extends Seeder
 
         $studentUsers = [
             [
-                'username' => 'alya',
-                'email' => 'alya@sekolah.id',
-                'password_hash' => $defaultPasswordHash,
-                'full_name' => 'Alya MBG',
-                'role' => 'student',
-                'institution' => 'SMA Negeri 1 Denpasar',
-                'status' => 'active',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'username' => 'edy',
+                'username' => 'siswa',
                 'email' => 'edy@sekolah.id',
                 'password_hash' => Hash::make('123'),
                 'full_name' => 'edy keren',

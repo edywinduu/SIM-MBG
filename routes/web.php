@@ -19,8 +19,7 @@ use Illuminate\Support\Facades\Route;
 // ==========================================
 
 // Landing Page / Beranda
-Route::get('/', [LandingController::class, 'index'])->name('home');
-Route::get('/landing', [LandingController::class, 'index'])->name('landing');
+ Route::get('/', [LandingController::class, 'index'])->name('landing');
 
 // Autentikasi (Login & Register)
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
@@ -77,25 +76,6 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/review', [StudentDashboardController::class, 'review'])->name('review');
     });
 
-});
-
-Route::get('/siswa/{page?}', function ($page = 'dashboard') {
-    $cleanPage = str_replace('.html', '', $page);
-
-    return redirect("/student/{$cleanPage}");
-});
-
-Route::get('/admin/{page}.html', function ($page) {
-    return redirect("/admin/{$page}");
-});
-
-Route::get('/sppg/{page}.html', function ($page) {
-    if ($page === 'login') {
-        return redirect()->route('login');
-    }
-    $cleanPage = ($page === 'pilihan') ? 'selections' : $page;
-
-    return redirect("/sppg/{$cleanPage}");
 });
 
 Route::get('/sppg/{page}.blade.php', function ($page) {
