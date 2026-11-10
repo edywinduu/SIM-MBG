@@ -6,6 +6,7 @@
 .idea
 .cursor
 .zed
+vendor
 node_modules
 public/build
 public/hot

@@ -7,56 +7,12 @@ services:
     restart: unless-stopped
     ports:
       - "8000:80"
+    env_file:
+      - .env
     environment:
-      APP_NAME: ${APP_NAME:-Laravel}
-      APP_ENV: ${APP_ENV:-local}
-      APP_DEBUG: ${APP_DEBUG:-true}
-      APP_URL: ${APP_URL:-http://localhost:8000}
-      APP_TIMEZONE: Asia/Makassar
-      APP_LOCALE: id
-      DB_CONNECTION: mysql
-      DB_HOST: db
-      DB_PORT: 3306
-      DB_DATABASE: ${DB_DATABASE:-sim_mbg}
-      DB_USERNAME: ${DB_USERNAME:-sim_mbg_user}
-      DB_PASSWORD: ${DB_PASSWORD:-secret}
-      SESSION_DRIVER: ${SESSION_DRIVER:-database}
-      CACHE_STORE: ${CACHE_STORE:-database}
-      QUEUE_CONNECTION: ${QUEUE_CONNECTION:-database}
+      DB_HOST: ${DOCKER_DB_HOST:-host.docker.internal}
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     volumes:
       - ./:/var/www/html
-    depends_on:
-      db:
-        condition: service_healthy
-    networks:
-      - sim-mbg-network
 
-  db:
-    image: mysql:8.4
-    container_name: sim-mbg-db
-    restart: unless-stopped
-    ports:
-      - "3306:3306"
-    environment:
-      MYSQL_DATABASE: ${DB_DATABASE:-sim_mbg}
-      MYSQL_USER: ${DB_USERNAME:-sim_mbg_user}
-      MYSQL_PASSWORD: ${DB_PASSWORD:-secret}
-      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-rootsecret}
-      TZ: Asia/Makassar
-    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
-    volumes:
-      - db_data:/var/lib/mysql
-    healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
-      interval: 5s
-      timeout: 5s
-      retries: 10
-    networks:
-      - sim-mbg-network
-
-volumes:
-  db_data:
-
-networks:
-  sim-mbg-network:
-    driver: bridge

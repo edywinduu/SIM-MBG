@@ -48,14 +48,16 @@ COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
 WORKDIR /var/www/html
 
+# Copy file composer terlebih dahulu agar layer cache optimal
+COPY composer.json composer.lock ./
+RUN composer install --no-interaction --prefer-dist --optimize-autoloader --no-scripts
+
 # Copy seluruh source code aplikasi
 COPY . .
 
-# Install dependensi Composer
-RUN composer install --no-interaction --prefer-dist --optimize-autoloader
-
-# Atur permission direktori storage & cache Laravel
-RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache \
+# Jalankan script post-autoload-dump & atur permission storage/cache Laravel
+RUN composer dump-autoload --optimize \
+    && chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache \
     && chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
 
 EXPOSE 80
