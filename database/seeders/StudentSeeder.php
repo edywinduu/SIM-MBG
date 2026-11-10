@@ -17,11 +17,11 @@ class StudentSeeder extends Seeder
 
         $students = [
             [
-                'username' => 'alya',
+                'username' => 'siswa',
                 'nisn' => '0081234567',
                 'name' => 'Alya MBG',
                 'school_npsn' => '50103120',
-                'class_name' => 'XI IPA 1',
+                'class_name' => 'AKU IPA',
                 'recipient_status' => 'active',
             ],
             [

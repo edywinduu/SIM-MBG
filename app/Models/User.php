@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -57,7 +58,9 @@ class User extends Authenticatable
      */
     public function isSppg(): bool
     {
-        return strtolower($this->role ?? '') === 'sppg';
+        $role = strtolower($this->role ?? '');
+
+        return in_array($role, ['sppg', 'guru', 'petugas', 'petugas_sppg'], true);
     }
 
     /**
@@ -68,5 +71,13 @@ class User extends Authenticatable
         $role = strtolower($this->role ?? '');
 
         return in_array($role, ['student', 'siswa'], true);
+    }
+
+    /**
+     * Get the student profile associated with the user.
+     */
+    public function student(): HasOne
+    {
+        return $this->hasOne(Student::class, 'user_id');
     }
 }

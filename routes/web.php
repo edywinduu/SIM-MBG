@@ -19,7 +19,7 @@ use Illuminate\Support\Facades\Route;
 // ==========================================
 
 // Landing Page / Beranda
- Route::get('/', [LandingController::class, 'index'])->name('landing');
+Route::get('/', [LandingController::class, 'index'])->name('landing');
 
 // Autentikasi (Login & Register)
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
@@ -75,21 +75,4 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/profile', [StudentDashboardController::class, 'profile'])->name('profile');
         Route::get('/review', [StudentDashboardController::class, 'review'])->name('review');
     });
-
-});
-
-Route::get('/sppg/{page}.blade.php', function ($page) {
-    return redirect("/sppg/{$page}");
-});
-
-Route::get('/student/{page}.html', function ($page) {
-    return redirect("/student/{$page}");
-});
-
-Route::get('/pages/auth/login.html', function () {
-    return redirect()->route('login');
-});
-
-Route::get('/pages/auth/register.html', function () {
-    return redirect()->route('register');
 });

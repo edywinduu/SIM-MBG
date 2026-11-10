@@ -31,25 +31,30 @@
     
     <header class="main-header">
         <div class="container nav-container">
-            <a href="dashboard.html" class="student-navbar-brand" aria-label="SIM-MBG Dashboard">
+            <a href="{{ route('student.dashboard') }}" class="student-navbar-brand" aria-label="SIM-MBG Dashboard">
                 <img src="{{ asset('assets/icons/logo.svg') }}" alt="Logo SIM-MBG" width="52" height="48">
                 <span class="student-brand-title">SIM-MBG</span>
             </a>
 
             <nav class="nav-links" id="mainNav">
                 <ul class="student-nav-menu">
-                    <li><a href="dashboard.html" class="student-nav-btn">Dashboard</a></li>
-                    <li><a href="menu.html" class="student-nav-btn">Pilih Menu</a></li>
-                    <li><a href="history.html" class="student-nav-btn">Riwayat & Ulasan</a></li>
-                    <li><a href="review.html" class="student-nav-btn active">Profil Saya</a></li>
+                    <li><a href="{{ route('student.dashboard') }}" class="student-nav-btn {{ request()->routeIs('student.dashboard') ? 'active' : '' }}">Dashboard</a></li>
+                    <li><a href="{{ route('student.menu') }}" class="student-nav-btn {{ request()->routeIs('student.menu') ? 'active' : '' }}">Pilih Menu</a></li>
+                    <li><a href="{{ route('student.history') }}" class="student-nav-btn {{ request()->routeIs('student.history') ? 'active' : '' }}">Riwayat & Ulasan</a></li>
+                    <li><a href="{{ route('student.profile') }}" class="student-nav-btn {{ request()->routeIs('student.profile') ? 'active' : '' }}">Profil Saya</a></li>
                 </ul>
             </nav>
 
             <div class="nav-actions">
-                <a href="review.html" class="student-user-chip" title="Lihat Profil Saya">
-                    <div class="student-user-avatar">A</div>
+                @php
+                    $authUser = Auth::user();
+                    $displayName = $authUser?->full_name ?: ($authUser?->username ?? 'Siswa');
+                    $initial = strtoupper(substr($displayName, 0, 1));
+                @endphp
+                <a href="{{ route('student.profile') }}" class="student-user-chip" title="Lihat Profil Saya">
+                    <div class="student-user-avatar">{{ $initial }}</div>
                     <div class="student-user-meta">
-                        <span class="student-user-name student-display-name">Alya MBG</span>
+                        <span class="student-user-name student-display-name">{{ $displayName }}</span>
                         <span class="student-user-role">Siswa</span>
                     </div>
                 </a>

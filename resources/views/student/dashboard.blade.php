@@ -31,7 +31,7 @@
     
     <header class="main-header">
         <div class="container nav-container">
-            <a href="dashboard.html" class="student-navbar-brand" aria-label="SIM-MBG Dashboard">
+            <a href="{{ route('student.dashboard') }}" class="student-navbar-brand" aria-label="SIM-MBG Dashboard">
                 <img src="{{ asset('assets/icons/logo.svg') }}" alt="Logo SIM-MBG" width="52" height="48">
                 <span class="student-brand-title">SIM-MBG</span>
             </a>
@@ -39,19 +39,24 @@
             
             <nav class="nav-links" id="mainNav">
                 <ul class="student-nav-menu">
-                    <li><a href="dashboard.html" class="student-nav-btn active">Dashboard</a></li>
-                    <li><a href="menu.html" class="student-nav-btn">Pilih Menu</a></li>
-                    <li><a href="history.html" class="student-nav-btn">Riwayat & Ulasan</a></li>
-                    <li><a href="review.html" class="student-nav-btn">Profil Saya</a></li>
+                    <li><a href="{{ route('student.dashboard') }}" class="student-nav-btn {{ request()->routeIs('student.dashboard') ? 'active' : '' }}">Dashboard</a></li>
+                    <li><a href="{{ route('student.menu') }}" class="student-nav-btn {{ request()->routeIs('student.menu') ? 'active' : '' }}">Pilih Menu</a></li>
+                    <li><a href="{{ route('student.history') }}" class="student-nav-btn {{ request()->routeIs('student.history') ? 'active' : '' }}">Riwayat & Ulasan</a></li>
+                    <li><a href="{{ route('student.profile') }}" class="student-nav-btn {{ request()->routeIs('student.profile') ? 'active' : '' }}">Profil Saya</a></li>
                 </ul>
             </nav>
 
             
             <div class="nav-actions">
-                <a href="review.html" class="student-user-chip" title="Lihat Profil Saya">
-                    <div class="student-user-avatar">A</div>
+                @php
+                    $authUser = Auth::user();
+                    $displayName = $authUser?->full_name ?: ($authUser?->username ?? 'Siswa');
+                    $initial = strtoupper(substr($displayName, 0, 1));
+                @endphp
+                <a href="{{ route('student.profile') }}" class="student-user-chip" title="Lihat Profil Saya">
+                    <div class="student-user-avatar">{{ $initial }}</div>
                     <div class="student-user-meta">
-                        <span class="student-user-name student-display-name">Alya MBG</span>
+                        <span class="student-user-name student-display-name">{{ $displayName }}</span>
                         <span class="student-user-role">Siswa</span>
                     </div>
                 </a>
@@ -89,13 +94,11 @@
                     </div>
                     <div class="student-meta-item">
                         <span class="material-symbols-outlined" style="color: var(--color-primary); font-size: 18px;">school</span>
-                        <span class="student-display-school">{{ auth()->user()->institusion}}</span>
+                        <span class="student-display-school">{{ auth()->user()->institution }}</span>
                     </div>
-                    <span class="student-meta-badge">Kelas XI IPA 1</span>
+                    <span class="student-meta-badge">{{ auth()->user()->student?->class_name ?? 'Error' }}</span>
                 </div>
             </section>
-
-            
             <div class="dashboard-grid">
                 
                 <div class="dashboard-left-col">
@@ -104,7 +107,7 @@
                         <div class="card-top-title">
                             <h2 class="section-title-sm">
                                 <span class="material-symbols-outlined" style="color: var(--color-primary);">lunch_dining</span>
-                                <span>Distribusi Makan Siang Hari Ini</span>
+                                <span>Distribusi Makan Siang</span>
                             </h2>
                             <span class="badge badge-primary">Sesuai Jadwal</span>
                         </div>
@@ -115,7 +118,7 @@
                                     <span class="material-symbols-outlined">schedule</span>
                                 </div>
                                 <div>
-                                    <div class="time-val">11:30 � 13:00 WITA</div>
+                                    <div class="time-val">{{ $distributionTime ?? '11:30 - 12:30 WITA' }}</div>
                                     <div class="time-loc">Lokasi: Kantin Sekolah / Ruang Makan Kelas</div>
                                 </div>
                             </div>
@@ -129,20 +132,12 @@
 
                     
                     <article class="notice-card">
-                        <div class="sppg-notice-banner">
-                            <span class="material-symbols-outlined">campaign</span>
-                            <div class="sppg-notice-text">
-                                <h4>Pemberitahuan Dapur SPPG</h4>
-                                <p>Seluruh menu hari ini disiapkan menggunakan bahan organik lokal bebas alergen kacang yang telah lolos verifikasi standar gizi.</p>
-                            </div>
-                        </div>
-
                         <div class="tomorrow-action-box">
                             <div class="tomorrow-meta">
-                                <h4>Pemilihan Menu Kamis, 9 Oktober 2026</h4>
-                                <p>Batas waktu pemilihan ditutup malam ini pukul 20:00 WITA</p>
+                                <h4>Pemilihan menu {{ now()->addDay()->translatedFormat('l, d F Y') }}</h4>
+                                <p>Batas waktu pemilihan ditutup malam ini pukul {{ $cutoffTime ?? '20:00 WITA' }}</p>
                             </div>
-                            <a href="menu.html" class="btn btn-primary btn-sm">
+                            <a href="{{ route('student.menu') }}" class="btn btn-primary btn-sm">
                                 <span>Pilih Menu</span>
                                 <span class="material-symbols-outlined" style="font-size: 16px;">arrow_forward</span>
                             </a>
@@ -150,7 +145,6 @@
                     </article>
                 </div>
 
-                
                 <div class="dashboard-right-col">
                     <article class="menu-today-card">
                         <div class="menu-today-img-wrap">
