@@ -1,19 +1,5 @@
 # ==========================================
-# Stage 1: Build Frontend Assets (Node 24)
-# ==========================================
-FROM node:24-alpine AS frontend
-WORKDIR /app
-
-COPY package.json package-lock.json* ./
-RUN npm install --ignore-scripts
-
-COPY resources/ ./resources/
-COPY public/ ./public/
-COPY vite.config.js ./
-RUN npm run build
-
-# ==========================================
-# Stage 2: PHP 8.5 + Apache 2.4 Runtime
+# PHP 8.5 + Apache 2.4 Runtime
 # ==========================================
 FROM php:8.5-apache
 
@@ -64,9 +50,6 @@ WORKDIR /var/www/html
 
 # Copy seluruh source code aplikasi
 COPY . .
-
-# Copy hasil build Vite dari Stage 1
-COPY --from=frontend /app/public/build ./public/build
 
 # Install dependensi Composer
 RUN composer install --no-interaction --prefer-dist --optimize-autoloader
