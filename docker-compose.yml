@@ -10,9 +10,39 @@ services:
     env_file:
       - .env
     environment:
-      DB_HOST: ${DOCKER_DB_HOST:-host.docker.internal}
+      DB_CONNECTION: mysql
+      DB_HOST: ${DOCKER_DB_HOST:-db}
+      DB_PORT: 3306
+      DB_DATABASE: ${DB_DATABASE:-sim_mbg}
+      DB_USERNAME: ${DB_USERNAME:-root}
+      DB_PASSWORD: ${DB_PASSWORD:-}
     extra_hosts:
       - "host.docker.internal:host-gateway"
     volumes:
       - ./:/var/www/html
       - /var/www/html/vendor
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    image: mysql:8.0
+    container_name: sim-mbg-db
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: ${DB_DATABASE:-sim_mbg}
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD:-}
+      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+      TZ: Asia/Makassar
+    ports:
+      - "${FORWARD_DB_PORT:-3307}:3306"
+    volumes:
+      - db-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  db-data:
