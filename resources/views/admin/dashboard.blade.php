@@ -1,4 +1,6 @@
-<!DOCTYPE html>
+composer install
+copy .env.example .env
+php artisan key:generate<!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">

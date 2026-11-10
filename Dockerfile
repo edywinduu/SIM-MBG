@@ -7,7 +7,8 @@ FROM php:8.5-apache
 ENV TZ=Asia/Makassar
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
-# Install dependensi sistem & ekstensi PHP sesuai spesifikasi lokal
+# Install dependensi sistem & ekstensi PHP
+# (opcache, mbstring, xml sudah bawaan PHP 8.5)
 RUN apt-get update && apt-get install -y --no-install-recommends \
     git \
     unzip \
@@ -18,12 +19,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && docker-php-ext-install \
         pdo_mysql \
         mysqli \
-        mbstring \
-        xml \
         zip \
         exif \
         pcntl \
-        opcache \
     && a2enmod rewrite \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
@@ -43,7 +41,7 @@ ENV APACHE_DOCUMENT_ROOT=/var/www/html/public
 RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf \
     && sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf
 
-# Copy Composer 2.10
+# Copy Composer 2
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
 WORKDIR /var/www/html
