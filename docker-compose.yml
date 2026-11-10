@@ -31,6 +31,29 @@ services:
     networks:
       - sim-mbg-network
 
+  db:
+    image: mysql:8.4
+    container_name: sim-mbg-db
+    restart: unless-stopped
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_DATABASE: ${DB_DATABASE:-sim_mbg}
+      MYSQL_USER: ${DB_USERNAME:-sim_mbg_user}
+      MYSQL_PASSWORD: ${DB_PASSWORD:-secret}
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-rootsecret}
+      TZ: Asia/Makassar
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    volumes:
+      - db_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    networks:
+      - sim-mbg-network
+
 volumes:
   db_data:
 
