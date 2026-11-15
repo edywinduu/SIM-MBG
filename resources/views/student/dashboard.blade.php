@@ -210,34 +210,116 @@
             </div>
 
             
+            {{-- Section Statistik Analitik Siswa --}}
             <section class="dashboard-kpi-row">
-                <div class="kpi-stat-card">
-                    <div class="kpi-icon-wrap">
-                        <span class="material-symbols-outlined">event_available</span>
+                {{-- Kartu 1: Tingkat Kehadiran MBG --}}
+                <div class="kpi-stat-card enhanced-kpi-card">
+                    <div class="kpi-card-top">
+                        <div class="kpi-icon-wrap attendance">
+                            <span class="material-symbols-outlined">event_available</span>
+                        </div>
+                        <span class="kpi-top-badge badge-success">
+                            <span class="kpi-badge-dot"></span>
+                            <span>{{ $attendanceRate >= 100 ? 'Sempurna' : 'Baik' }}</span>
+                        </span>
                     </div>
-                    <div class="kpi-stat-info">
-                        <h3>100%</h3>
-                        <p>Tingkat Kehadiran MBG</p>
+
+                    <div class="kpi-main-metric">
+                        <div class="kpi-stat-info">
+                            <h3>{{ $attendanceRate }}%</h3>
+                            <p>Tingkat Kehadiran MBG</p>
+                        </div>
+                    </div>
+
+                    <div class="kpi-progress-wrap">
+                        <div class="kpi-progress-bar">
+                            <div class="kpi-progress-fill attendance-fill" style="width: {{ $attendanceRate }}%;"></div>
+                        </div>
+                    </div>
+
+                    <div class="kpi-meta-details">
+                        <div class="kpi-detail-item">
+                            <span class="detail-label">Total Diambil:</span>
+                            <span class="detail-value">{{ $totalPickups }} Hari</span>
+                        </div>
+                        <div class="kpi-detail-item">
+                            <span class="detail-label">Terlewat:</span>
+                            <span class="detail-value">{{ $missedPickups }} Hari</span>
+                        </div>
                     </div>
                 </div>
 
-                <div class="kpi-stat-card">
-                    <div class="kpi-icon-wrap">
-                        <span class="material-symbols-outlined">rate_review</span>
+                {{-- Kartu 2: Ulasan Menu Diserahkan --}}
+                <div class="kpi-stat-card enhanced-kpi-card">
+                    <div class="kpi-card-top">
+                        <div class="kpi-icon-wrap review">
+                            <span class="material-symbols-outlined">rate_review</span>
+                        </div>
+                        <span class="kpi-top-badge badge-info">
+                            <span class="kpi-badge-dot info"></span>
+                            <span>Aktif</span>
+                        </span>
                     </div>
-                    <div class="kpi-stat-info">
-                        <h3>13 Kali</h3>
-                        <p>Ulasan Menu Diserahkan</p>
+
+                    <div class="kpi-main-metric">
+                        <div class="kpi-stat-info">
+                            <h3>{{ $reviewCount }} Kali</h3>
+                            <p>Ulasan Menu Diserahkan</p>
+                        </div>
+                    </div>
+
+                    <div class="kpi-progress-wrap">
+                        <div class="kpi-progress-bar">
+                            <div class="kpi-progress-fill review-fill" style="width: {{ $reviewPercentage }}%;"></div>
+                        </div>
+                    </div>
+
+                    <div class="kpi-meta-details">
+                        <div class="kpi-detail-item">
+                            <span class="detail-label">Sudah Diulas:</span>
+                            <span class="detail-value">{{ $reviewCount }} Menu</span>
+                        </div>
+                        <div class="kpi-detail-item">
+                            <span class="detail-label">Belum Diulas:</span>
+                            <span class="detail-value">{{ $pendingReviewCount }} Menu</span>
+                        </div>
                     </div>
                 </div>
 
-                <div class="kpi-stat-card">
-                    <div class="kpi-icon-wrap">
-                        <span class="material-symbols-outlined">star</span>
+                {{-- Kartu 3: Rata-rata Kepuasan Rasa --}}
+                <div class="kpi-stat-card enhanced-kpi-card">
+                    <div class="kpi-card-top">
+                        <div class="kpi-icon-wrap rating">
+                            <span class="material-symbols-outlined">star</span>
+                        </div>
+                        <span class="kpi-top-badge badge-warning">
+                            <span class="material-symbols-outlined" style="font-size: 14px; color: #F59E0B;">hotel_class</span>
+                            <span>Bintang {{ $avgRating }}</span>
+                        </span>
                     </div>
-                    <div class="kpi-stat-info">
-                        <h3>4.8 / 5.0</h3>
-                        <p>Rata-rata Kepuasan Rasa</p>
+
+                    <div class="kpi-main-metric">
+                        <div class="kpi-stat-info">
+                            <h3>{{ $avgRating }} <span class="kpi-sub-scale">/ 5.0</span></h3>
+                            <p>Rata-rata Kepuasan Rasa</p>
+                        </div>
+                    </div>
+
+                    <div class="kpi-progress-wrap">
+                        <div class="kpi-progress-bar">
+                            <div class="kpi-progress-fill rating-fill" style="width: {{ $ratingPercentage }}%;"></div>
+                        </div>
+                    </div>
+
+                    <div class="kpi-meta-details">
+                        <div class="kpi-detail-item">
+                            <span class="detail-label">Penilaian Rasa:</span>
+                            <span class="detail-value">Sangat Enak</span>
+                        </div>
+                        <div class="kpi-detail-item">
+                            <span class="detail-label">Kesesuaian Porsi:</span>
+                            <span class="detail-value">Pas & Cukup</span>
+                        </div>
                     </div>
                 </div>
             </section>

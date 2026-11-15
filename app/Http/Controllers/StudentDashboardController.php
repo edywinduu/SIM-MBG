@@ -87,12 +87,69 @@ class StudentDashboardController extends Controller
             }
         }
 
+        // 6. Data statistik siswa untuk kartu analitik (Opsi A)
+        $totalPickups = 18;
+        $missedPickups = 0;
+        $attendanceRate = 100;
+        $reviewCount = 13;
+        $pendingReviewCount = 5;
+        $reviewPercentage = 72;
+        $avgRating = '4.8';
+        $ratingPercentage = 96;
+
+        if ($student) {
+            $totalPickupsCount = DB::table('pickups')
+                ->where('student_id', $student->id)
+                ->where('status', 'picked_up')
+                ->count();
+
+            $pendingPickupsCount = DB::table('pickups')
+                ->where('student_id', $student->id)
+                ->where('status', 'pending')
+                ->where('date', '<', today())
+                ->count();
+
+            if ($totalPickupsCount > 0 || $pendingPickupsCount > 0) {
+                $totalSchedules = $totalPickupsCount + $pendingPickupsCount;
+                $totalPickups = $totalPickupsCount;
+                $missedPickups = $pendingPickupsCount;
+                $attendanceRate = $totalSchedules > 0 ? (int) round(($totalPickups / $totalSchedules) * 100) : 100;
+            }
+
+            $userReviewsCount = DB::table('student_reviews')
+                ->where('student_id', $student->id)
+                ->count();
+
+            if ($userReviewsCount > 0) {
+                $reviewCount = $userReviewsCount;
+                $pendingReviewCount = max(0, $totalPickups - $reviewCount);
+                $reviewPercentage = $totalPickups > 0 ? min(100, (int) round(($reviewCount / $totalPickups) * 100)) : 100;
+
+                $userAvg = DB::table('student_reviews')
+                    ->where('student_id', $student->id)
+                    ->avg('rating');
+
+                if ($userAvg) {
+                    $avgRating = number_format($userAvg, 1);
+                    $ratingPercentage = min(100, (int) round(($userAvg / 5) * 100));
+                }
+            }
+        }
+
         return view('student.dashboard', compact(
             'distribution',
             'distributionTime',
             'cutoffTime',
             'student',
-            'selectedMenu'
+            'selectedMenu',
+            'totalPickups',
+            'missedPickups',
+            'attendanceRate',
+            'reviewCount',
+            'pendingReviewCount',
+            'reviewPercentage',
+            'avgRating',
+            'ratingPercentage'
         ));
     }
 
