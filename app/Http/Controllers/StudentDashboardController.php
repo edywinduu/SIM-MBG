@@ -5,18 +5,16 @@ namespace App\Http\Controllers;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\View\View;
 
 class StudentDashboardController extends Controller
 {
-    public function index()
+    public function index(): View
     {
         $user = Auth::user();
-        $userId = Auth::id();
 
-        // 1. Cari data siswa berdasarkan user_id atau relasi sekolah dari institusi user
-        $student = DB::table('students')
-            ->where('user_id', $userId)
-            ->first();
+        // 1. Ambil data siswa melalui relasi Eloquent dan cari sekolah terkait
+        $student = $user?->student;
 
         $schoolId = $student?->school_id;
         if (! $schoolId && $user?->institution) {
@@ -72,25 +70,48 @@ class StudentDashboardController extends Controller
             $cutoffTime = Carbon::parse($tomorrowSchedule->cutoff_time)->format('H:i').' WITA';
         }
 
-        return view('student.dashboard', compact('distribution', 'distributionTime', 'cutoffTime', 'student'));
+        // 5. Ambil menu yang dipilih siswa untuk hari ini melalui relasi Eloquent
+        $selectedMenu = null;
+        if ($student) {
+            $selectedMenu = $student->selectedMenus()
+                ->join('menu_schedules', 'menu_selections.schedule_id', '=', 'menu_schedules.id')
+                ->whereDate('menu_schedules.date', today())
+                ->select('menus.*')
+                ->first();
+
+            // Fallback ke pilihan menu terakhir jika belum ada pilihan untuk hari ini
+            if (! $selectedMenu) {
+                $selectedMenu = $student->selectedMenus()
+                    ->latest('menu_selections.created_at')
+                    ->first();
+            }
+        }
+
+        return view('student.dashboard', compact(
+            'distribution',
+            'distributionTime',
+            'cutoffTime',
+            'student',
+            'selectedMenu'
+        ));
     }
 
-    public function menu()
+    public function menu(): View
     {
         return view('student.menu');
     }
 
-    public function history()
+    public function history(): View
     {
         return view('student.history');
     }
 
-    public function profile()
+    public function profile(): View
     {
         return view('student.profile');
     }
 
-    public function review()
+    public function review(): View
     {
         return view('student.review');
     }

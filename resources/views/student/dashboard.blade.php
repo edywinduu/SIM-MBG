@@ -96,7 +96,7 @@
                         <span class="material-symbols-outlined" style="color: var(--color-primary); font-size: 18px;">school</span>
                         <span class="student-display-school">{{ auth()->user()->institution }}</span>
                     </div>
-                    <span class="student-meta-badge">{{ auth()->user()->student?->class_name ?? 'Error' }}</span>
+                    <span class="student-meta-badge">{{ $student?->class_name ?? 'Error' }}</span>
                 </div>
             </section>
             <div class="dashboard-grid">
@@ -156,7 +156,7 @@
                         </div>
 
                         <div class="menu-today-body">
-                            <h3 class="menu-today-title" id="todayMenuTitle">Paket A: Ayam Panggang Madu & Capcay</h3>
+                            <h3 class="menu-today-title" id="todayMenuTitle">{{ $selectedMenu?->name ?? 'Belum Memilih Menu' }}</h3>
                             
                             <div class="menu-composition-chips">
                                 <span class="comp-chip">Nasi Pulen</span>
