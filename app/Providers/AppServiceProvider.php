@@ -21,6 +21,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        Carbon::setLocale('id');
+
         // Berlaku untuk SEMUA file blade (*), atau khusus 'student.*'
         View::composer('*', function ($view) {
             $now = Carbon::now('Asia/Makassar');

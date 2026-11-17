@@ -148,7 +148,7 @@
                 <div class="dashboard-right-col">
                     <article class="menu-today-card">
                         <div class="menu-today-img-wrap">
-                            <img src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=800&q=80" alt="Menu Hari Ini" loading="lazy">
+                            <img src="{{ $selectedMenu?->image ?: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=800&q=80' }}" alt="{{ $selectedMenu?->name ?? 'Menu Hari Ini' }}" loading="lazy">
                             <span class="menu-img-badge">
                                 <span class="material-symbols-outlined" style="font-size: 16px;">restaurant</span>
                                 <span>MENU HARI INI</span>
@@ -158,51 +158,54 @@
                         <div class="menu-today-body">
                             <h3 class="menu-today-title" id="todayMenuTitle">{{ $selectedMenu?->name ?? 'Belum Memilih Menu' }}</h3>
                             
-                            <div class="menu-composition-chips">
-                                <span class="comp-chip">Nasi Pulen</span>
-                                <span class="comp-chip">Ayam Panggang</span>
-                                <span class="comp-chip">Capcay Segar</span>
-                                <span class="comp-chip">Tempe Bacem</span>
-                                <span class="comp-chip">Semangka</span>
-                            </div>
+                            <div style="{{ $selectedMenu ? '' : 'display: none;' }}">
+                                <div class="menu-composition-chips">
+                                    @foreach ($selectedMenu?->items ?? [] as $component)
+                                        <span class="comp-chip">{{ $component }}</span>
+                                    @endforeach
+                                </div>
 
-                            
-                            <div class="macro-bar-container">
-                                <div class="macro-bar-labels">
-                                    <span>Protein 35%</span>
-                                    <span>Karbohidrat 45%</span>
-                                    <span>Lemak Sehat 20%</span>
-                                </div>
-                                <div class="macro-bar-track">
-                                    <div class="macro-seg-protein"></div>
-                                    <div class="macro-seg-carb"></div>
-                                    <div class="macro-seg-fat"></div>
-                                </div>
-                            </div>
+                                @php
+                                    $macros = $selectedMenu?->macro_percentages ?? ['protein' => 35, 'carbs' => 45, 'fat' => 20];
+                                @endphp
 
-                            
-                            <div class="nutrition-grid-4">
-                                <div class="nutri-cell">
-                                    <div class="nutri-val">620</div>
-                                    <div class="nutri-lbl">Kkal</div>
+                                <div class="macro-bar-container">
+                                    <div class="macro-bar-labels">
+                                        <span>Protein {{ $macros['protein'] }}%</span>
+                                        <span>Karbohidrat {{ $macros['carbs'] }}%</span>
+                                        <span>Lemak Sehat {{ $macros['fat'] }}%</span>
+                                    </div>
+                                    <div class="macro-bar-track">
+                                        <div class="macro-seg-protein" style="width: {{ $macros['protein'] }}%;"></div>
+                                        <div class="macro-seg-carb" style="width: {{ $macros['carbs'] }}%;"></div>
+                                        <div class="macro-seg-fat" style="width: {{ $macros['fat'] }}%;"></div>
+                                    </div>
                                 </div>
-                                <div class="nutri-cell">
-                                    <div class="nutri-val">32g</div>
-                                    <div class="nutri-lbl">Protein</div>
-                                </div>
-                                <div class="nutri-cell">
-                                    <div class="nutri-val">65g</div>
-                                    <div class="nutri-lbl">Karbo</div>
-                                </div>
-                                <div class="nutri-cell">
-                                    <div class="nutri-val">8g</div>
-                                    <div class="nutri-lbl">Serat</div>
-                                </div>
-                            </div>
 
-                            <div class="menu-eco-badge">
-                                <span class="material-symbols-outlined" style="font-size: 18px;">compost</span>
-                                <span>Kemasan Ramah Lingkungan & Higienis</span>
+                                
+                                <div class="nutrition-grid-4">
+                                    <div class="nutri-cell">
+                                        <div class="nutri-val">{{ $selectedMenu?->calories ?? 0 }}</div>
+                                        <div class="nutri-lbl">Kkal</div>
+                                    </div>
+                                    <div class="nutri-cell">
+                                        <div class="nutri-val">{{ $selectedMenu?->protein ?? 0 }}g</div>
+                                        <div class="nutri-lbl">Protein</div>
+                                    </div>
+                                    <div class="nutri-cell">
+                                        <div class="nutri-val">{{ $selectedMenu?->carbs ?? 0 }}g</div>
+                                        <div class="nutri-lbl">Karbo</div>
+                                    </div>
+                                    <div class="nutri-cell">
+                                        <div class="nutri-val">{{ (float) ($selectedMenu?->fiber ?? 0) }}g</div>
+                                        <div class="nutri-lbl">Serat</div>
+                                    </div>
+                                </div>
+
+                                <div class="menu-eco-badge">
+                                    <span class="material-symbols-outlined" style="font-size: 18px;">compost</span>
+                                    <span>Kemasan Ramah Lingkungan & Higienis</span>
+                                </div>
                             </div>
                         </div>
                     </article>

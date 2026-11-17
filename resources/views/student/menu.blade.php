@@ -95,7 +95,11 @@
                     <div class="allergy-pill-text">
                         <h4>Profil Alergi Saya</h4>
                         <div class="allergy-tags" id="userAllergyTags">
-                            
+                            @forelse ($allergies ?? [] as $allergy)
+                                <span class="allergy-tag" style="background-color: #FEE2E2; color: #991B1B; padding: 2px 8px; border-radius: 999px; font-size: 11px; font-weight: 600;">{{ $allergy }}</span>
+                            @empty
+                                <span class="allergy-tag" style="background-color: #DCFCE7; color: #166534; padding: 2px 8px; border-radius: 999px; font-size: 11px; font-weight: 600;">Aman (Tidak Ada Alergi)</span>
+                            @endforelse
                         </div>
                     </div>
                 </div>
@@ -109,7 +113,7 @@
                     </div>
                     <div>
                         <h3>Batas Waktu Pemilihan Menu (Cut-Off)</h3>
-                        <p>Batas akhir konfirmasi pilihan untuk Rabu, 8 Oktober 2026 adalah pukul <strong>20:00 WITA</strong></p>
+                        <p>Batas akhir konfirmasi pilihan untuk {{ $targetDateFormatted ?? now()->translatedFormat('l, d F Y') }} adalah pukul <strong>{{ $cutoffTime ?? '20:00 WITA' }}</strong></p>
                     </div>
                 </div>
 
@@ -129,46 +133,106 @@
             </div>
 
             
+            @php
+                $baseDate = isset($targetDate) ? $targetDate->copy() : ($schedule?->date ? \Carbon\Carbon::parse($schedule->date) : today());
+            @endphp
+
             <nav class="day-tabs-nav" aria-label="Pilih Hari Menu">
-                <button type="button" class="day-tab-btn past" data-day="senin" disabled aria-disabled="true" title="Hari telah berakhir">
-                    <span class="day-name">Senin</span>
-                    <span class="day-date">6 Okt 2026</span>
-                    <span class="day-state-tag past">Berakhir</span>
-                </button>
-                <button type="button" class="day-tab-btn past" data-day="selasa" disabled aria-disabled="true" title="Hari telah berakhir">
-                    <span class="day-name">Selasa</span>
-                    <span class="day-date">7 Okt 2026</span>
-                    <span class="day-state-tag past">Berakhir</span>
-                </button>
-                <button type="button" class="day-tab-btn active" data-day="rabu">
-                    <span class="day-name">Rabu</span>
-                    <span class="day-date">8 Okt 2026</span>
-                    <span class="day-state-tag open">Hari Ini (Aktif)</span>
-                </button>
-                <button type="button" class="day-tab-btn" data-day="kamis">
-                    <span class="day-name">Kamis</span>
-                    <span class="day-date">9 Okt 2026</span>
-                    <span class="day-state-tag open">Buka</span>
-                </button>
-                <button type="button" class="day-tab-btn" data-day="jumat">
-                    <span class="day-name">Jumat</span>
-                    <span class="day-date">10 Okt 2026</span>
-                    <span class="day-state-tag open">Buka</span>
-                </button>
+                @for ($offset = -2; $offset <= 2; $offset++)
+                    @php
+                        $tabDate = $baseDate->copy()->addDays($offset);
+                        $dayName = $tabDate->translatedFormat('l');
+                        $dateFormatted = $tabDate->translatedFormat('j M Y');
+                        $dataDay = strtolower($tabDate->format('l'));
+                        $isPast = $offset < 0;
+                        $isToday = $offset === 0;
+                    @endphp
+
+                    <button
+                        type="button"
+                        class="day-tab-btn {{ $isPast ? 'past' : ($isToday ? 'active' : '') }}"
+                        data-day="{{ $dataDay }}"
+                        {{ $isPast ? 'disabled aria-disabled="true" title="Hari telah berakhir"' : '' }}
+                    >
+                        <span class="day-name">{{ $dayName }}</span>
+                        <span class="day-date">{{ $dateFormatted }}</span>
+                        @if ($isPast)
+                            <span class="day-state-tag past">Berakhir</span>
+                        @elseif ($isToday)
+                            <span class="day-state-tag open">Hari Ini (Aktif)</span>
+                        @else
+                            <span class="day-state-tag open">Buka</span>
+                        @endif
+                    </button>
+                @endfor
             </nav>
 
             
             <div class="menu-grid-header">
                 <div>
-                    <h2 class="section-title-sm" style="font-size: 22px;">Daftar Pilihan Menu: Rabu, 8 Oktober 2026</h2>
-                    <p class="text-muted" style="font-size: 13px; margin: 0;">Tersedia 3 paket standar gizi seimbang yang disiapkan oleh SPPG Denpasar Selatan</p>
+                    <h2 class="section-title-sm" style="font-size: 22px;">Daftar Pilihan Menu: {{ $targetDateFormatted ?? now()->translatedFormat('l, d F Y') }}</h2>
+                    <p class="text-muted" style="font-size: 13px; margin: 0;">Tersedia {{ count($menus ?? []) }} paket standar gizi seimbang yang disiapkan oleh {{ $sppgName ?? 'SPPG Penyedia' }}</p>
                 </div>
-                <span class="badge badge-primary">Tersedia 3 Menu</span>
+                <span class="badge badge-primary">Tersedia {{ count($menus ?? []) }} Menu</span>
             </div>
 
             
             <div class="menu-cards-grid" id="menuCardsGrid">
-                
+                @foreach ($menus ?? [] as $menu)
+                    @php
+                        $packageCode = 'Paket ' . chr(65 + $loop->index);
+                        $isSelected = ($menu->id == ($selectedMenuId ?? null));
+                    @endphp
+                    <div class="menu-package-card {{ $isSelected ? 'selected' : '' }}" data-menu-id="{{ $menu->id }}">
+                        @if ($isSelected)
+                            <div class="card-selected-ribbon">✓ Terpilih</div>
+                        @endif
+
+                        <div class="package-img-holder">
+                            <img src="{{ $menu->image }}" alt="{{ $menu->name }}" loading="lazy">
+                        </div>
+
+                        <div class="package-card-body">
+                            <div class="package-title-row">
+                                <h4 class="package-title">{{ $packageCode }}</h4>
+                                <span class="package-calories">{{ $menu->calories }} kkal</span>
+                            </div>
+
+                            <p class="package-desc">{{ $menu->name }}</p>
+
+                            <div class="package-macros-row">
+                                <span class="macro-pill protein">{{ $menu->protein }}g Protein</span>
+                                <span class="macro-pill fiber">{{ $menu->fiber }}g Serat</span>
+                                <span class="macro-pill">{{ $menu->fat }}g Lemak</span>
+                            </div>
+
+                            <div class="plate-details-box">
+                                <h5>Komposisi Piring:</h5>
+                                <ul class="plate-items-list">
+                                    @foreach ($menu->items as $it)
+                                        <li>{{ $it }}</li>
+                                    @endforeach
+                                </ul>
+                            </div>
+
+                            <div class="card-allergy-safe">
+                                <span class="material-symbols-outlined">verified_user</span>
+                                <p>Standar Higienis & Gizi Terverifikasi</p>
+                            </div>
+
+                            <button
+                                type="button"
+                                class="btn {{ $isSelected ? 'btn-secondary' : 'btn-primary' }} package-btn-action select-menu-btn"
+                                data-menu-id="{{ $menu->id }}"
+                                data-schedule-id="{{ $schedule?->id ?? '' }}"
+                                onclick="chooseMenu({{ $menu->id }}, {{ $schedule?->id ?? 'null' }}, '{{ $packageCode }}', this)"
+                                {{ $isSelected ? 'disabled' : '' }}
+                            >
+                                {{ $isSelected ? 'Menu Terpilih' : 'Pilih Paket Ini' }}
+                            </button>
+                        </div>
+                    </div>
+                @endforeach
             </div>
 
             
@@ -212,5 +276,89 @@
     
     <script src="{{ asset('js/main.js') }}"></script>
     <script src="{{ asset('js/pages/siswa.js') }}"></script>
+    <script>
+        async function chooseMenu(menuId, scheduleId, packageCode, btnElement) {
+            if (!btnElement || btnElement.disabled) {
+                return;
+            }
+
+            const originalText = btnElement.textContent;
+            btnElement.disabled = true;
+            btnElement.textContent = 'Menyimpan...';
+
+            const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+
+            try {
+                const response = await fetch("{{ route('student.menu.select') }}", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken
+                    },
+                    body: JSON.stringify({
+                        menu_id: menuId,
+                        schedule_id: scheduleId
+                    })
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.success) {
+                    // Reset status terpilih pada kartu menu lainnya
+                    document.querySelectorAll('.menu-package-card').forEach(card => {
+                        card.classList.remove('selected');
+                        const ribbon = card.querySelector('.card-selected-ribbon');
+                        if (ribbon) {
+                            ribbon.remove();
+                        }
+                        const actionBtn = card.querySelector('.select-menu-btn');
+                        if (actionBtn) {
+                            actionBtn.className = 'btn btn-primary package-btn-action select-menu-btn';
+                            actionBtn.disabled = false;
+                            actionBtn.textContent = 'Pilih Paket Ini';
+                        }
+                    });
+
+                    // Set status terpilih pada kartu yang diklik
+                    const currentCard = btnElement.closest('.menu-package-card');
+                    if (currentCard) {
+                        currentCard.classList.add('selected');
+                        const ribbon = document.createElement('div');
+                        ribbon.className = 'card-selected-ribbon';
+                        ribbon.textContent = '✓ Terpilih';
+                        currentCard.prepend(ribbon);
+                    }
+
+                    btnElement.className = 'btn btn-secondary package-btn-action select-menu-btn';
+                    btnElement.disabled = true;
+                    btnElement.textContent = 'Menu Terpilih';
+
+                    const toastType = data.has_allergy_warning ? 'warning' : 'success';
+                    if (typeof showStudentToast === 'function') {
+                        showStudentToast(data.message, toastType);
+                    }
+                } else {
+                    btnElement.disabled = false;
+                    btnElement.textContent = originalText;
+                    const errorMsg = data.message || 'Gagal memilih menu. Silakan coba lagi.';
+                    if (typeof showStudentToast === 'function') {
+                        showStudentToast(errorMsg, 'warning');
+                    } else {
+                        alert(errorMsg);
+                    }
+                }
+            } catch (error) {
+                console.error('Error saat memilih menu:', error);
+                btnElement.disabled = false;
+                btnElement.textContent = originalText;
+                if (typeof showStudentToast === 'function') {
+                    showStudentToast('Terjadi kesalahan jaringan saat memilih menu.', 'warning');
+                } else {
+                    alert('Terjadi kesalahan koneksi.');
+                }
+            }
+        }
+    </script>
 </body>
 </html>

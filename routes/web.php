@@ -5,7 +5,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\LandingController;
 use App\Http\Controllers\SPPGDashboardController;
-use App\Http\Controllers\StudentDashboardController;
+use App\Http\Controllers\StudentController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -69,10 +69,11 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/', function () {
             return redirect()->route('student.dashboard');
         });
-        Route::get('/dashboard', [StudentDashboardController::class, 'index'])->name('dashboard');
-        Route::get('/menu', [StudentDashboardController::class, 'menu'])->name('menu');
-        Route::get('/history', [StudentDashboardController::class, 'history'])->name('history');
-        Route::get('/profile', [StudentDashboardController::class, 'profile'])->name('profile');
-        Route::get('/review', [StudentDashboardController::class, 'review'])->name('review');
+        Route::get('/dashboard', [StudentController::class, 'index'])->name('dashboard');
+        Route::get('/menu', [StudentController::class, 'menu'])->name('menu');
+        Route::post('/menu/select', [StudentController::class, 'selectMenu'])->name('menu.select');
+        Route::get('/history', [StudentController::class, 'history'])->name('history');
+        Route::get('/profile', [StudentController::class, 'profile'])->name('profile');
+        Route::get('/review', [StudentController::class, 'review'])->name('review');
     });
 });
