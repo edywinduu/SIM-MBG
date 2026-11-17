@@ -91,19 +91,19 @@
             <section class="riwayat-ribbon-summary">
                 <div class="summary-col">
                     <div class="summary-lbl">Tingkat Kehadiran Makan</div>
-                    <div class="summary-val">100%</div>
+                    <div class="summary-val">{{ $attendanceRate }}</div>
                     <div class="summary-desc">Selalu mengambil paket makan siang sesuai jadwal</div>
                 </div>
 
                 <div class="summary-col">
                     <div class="summary-lbl">Total Ulasan Diserahkan</div>
-                    <div class="summary-val">13 Kali</div>
+                    <div class="summary-val">{{ $totalReviews }} Kali</div>
                     <div class="summary-desc">Masukan Anda membantu evaluasi gizi oleh SPPG</div>
                 </div>
 
                 <div class="summary-col">
                     <div class="summary-lbl">Rata-rata Skor Bintang</div>
-                    <div class="summary-val">4.8 / 5.0</div>
+                    <div class="summary-val">{{ $avgScore }}</div>
                     <div class="summary-desc">Tingkat kepuasan sangat tinggi terhadap menu yang disajikan</div>
                 </div>
             </section>
@@ -194,6 +194,9 @@
     </footer>
 
     
+    <script>
+        window.STUDENT_HISTORY_DATA = @json($historyData);
+    </script>
     <script src="{{ asset('js/main.js') }}"></script>
     <script src="{{ asset('js/pages/siswa.js') }}"></script>
 </body>

@@ -84,7 +84,7 @@
             
             <div class="menu-selection-header">
                 <div>
-                    <h1 class="student-welcome-h1">Pilih Menu Makan Siang ??</h1>
+                    <h1 class="student-welcome-h1">Pilih Menu Makan Siang</h1>
                     <p class="text-muted" style="font-size: 14px; margin: 0;">Pilih paket menu bergizi harian Anda sebelum batas waktu pemesanan ditutup.</p>
                 </div>
 
@@ -113,7 +113,7 @@
                     </div>
                     <div>
                         <h3>Batas Waktu Pemilihan Menu (Cut-Off)</h3>
-                        <p>Batas akhir konfirmasi pilihan untuk {{ $targetDateFormatted ?? now()->translatedFormat('l, d F Y') }} adalah pukul <strong>{{ $cutoffTime ?? '20:00 WITA' }}</strong></p>
+                        <p>Batas akhir konfirmasi pilihan untuk {{ $targetDateFormatted ?? now()->addDay()->translatedFormat('l, d F Y') }} adalah pukul <strong>{{ $cutoffTime ?? '20:00 WITA' }}</strong></p>
                     </div>
                 </div>
 
@@ -134,43 +134,58 @@
 
             
             @php
-                $baseDate = isset($targetDate) ? $targetDate->copy() : ($schedule?->date ? \Carbon\Carbon::parse($schedule->date) : today());
+                $today = today();
+                $tomorrow = $today->copy()->addDay();
+                $currentTargetDate = $targetDate ?? $tomorrow;
             @endphp
 
             <nav class="day-tabs-nav" aria-label="Pilih Hari Menu">
                 @for ($offset = -2; $offset <= 2; $offset++)
                     @php
-                        $tabDate = $baseDate->copy()->addDays($offset);
+                        $tabDate = $tomorrow->copy()->addDays($offset);
                         $dayName = $tabDate->translatedFormat('l');
                         $dateFormatted = $tabDate->translatedFormat('j M Y');
                         $dataDay = strtolower($tabDate->format('l'));
-                        $isPast = $offset < 0;
-                        $isToday = $offset === 0;
+                        $isPast = $tabDate->lte($today);
+                        $isCurrentSelected = $tabDate->isSameDay($currentTargetDate);
                     @endphp
 
-                    <button
-                        type="button"
-                        class="day-tab-btn {{ $isPast ? 'past' : ($isToday ? 'active' : '') }}"
-                        data-day="{{ $dataDay }}"
-                        {{ $isPast ? 'disabled aria-disabled="true" title="Hari telah berakhir"' : '' }}
-                    >
-                        <span class="day-name">{{ $dayName }}</span>
-                        <span class="day-date">{{ $dateFormatted }}</span>
-                        @if ($isPast)
-                            <span class="day-state-tag past">Berakhir</span>
-                        @elseif ($isToday)
-                            <span class="day-state-tag open">Hari Ini (Aktif)</span>
-                        @else
-                            <span class="day-state-tag open">Buka</span>
-                        @endif
-                    </button>
+                    @if ($isPast)
+                        <button
+                            type="button"
+                            class="day-tab-btn past"
+                            data-day="{{ $dataDay }}"
+                            disabled
+                            aria-disabled="true"
+                            title="Batas waktu pemesanan telah berakhir"
+                        >
+                            <span class="day-name">{{ $dayName }}</span>
+                            <span class="day-date">{{ $dateFormatted }}</span>
+                            <span class="day-state-tag past">{{ $tabDate->isSameDay($today) ? 'Hari Ini (Berakhir)' : 'Berakhir' }}</span>
+                        </button>
+                    @else
+                        <a
+                            href="{{ route('student.menu', ['date' => $tabDate->toDateString()]) }}"
+                            class="day-tab-btn {{ $isCurrentSelected ? 'active' : '' }}"
+                            data-day="{{ $dataDay }}"
+                            style="text-decoration: none;"
+                        >
+                            <span class="day-name">{{ $dayName }}</span>
+                            <span class="day-date">{{ $dateFormatted }}</span>
+                            @if ($tabDate->isSameDay($tomorrow))
+                                <span class="day-state-tag open">Besok (Aktif)</span>
+                            @else
+                                <span class="day-state-tag open">Buka</span>
+                            @endif
+                        </a>
+                    @endif
                 @endfor
             </nav>
 
             
             <div class="menu-grid-header">
                 <div>
-                    <h2 class="section-title-sm" style="font-size: 22px;">Daftar Pilihan Menu: {{ $targetDateFormatted ?? now()->translatedFormat('l, d F Y') }}</h2>
+                    <h2 class="section-title-sm" style="font-size: 22px;">Daftar Pilihan Menu: {{ $targetDateFormatted ?? now()->addDay()->translatedFormat('l, d F Y') }}</h2>
                     <p class="text-muted" style="font-size: 13px; margin: 0;">Tersedia {{ count($menus ?? []) }} paket standar gizi seimbang yang disiapkan oleh {{ $sppgName ?? 'SPPG Penyedia' }}</p>
                 </div>
                 <span class="badge badge-primary">Tersedia {{ count($menus ?? []) }} Menu</span>
@@ -178,7 +193,7 @@
 
             
             <div class="menu-cards-grid" id="menuCardsGrid">
-                @foreach ($menus ?? [] as $menu)
+                @forelse ($menus ?? [] as $menu)
                     @php
                         $packageCode = 'Paket ' . chr(65 + $loop->index);
                         $isSelected = ($menu->id == ($selectedMenuId ?? null));
@@ -232,7 +247,13 @@
                             </button>
                         </div>
                     </div>
-                @endforeach
+                @empty
+                    <div class="card" style="grid-column: 1 / -1; padding: 48px; text-align: center;">
+                        <span class="material-symbols-outlined" style="font-size: 48px; color: #62748E; margin-bottom: 12px;">restaurant_menu</span>
+                        <h4 style="font-size: 18px; color: #0B1C30; margin-bottom: 4px;">Tidak Ada Menu Tersedia</h4>
+                        <p style="font-size: 14px; color: #62748E;">Jadwal menu untuk tanggal ini belum diterbitkan oleh SPPG.</p>
+                    </div>
+                @endforelse
             </div>
 
             

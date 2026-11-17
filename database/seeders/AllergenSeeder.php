@@ -18,6 +18,7 @@ class AllergenSeeder extends Seeder
             ['name' => 'Telur'],
             ['name' => 'Laktosa'],
             ['name' => 'Gluten'],
+            ['name' => 'Vegetarian'],
         ];
 
         foreach ($allergens as $allergen) {

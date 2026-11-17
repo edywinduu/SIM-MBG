@@ -1,8 +1,8 @@
 /**
  * SIM-MBG — Student Page Script (siswa.js)
  * Khusus menangani interaktivitas UI frontend (modal, tab, filter, preview).
- * Data utama (nama siswa, sekolah, kelas, jam distribusi, akun) sepenuhnya
- * dikelola dan dirender langsung oleh Laravel Blade & Controller backend.
+ * Data utama (nama siswa, sekolah, kelas, jam distribusi, akun, menu, riwayat)
+ * sepenuhnya dikelola dan dirender langsung oleh Laravel Blade & Controller backend.
  */
 
 /**
@@ -52,30 +52,54 @@ document.addEventListener('DOMContentLoaded', () => {
 function initDashboardPage() {
   const pickupBtn = document.querySelector('#pickupStatusBtn');
   const pickupStateText = document.querySelector('#pickupStateText');
-  let isCurrentlyClaimed = false;
 
-  // Interaksi tombol status ambil makan siang (UI Toggle)
+  // Interaksi tombol status ambil makan siang terhubung ke backend
   if (pickupBtn && !pickupBtn.dataset.bound) {
     pickupBtn.dataset.bound = 'true';
-    pickupBtn.addEventListener('click', () => {
-      if (isCurrentlyClaimed) {
+    pickupBtn.addEventListener('click', async () => {
+      if (pickupBtn.disabled || pickupBtn.classList.contains('claimed')) {
         showStudentToast('Anda sudah mengambil porsi makan siang hari ini.', 'info');
         return;
       }
 
-      isCurrentlyClaimed = true;
-      setPickupButtonClaimed(pickupBtn, pickupStateText, '12.10 WITA');
-      showStudentToast('Status pengambilan makan siang diperbarui: Sudah Diambil!', 'success');
+      pickupBtn.disabled = true;
+
+      try {
+        const csrf = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+        const res = await fetch('/student/pickup/claim', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': csrf,
+            'Accept': 'application/json'
+          }
+        });
+
+        const data = await res.json();
+        if (data.status === 'success' || data.status === 'info') {
+          setPickupButtonClaimed(pickupBtn, pickupStateText, data.pickup_time || '');
+          showStudentToast(data.message || 'Makan siang sudah diambil!', data.status);
+        } else {
+          pickupBtn.disabled = false;
+          showStudentToast(data.message || 'Gagal memperbarui status pengambilan.', 'error');
+        }
+      } catch (err) {
+        console.error(err);
+        pickupBtn.disabled = false;
+        showStudentToast('Terjadi gangguan jaringan saat memproses status pengambilan.', 'error');
+      }
     });
   }
 
   function setPickupButtonClaimed(btn, textEl, timeStr) {
     if (!btn) return;
     btn.className = 'pickup-status-btn claimed';
-    if (textEl) textEl.textContent = `Makan Siang Sudah Diambil (${timeStr})`;
+    btn.disabled = true;
+    const timeLabel = timeStr ? ` (${timeStr})` : '';
+    if (textEl) textEl.textContent = `Makan Siang Sudah Diambil${timeLabel}`;
     btn.innerHTML = `
       <span class="material-symbols-outlined">check_circle</span>
-      <span>Makan Siang Sudah Diambil (${timeStr})</span>
+      <span>Makan Siang Sudah Diambil${timeLabel}</span>
     `;
   }
 }
@@ -85,7 +109,6 @@ function initDashboardPage() {
 // =========================================================================
 
 function initMenuSelectionPage() {
-  const gridContainer = document.querySelector('#menuCardsGrid');
   const dayTabs = document.querySelectorAll('.day-tab-btn');
 
   initCountdownTimer();
@@ -100,129 +123,38 @@ function initMenuSelectionPage() {
       showStudentToast(`Menampilkan menu untuk ${dayName}`, 'info');
     });
   });
-
-  // Contoh data menu untuk interaksi tampilan jika kontainer menu belum diisi oleh Blade
-  if (gridContainer && gridContainer.children.length === 0) {
-    const menus = [
-      {
-        id: 1,
-        code: 'Paket A',
-        name: 'Ayam Panggang Madu & Capcay Sayur',
-        calories: '620 kkal',
-        protein: '32g',
-        fiber: '8g',
-        fat: '18g',
-        items: ['Nasi Putih Pulen', 'Ayam Panggang Madu', 'Capcay Sayuran Segar', 'Tempe Bacem Rempah', 'Semangka Merah'],
-        image: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=800&q=80',
-        is_selected: true
-      },
-      {
-        id: 2,
-        code: 'Paket B',
-        name: 'Ikan Bakar Sambal Dabu & Cah Kangkung',
-        calories: '590 kkal',
-        protein: '34g',
-        fiber: '7g',
-        fat: '14g',
-        items: ['Nasi Merah Organik', 'Fillet Ikan Kembung Bakar', 'Sambal Dabu-Dabu Segar', 'Cah Kangkung Tauco', 'Pisang Ambon'],
-        image: 'https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?auto=format&fit=crop&w=800&q=80',
-        is_selected: false
-      },
-      {
-        id: 3,
-        code: 'Paket C',
-        name: 'Rolade Daging Sapi & Sup Sayur Bening',
-        calories: '640 kkal',
-        protein: '28g',
-        fiber: '6g',
-        fat: '20g',
-        items: ['Nasi Putih', 'Rolade Daging Sapi', 'Sup Sayur Bening', 'Tahu Goreng', 'Jeruk Manis'],
-        image: 'https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=800&q=80',
-        is_selected: false
-      }
-    ];
-
-    renderMenuCardsList(menus, 1);
-  }
-
-  function renderMenuCardsList(menuList, activeSelectedId) {
-    if (!gridContainer) return;
-
-    gridContainer.innerHTML = menuList.map(menu => {
-      const isSelected = (menu.id === activeSelectedId);
-
-      return `
-        <div class="menu-package-card ${isSelected ? 'selected' : ''}" data-menu-id="${menu.id}">
-          ${isSelected ? '<div class="card-selected-ribbon">✓ Terpilih</div>' : ''}
-
-          <div class="package-img-holder">
-            <img src="${menu.image}" alt="${menu.name}" loading="lazy">
-          </div>
-
-          <div class="package-card-body">
-            <div class="package-title-row">
-              <h4 class="package-title">${menu.code}</h4>
-              <span class="package-calories">${menu.calories}</span>
-            </div>
-
-            <p class="package-desc">${menu.name}</p>
-
-            <div class="package-macros-row">
-              <span class="macro-pill protein">${menu.protein} Protein</span>
-              <span class="macro-pill fiber">${menu.fiber} Serat</span>
-              <span class="macro-pill">${menu.fat} Lemak</span>
-            </div>
-
-            <div class="plate-details-box">
-              <h5>Komposisi Piring:</h5>
-              <ul class="plate-items-list">
-                ${menu.items.map(it => `<li>${it}</li>`).join('')}
-              </ul>
-            </div>
-
-            <div class="card-allergy-safe">
-              <span class="material-symbols-outlined">verified_user</span>
-              <p>Standar Higienis & Gizi Terverifikasi</p>
-            </div>
-
-            <button
-              type="button"
-              class="btn ${isSelected ? 'btn-secondary' : 'btn-primary'} package-btn-action select-menu-btn"
-              data-menu-id="${menu.id}"
-              ${isSelected ? 'disabled' : ''}
-            >
-              ${isSelected ? 'Menu Terpilih' : 'Pilih Paket Ini'}
-            </button>
-          </div>
-        </div>
-      `;
-    }).join('');
-
-    gridContainer.querySelectorAll('.select-menu-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const chosenId = parseInt(btn.dataset.menuId, 10);
-        const chosenMenu = menuList.find(m => m.id === chosenId);
-        showStudentToast(`Berhasil memilih ${chosenMenu.code}: ${chosenMenu.name}!`, 'success');
-        renderMenuCardsList(menuList, chosenId);
-      });
-    });
-  }
 }
 
+/**
+ * Menghitung sisa waktu menuju batas akhir pemesanan menu (Cut-Off pukul 20:00 WITA)
+ */
 function initCountdownTimer() {
   const timerDigits = document.querySelector('#countdownDigits');
   if (!timerDigits) return;
 
-  let totalSeconds = 3 * 3600 + 44 * 60 + 18;
-  setInterval(() => {
-    if (totalSeconds > 0) {
-      totalSeconds--;
-      const hours = Math.floor(totalSeconds / 3600);
-      const minutes = Math.floor((totalSeconds % 3600) / 60);
-      const seconds = totalSeconds % 60;
-      timerDigits.textContent = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+  function updateTimer() {
+    const now = new Date();
+    const cutoff = new Date();
+    cutoff.setHours(20, 0, 0, 0);
+
+    const diffMs = cutoff - now;
+    if (diffMs <= 0) {
+      timerDigits.textContent = '00:00:00';
+      const label = document.querySelector('.countdown-label');
+      if (label) label.textContent = 'Waktu Pemilihan Ditutup';
+      return;
     }
-  }, 1000);
+
+    const totalSeconds = Math.floor(diffMs / 1000);
+    const hours = Math.floor(totalSeconds / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const seconds = totalSeconds % 60;
+
+    timerDigits.textContent = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+  }
+
+  updateTimer();
+  setInterval(updateTimer, 1000);
 }
 
 // =========================================================================
@@ -230,37 +162,16 @@ function initCountdownTimer() {
 // =========================================================================
 
 let currentEditReviewId = null;
-let cachedHistoryData = [
-  {
-    id: 101,
-    date: 'Senin, 6 Oktober 2026',
-    pickupTime: '12:10 WITA',
-    status: 'Sudah Diambil',
-    menuCode: 'Paket A',
-    menuName: 'Ayam Woku Belanga & Sup Jagung Manis',
-    rating: 5,
-    review: 'Rasa ayam woku sangat meresap, bumbu pas tidak terlalu pedas. Sup jagungnya hangat dan segar!',
-    macros: '610 kkal | 31g Protein | 7g Serat',
-    image: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=800&q=80'
-  },
-  {
-    id: 102,
-    date: 'Jumat, 3 Oktober 2026',
-    pickupTime: '12:05 WITA',
-    status: 'Sudah Diambil',
-    menuCode: 'Paket C',
-    menuName: 'Rendang Daging Sapi & Sayur Nangka',
-    rating: 5,
-    review: 'Daging sangat empuk, bumbu gurih mantap. Sayur nangka juga enak, porsi sangat mengenyangkan.',
-    macros: '650 kkal | 35g Protein | 6g Serat',
-    image: 'https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=800&q=80'
-  }
-];
+let currentEditMenuId = null;
+let cachedHistoryData = (typeof window !== 'undefined' && Array.isArray(window.STUDENT_HISTORY_DATA))
+  ? window.STUDENT_HISTORY_DATA
+  : [];
 
 function initRiwayatPage() {
   const feedContainer = document.querySelector('#riwayatCardsFeed');
   const searchInput = document.querySelector('#riwayatSearchInput');
   const filterBtns = document.querySelectorAll('.filter-chip-btn');
+  const sortSelect = document.querySelector('.sort-select');
   const reviewModal = document.querySelector('#reviewModal');
   const modalCloseBtn = document.querySelector('#modalCloseBtn');
   const cancelReviewBtn = document.querySelector('#cancelReviewBtn');
@@ -268,15 +179,22 @@ function initRiwayatPage() {
   const starBtns = document.querySelectorAll('.star-rate-btn');
   const reviewTextarea = document.querySelector('#modalReviewText');
 
+  if (typeof window !== 'undefined' && Array.isArray(window.STUDENT_HISTORY_DATA)) {
+    cachedHistoryData = window.STUDENT_HISTORY_DATA;
+  } else {
+    cachedHistoryData = [];
+  }
+
   let activeFilter = 'all';
   let searchQuery = '';
+  let currentSort = 'newest';
 
   renderRiwayatList();
 
   function renderRiwayatList() {
     if (!feedContainer) return;
 
-    const filtered = cachedHistoryData.filter(item => {
+    let filtered = cachedHistoryData.filter(item => {
       const matchesSearch = item.menuName.toLowerCase().includes(searchQuery.toLowerCase()) ||
                             item.menuCode.toLowerCase().includes(searchQuery.toLowerCase());
       if (!matchesSearch) return false;
@@ -285,6 +203,12 @@ function initRiwayatPage() {
       if (activeFilter === 'pending') return item.rating === 0;
       return true;
     });
+
+    if (currentSort === 'rating') {
+      filtered = [...filtered].sort((a, b) => b.rating - a.rating);
+    } else if (currentSort === 'oldest') {
+      filtered = [...filtered].reverse();
+    }
 
     if (filtered.length === 0) {
       feedContainer.innerHTML = `
@@ -298,7 +222,7 @@ function initRiwayatPage() {
     }
 
     feedContainer.innerHTML = filtered.map(item => `
-      <article class="riwayat-card" data-review-id="${item.id}">
+      <article class="riwayat-card" data-review-id="${item.id || ''}">
         <div class="riwayat-img-col">
           <img src="${item.image}" alt="${item.menuName}" loading="lazy">
         </div>
@@ -323,14 +247,15 @@ function initRiwayatPage() {
         </div>
 
         <div class="riwayat-actions-col">
-          <button type="button" class="btn btn-outline btn-sm edit-review-btn" data-id="${item.id}">
+          <button type="button" class="btn btn-outline btn-sm edit-review-btn" data-id="${item.id || ''}" data-menu-id="${item.menu_id || ''}">
             <span class="material-symbols-outlined" style="font-size: 18px;">edit</span>
-            <span>Ubah Ulasan</span>
+            <span>${item.rating > 0 ? 'Ubah Ulasan' : 'Tulis Ulasan'}</span>
           </button>
+          ${item.id ? `
           <button type="button" class="btn btn-secondary btn-sm delete-review-btn" data-id="${item.id}" style="color: #93000A;">
             <span class="material-symbols-outlined" style="font-size: 18px;">delete</span>
             <span>Hapus</span>
-          </button>
+          </button>` : ''}
         </div>
       </article>
     `).join('');
@@ -338,8 +263,9 @@ function initRiwayatPage() {
     // Listener tombol Edit Ulasan
     feedContainer.querySelectorAll('.edit-review-btn').forEach(btn => {
       btn.addEventListener('click', () => {
-        const id = parseInt(btn.dataset.id, 10);
-        openEditReviewModal(id);
+        const id = btn.dataset.id ? parseInt(btn.dataset.id, 10) : null;
+        const menuId = btn.dataset.menuId ? parseInt(btn.dataset.menuId, 10) : null;
+        openEditReviewModal(id, menuId);
       });
     });
 
@@ -370,14 +296,27 @@ function initRiwayatPage() {
     });
   }
 
-  function openEditReviewModal(id) {
-    currentEditReviewId = id;
-    const target = cachedHistoryData.find(r => r.id === id);
+  // Pengurutan riwayat
+  if (sortSelect) {
+    sortSelect.addEventListener('change', (e) => {
+      currentSort = e.target.value;
+      renderRiwayatList();
+    });
+  }
+
+  function openEditReviewModal(id, menuId) {
+    currentEditReviewId = id || null;
+    currentEditMenuId = menuId || null;
+    const target = cachedHistoryData.find(r => (id && r.id === id) || (menuId && r.menu_id === menuId));
     if (!target) return;
+
+    if (!currentEditMenuId && target.menu_id) {
+      currentEditMenuId = target.menu_id;
+    }
 
     const modalTitle = document.querySelector('#modalMenuTitle');
     if (modalTitle) modalTitle.textContent = `${target.menuCode}: ${target.menuName}`;
-    if (reviewTextarea) reviewTextarea.value = target.review;
+    if (reviewTextarea) reviewTextarea.value = target.rating > 0 ? target.review : '';
     setModalStars(target.rating || 5);
 
     if (reviewModal) reviewModal.classList.add('show');
@@ -386,6 +325,7 @@ function initRiwayatPage() {
   function closeReviewModal() {
     if (reviewModal) reviewModal.classList.remove('show');
     currentEditReviewId = null;
+    currentEditMenuId = null;
   }
 
   let currentSelectedStars = 5;
@@ -416,29 +356,81 @@ function initRiwayatPage() {
   // Submit perubahan ulasan
   if (submitReviewBtn && !submitReviewBtn.dataset.bound) {
     submitReviewBtn.dataset.bound = 'true';
-    submitReviewBtn.addEventListener('click', () => {
-      if (!currentEditReviewId) return;
-
+    submitReviewBtn.addEventListener('click', async () => {
       const newRating = currentSelectedStars;
-      const newComment = reviewTextarea ? reviewTextarea.value.trim() : 'Makanannya lezat dan bergizi.';
+      const newComment = reviewTextarea ? reviewTextarea.value.trim() : '';
 
-      const idx = cachedHistoryData.findIndex(r => r.id === currentEditReviewId);
-      if (idx !== -1) {
-        cachedHistoryData[idx].rating = newRating;
-        cachedHistoryData[idx].review = newComment;
+      submitReviewBtn.disabled = true;
+
+      try {
+        const csrf = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+        const res = await fetch('/student/review/save', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': csrf,
+            'Accept': 'application/json'
+          },
+          body: JSON.stringify({
+            review_id: currentEditReviewId,
+            menu_id: currentEditMenuId,
+            rating: newRating,
+            comment: newComment
+          })
+        });
+
+        const data = await res.json();
+        if (data.status === 'success') {
+          const idx = cachedHistoryData.findIndex(r =>
+            (currentEditReviewId && r.id === currentEditReviewId) ||
+            (currentEditMenuId && r.menu_id === currentEditMenuId)
+          );
+          if (idx !== -1) {
+            if (data.review_id) cachedHistoryData[idx].id = data.review_id;
+            cachedHistoryData[idx].rating = newRating;
+            cachedHistoryData[idx].review = newComment;
+          }
+
+          showStudentToast(data.message || 'Ulasan berhasil disimpan!', 'success');
+          closeReviewModal();
+          renderRiwayatList();
+        } else {
+          showStudentToast(data.message || 'Gagal menyimpan ulasan.', 'error');
+        }
+      } catch (err) {
+        console.error(err);
+        showStudentToast('Terjadi kesalahan koneksi saat menyimpan ulasan.', 'error');
+      } finally {
+        submitReviewBtn.disabled = false;
       }
-
-      showStudentToast('Ulasan berhasil diperbarui!', 'success');
-      closeReviewModal();
-      renderRiwayatList();
     });
   }
 
-  function handleDeleteReview(id) {
+  async function handleDeleteReview(id) {
     if (!confirm('Apakah Anda yakin ingin menghapus ulasan ini?')) return;
-    cachedHistoryData = cachedHistoryData.filter(r => r.id !== id);
-    showStudentToast('Ulasan berhasil dihapus.', 'info');
-    renderRiwayatList();
+
+    try {
+      const csrf = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+      const res = await fetch(`/student/review/${id}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRF-TOKEN': csrf,
+          'Accept': 'application/json'
+        }
+      });
+      const data = await res.json();
+      if (data.status === 'success') {
+        cachedHistoryData = cachedHistoryData.filter(r => r.id !== id);
+        showStudentToast(data.message || 'Ulasan berhasil dihapus.', 'info');
+        renderRiwayatList();
+      } else {
+        showStudentToast(data.message || 'Gagal menghapus ulasan.', 'error');
+      }
+    } catch (err) {
+      console.error(err);
+      showStudentToast('Terjadi kesalahan koneksi saat menghapus ulasan.', 'error');
+    }
   }
 }
 
@@ -467,10 +459,10 @@ function initProfilePage() {
     });
   });
 
-  // Simpan formulir alergi UI feedback
+  // Simpan formulir alergi ke database
   if (profileForm && !profileForm.dataset.bound) {
     profileForm.dataset.bound = 'true';
-    profileForm.addEventListener('submit', (e) => {
+    profileForm.addEventListener('submit', async (e) => {
       e.preventDefault();
       const saveBtn = document.querySelector('#saveProfileBtn');
       if (saveBtn) {
@@ -479,45 +471,107 @@ function initProfilePage() {
           <span class="material-symbols-outlined" style="animation: spin 1s linear infinite; font-size: 20px;">sync</span>
           <span>Menyimpan...</span>
         `;
-        setTimeout(() => {
+      }
+
+      const selectedAllergens = Array.from(allergyCheckboxes)
+        .filter(cb => cb.checked)
+        .map(cb => cb.value);
+      const medicalNotes = document.querySelector('#medicalNotes')?.value.trim() || '';
+
+      try {
+        const csrf = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+        const res = await fetch('/student/profile/allergies', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': csrf,
+            'Accept': 'application/json'
+          },
+          body: JSON.stringify({
+            allergens: selectedAllergens,
+            medical_notes: medicalNotes
+          })
+        });
+
+        const data = await res.json();
+        if (data.status === 'success') {
+          showStudentToast(data.message || 'Data preferensi alergi berhasil diperbarui!', 'success');
+        } else {
+          showStudentToast(data.message || 'Gagal memperbarui data alergi.', 'error');
+        }
+      } catch (err) {
+        console.error(err);
+        showStudentToast('Terjadi kesalahan jaringan saat memperbarui data alergi.', 'error');
+      } finally {
+        if (saveBtn) {
           saveBtn.disabled = false;
           saveBtn.innerHTML = `
             <span class="material-symbols-outlined" style="font-size: 20px;">save</span>
             <span>Perbarui Data Alergi</span>
           `;
-          showStudentToast('Data preferensi alergi berhasil diperbarui!', 'success');
-        }, 600);
+        }
       }
     });
   }
 
-  // Unggah & preview foto profil di browser
+  // Tombol batal perubahan profil
+  const cancelProfileBtn = document.querySelector('#cancelProfileBtn');
+  if (cancelProfileBtn && !cancelProfileBtn.dataset.bound) {
+    cancelProfileBtn.dataset.bound = 'true';
+    cancelProfileBtn.addEventListener('click', () => {
+      window.location.reload();
+    });
+  }
+
+  // Unggah berkas foto profil ke server
   if (triggerAvatarUpload && avatarFileInput) {
     triggerAvatarUpload.addEventListener('click', () => {
       avatarFileInput.click();
     });
   }
 
-  if (avatarFileInput) {
-    avatarFileInput.addEventListener('change', (e) => {
+  if (avatarFileInput && !avatarFileInput.dataset.bound) {
+    avatarFileInput.dataset.bound = 'true';
+    avatarFileInput.addEventListener('change', async (e) => {
       const file = e.target.files[0];
-      if (file && profileAvatarDisplay) {
-        const reader = new FileReader();
-        reader.onload = function(evt) {
-          const imgData = evt.target.result;
-          profileAvatarDisplay.innerHTML = `<img src="${imgData}" alt="Foto Profil">`;
+      if (!file) return;
+
+      const formData = new FormData();
+      formData.append('avatar', file);
+
+      try {
+        const csrf = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+        const res = await fetch('/student/profile/avatar', {
+          method: 'POST',
+          headers: {
+            'X-CSRF-TOKEN': csrf,
+            'Accept': 'application/json'
+          },
+          body: formData
+        });
+
+        const data = await res.json();
+        if (data.status === 'success') {
+          const imgUrl = data.avatar_url;
+          if (profileAvatarDisplay) {
+            profileAvatarDisplay.innerHTML = `<img src="${imgUrl}" alt="Foto Profil">`;
+          }
           document.querySelectorAll('.student-user-avatar').forEach(chip => {
-            chip.innerHTML = `<img src="${imgData}" alt="Foto Profil">`;
+            chip.innerHTML = `<img src="${imgUrl}" alt="Foto Profil">`;
           });
           avatarFileInput.value = '';
-          showStudentToast('Foto profil berhasil diperbarui!', 'success');
-        };
-        reader.readAsDataURL(file);
+          showStudentToast(data.message || 'Foto profil berhasil diperbarui!', 'success');
+        } else {
+          showStudentToast(data.message || 'Gagal mengunggah foto profil.', 'error');
+        }
+      } catch (err) {
+        console.error(err);
+        showStudentToast('Terjadi kesalahan saat mengunggah foto profil.', 'error');
       }
     });
   }
 
-  // Modal ubah nama profil / username
+  // Modal ubah nama profil
   const btnEditProfileTrigger = document.querySelector('#btnEditProfileTrigger');
   const editUsernameModal = document.querySelector('#editUsernameModal');
   const closeUsernameModalBtn = document.querySelector('#closeUsernameModalBtn');
@@ -532,26 +586,70 @@ function initProfilePage() {
   }
 
   function closeUsernameModal() {
-    if (!editUsernameModal) editUsernameModal.classList.remove('show');
+    if (editUsernameModal) {
+      editUsernameModal.classList.remove('show');
+    }
   }
 
   if (btnEditProfileTrigger) btnEditProfileTrigger.addEventListener('click', openUsernameModal);
   if (closeUsernameModalBtn) closeUsernameModalBtn.addEventListener('click', closeUsernameModal);
   if (cancelUsernameModalBtn) cancelUsernameModalBtn.addEventListener('click', closeUsernameModal);
 
+  // Tutup modal jika klik di area luar modal (backdrop)
+  if (editUsernameModal) {
+    editUsernameModal.addEventListener('click', (e) => {
+      if (e.target === editUsernameModal) {
+        closeUsernameModal();
+      }
+    });
+  }
+
+  // Tutup modal jika menekan tombol Escape di keyboard
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && editUsernameModal?.classList.contains('show')) {
+      closeUsernameModal();
+    }
+  });
+
   if (editUsernameForm && !editUsernameForm.dataset.bound) {
     editUsernameForm.dataset.bound = 'true';
-    editUsernameForm.addEventListener('submit', (e) => {
+    editUsernameForm.addEventListener('submit', async (e) => {
       e.preventDefault();
       const newName = newUsernameInput ? newUsernameInput.value.trim() : '';
       if (!newName) return;
 
-      document.querySelectorAll('.student-display-name').forEach(el => {
-        el.textContent = newName;
-      });
+      const saveBtn = document.querySelector('#saveUsernameBtn');
+      if (saveBtn) saveBtn.disabled = true;
 
-      closeUsernameModal();
-      showStudentToast(`Nama profil berhasil diubah menjadi "${newName}"!`, 'success');
+      try {
+        const csrf = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+        const res = await fetch('/student/profile/name', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': csrf,
+            'Accept': 'application/json'
+          },
+          body: JSON.stringify({ name: newName })
+        });
+
+        const data = await res.json();
+        if (data.status === 'success') {
+          const finalName = data.name || newName;
+          document.querySelectorAll('.student-display-name').forEach(el => {
+            el.textContent = finalName;
+          });
+          closeUsernameModal();
+          showStudentToast(data.message || `Nama profil berhasil diubah menjadi "${finalName}"!`, 'success');
+        } else {
+          showStudentToast(data.message || 'Gagal mengubah nama profil.', 'error');
+        }
+      } catch (err) {
+        console.error(err);
+        showStudentToast('Terjadi kesalahan jaringan saat memperbarui nama profil.', 'error');
+      } finally {
+        if (saveBtn) saveBtn.disabled = false;
+      }
     });
   }
 }

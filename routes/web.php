@@ -60,6 +60,7 @@ Route::middleware(['auth'])->group(function () {
             return redirect()->route('sppg.selections');
         });
         Route::get('/review', [SPPGDashboardController::class, 'review'])->name('review');
+        Route::post('/review/{id}/respond', [SPPGDashboardController::class, 'respondReview'])->name('review.respond');
     });
 
     // ----------------------------------------------------------------------
@@ -70,10 +71,16 @@ Route::middleware(['auth'])->group(function () {
             return redirect()->route('student.dashboard');
         });
         Route::get('/dashboard', [StudentController::class, 'index'])->name('dashboard');
+        Route::post('/pickup/claim', [StudentController::class, 'claimPickup'])->name('pickup.claim');
         Route::get('/menu', [StudentController::class, 'menu'])->name('menu');
         Route::post('/menu/select', [StudentController::class, 'selectMenu'])->name('menu.select');
         Route::get('/history', [StudentController::class, 'history'])->name('history');
+        Route::post('/review/save', [StudentController::class, 'saveReview'])->name('review.save');
+        Route::delete('/review/{id}', [StudentController::class, 'deleteReview'])->name('review.delete');
         Route::get('/profile', [StudentController::class, 'profile'])->name('profile');
+        Route::post('/profile/allergies', [StudentController::class, 'updateAllergies'])->name('profile.allergies');
+        Route::post('/profile/name', [StudentController::class, 'updateProfileName'])->name('profile.name');
+        Route::post('/profile/avatar', [StudentController::class, 'updateAvatar'])->name('profile.avatar');
         Route::get('/review', [StudentController::class, 'review'])->name('review');
     });
 });

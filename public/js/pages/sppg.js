@@ -706,14 +706,14 @@ function initPilihanPage() {
   render();
 }
 
-const FEEDBACKS = [
+const DEFAULT_FEEDBACKS = [
   { code: 'D1', school: 'SMP Negeri 1 Denpasar', who: 'I Nyoman Sukra • Koordinator UKS & Gizi • Hari ini, 11:30 WITA', score: 5.0, text: '"Anak-anak sangat antusias dengan menu Ayam Panggang Madu dan Sayur Capcay. Kemasan tiba dalam boks termal higienis, suhu sup masih hangat, dan tidak ada wadah penyok. 542 porsi tuntas dibagikan tepat waktu."', tags: [['Suhu Wadah: Hangat (58°C)', 'green'], ['Sisa Porsi: < 1%', 'green']], kind: 'puas' },
   { code: 'G2', school: 'SMP Negeri 2 Gianyar', who: 'Ni Ketut Suartini • Pengawas Distribusi Sekolah • Hari ini, 10:45 WITA', score: 4.8, text: '"Kualitas nasi pulen dan tekstur daging sangat lembut untuk siswa. Catatan khusus: paket siswa alergi telur (Komang Aditya) terlabeli dengan segel peach sangat jelas sehingga tidak tertukar."', tags: [['Label Alergen: Akurat 100%', 'green'], ['Porsi Diterima: 765', 'gray']], kind: 'puas' },
   { code: 'K1', school: 'SMP Negeri 1 Klungkung', who: 'Luh Putu Aryani • Komite Sekolah & Tim UKS • Kemarin, 12:15 WITA', score: 3.8, text: '"Rasa sayuran sop jagung manis disukai anak-anak. Namun, armada tiba pada 09.55 WITA (sedikit mendekati jam istirahat pertama). Mohon estimasi waktu pengantaran untuk jalur Klungkung dimajukan 15 menit."', tags: [['Catatan: Jadwal Armada', 'orange'], ['Koreksi Logistik', 'gray']], kind: 'evaluasi', warn: true }
 ];
 
-const RATINGS = [[5, 82], [4, 14], [3, 4], [2, 0], [1, 0]];
-const FAVORITES = [
+const DEFAULT_RATINGS = [[5, 82], [4, 14], [3, 4], [2, 0], [1, 0]];
+const DEFAULT_FAVORITES = [
   ['Ayam Panggang Madu & Capcay', 'Paket Reguler SD/SMP', '99.1%'],
   ['Semur Gandik Sapi & Buncis', 'Paket Reguler Tinggi Protein', '97.4%'],
   ['Ikan Fillet Bumbu Kuning', 'Paket Omega-3 & Sayur Bayam', '95.0%']
@@ -721,29 +721,71 @@ const FAVORITES = [
 
 function initReviewPage() {
   const list = $('#feedbackList');
+  if (!list) return;
+
+  const feedbacks = (typeof window !== 'undefined' && Array.isArray(window.SPPG_FEEDBACKS))
+    ? window.SPPG_FEEDBACKS
+    : DEFAULT_FEEDBACKS;
+
+  const ratings = (typeof window !== 'undefined' && Array.isArray(window.SPPG_RATINGS))
+    ? window.SPPG_RATINGS
+    : DEFAULT_RATINGS;
+
+  const favorites = (typeof window !== 'undefined' && Array.isArray(window.SPPG_FAVORITES))
+    ? window.SPPG_FAVORITES
+    : DEFAULT_FAVORITES;
+
   let filter = 'all';
 
   function render() {
-    const rows = FEEDBACKS.filter((f) => filter === 'all' || f.kind === filter);
+    const rows = feedbacks.filter((f) => filter === 'all' || f.kind === filter);
     list.innerHTML = rows.length ? rows.map((f, i) => `
-      <article class="fb-card ${f.warn ? 'warn' : ''}" data-i="${FEEDBACKS.indexOf(f)}">
+      <article class="fb-card ${f.warn ? 'warn' : ''}" data-i="${feedbacks.indexOf(f)}">
         <div class="fb-head">
           <div class="fb-avatar">${esc(f.code)}</div>
           <div class="fb-who"><h4>${esc(f.school)}</h4><p>${esc(f.who)}</p></div>
-          <span class="fb-score"><span class="material-symbols-outlined">star</span>${f.score.toFixed(1)}</span>
+          <span class="fb-score"><span class="material-symbols-outlined">star</span>${Number(f.score).toFixed(1)}</span>
         </div>
         <div class="fb-quote">${esc(f.text)}</div>
         <div class="fb-foot">
-          <div class="fb-tags">${f.tags.map(([l, c]) => `<span class="pill ${c === 'green' ? 'pill-green' : c === 'orange' ? 'pill-orange' : 'pill-gray'}">${esc(l)}</span>`).join('')}</div>
+          <div class="fb-tags">${(f.tags || []).map(([l, c]) => `<span class="pill ${c === 'green' ? 'pill-green' : c === 'orange' ? 'pill-orange' : 'pill-gray'}">${esc(l)}</span>`).join('')}</div>
           ${f.warn
             ? `<button type="button" class="fb-respond ${f.responded ? 'done' : ''}" data-respond>${f.responded ? '✓ Tanggapan Terkirim' : 'Tanggapi Tim Dapur <span class="material-symbols-outlined" style="font-size:18px;">arrow_forward</span>'}</button>`
             : '<span class="fb-verified"><span class="material-symbols-outlined">check_circle</span>Terverifikasi SPPG</span>'}
         </div>
       </article>`).join('') : '<p class="sppg-panel sppg-empty">Tidak ada umpan balik.</p>';
 
-    $$('[data-respond]', list).forEach((btn) => btn.addEventListener('click', () => {
-      const f = FEEDBACKS[Number(btn.closest('.fb-card').dataset.i)];
-      if (f.responded) return;
+    $$('[data-respond]', list).forEach((btn) => btn.addEventListener('click', async () => {
+      const card = btn.closest('.fb-card');
+      const idx = Number(card?.dataset.i);
+      const f = feedbacks[idx];
+      if (!f || f.responded) return;
+
+      btn.disabled = true;
+      if (f.id) {
+        try {
+          const csrf = $('meta[name="csrf-token"]')?.getAttribute('content');
+          const res = await fetch(`/sppg/review/${f.id}/respond`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'X-CSRF-TOKEN': csrf,
+              'Accept': 'application/json'
+            },
+            body: JSON.stringify({ response: 'Tanggapan diteruskan ke Tim Dapur' })
+          });
+          const json = await res.json();
+          if (json.status === 'success') {
+            f.responded = true;
+            showToast(json.message || `Tanggapan untuk ${f.school} diteruskan ke Tim Dapur`);
+            render();
+            return;
+          }
+        } catch (err) {
+          console.error(err);
+        }
+      }
+
       f.responded = true;
       showToast(`Tanggapan untuk ${f.school} diteruskan ke Tim Dapur`);
       render();
@@ -757,15 +799,21 @@ function initReviewPage() {
     render();
   }));
 
-  $('#ratingBars').innerHTML = RATINGS.map(([star, pct]) => `
-    <div class="rate-row">
-      <span>${star} Bintang</span>
-      <div class="rate-track"><div class="rate-fill ${star === 3 ? 'low' : star === 4 ? 'mid' : ''}" style="width:${pct}%"></div></div>
-      <b>${pct}%</b>
-    </div>`).join('');
+  const ratingBarsEl = $('#ratingBars');
+  if (ratingBarsEl) {
+    ratingBarsEl.innerHTML = ratings.map(([star, pct]) => `
+      <div class="rate-row">
+        <span>${star} Bintang</span>
+        <div class="rate-track"><div class="rate-fill ${star === 3 ? 'low' : star === 4 ? 'mid' : ''}" style="width:${pct}%"></div></div>
+        <b>${pct}%</b>
+      </div>`).join('');
+  }
 
-  $('#favList').innerHTML = FAVORITES.map(([name, sub, pct]) => `
-    <li><div><b>${esc(name)}</b><small>${esc(sub)}</small></div><span class="pill pill-green">${pct} Suka</span></li>`).join('');
+  const favListEl = $('#favList');
+  if (favListEl) {
+    favListEl.innerHTML = favorites.map(([name, sub, pct]) => `
+      <li><div><b>${esc(name)}</b><small>${esc(sub)}</small></div><span class="pill pill-green">${pct} Suka</span></li>`).join('');
+  }
 
   render();
 }

@@ -51,7 +51,7 @@
                         <span class="student-user-role sppg-user-role">{{ $sppgUser?->institution ?? 'Pegawai SPPG' }}</span>
                     </div>
                 </a>
-                <a href="{{ route('home') }}" class="btn btn-secondary btn-sm" title="Beranda">
+                <a href="{{ route('landing') }}" class="btn btn-secondary btn-sm" title="Beranda">
                     <span class="material-symbols-outlined" style="font-size: 18px;">home</span>
                 </a>
                 <form action="{{ route('logout') }}" method="POST" style="display: contents;">
@@ -85,13 +85,13 @@
 
             <section class="sppg-kpi-grid">
                 <article class="sppg-kpi"><div class="sppg-kpi-top"><span>SKOR KEPUASAN</span><div class="sppg-ico ico-orange"><span class="material-symbols-outlined">star</span></div></div>
-                    <div class="sppg-kpi-val">4.82 <small>/ 5.00</small></div><div class="sppg-kpi-foot text-primary">? +0.18 dari siklus lalu</div></article>
+                    <div class="sppg-kpi-val">{{ $kpis['satisfaction_score'] }} <small>/ 5.00</small></div><div class="sppg-kpi-foot text-primary">▲ +0.18 dari siklus lalu</div></article>
                 <article class="sppg-kpi"><div class="sppg-kpi-top"><span>KETEPATAN DISTRIBUSI</span><div class="sppg-ico ico-green"><span class="material-symbols-outlined">schedule</span></div></div>
-                    <div class="sppg-kpi-val">98.4% <small>on-time</small></div><div class="sppg-kpi-foot">Rata-rata tiba: <b>09.25 WITA</b></div></article>
+                    <div class="sppg-kpi-val">{{ $kpis['distribution_rate'] }}% <small>on-time</small></div><div class="sppg-kpi-foot">Rata-rata tiba: <b>09.25 WITA</b></div></article>
                 <article class="sppg-kpi"><div class="sppg-kpi-top"><span>TINGKAT KONSUMSI</span><div class="sppg-ico ico-green"><span class="material-symbols-outlined">restaurant</span></div></div>
-                    <div class="sppg-kpi-val">96.1% <span class="pill pill-solid">Optimal</span></div><div class="sppg-kpi-foot">Sisa makanan (waste): 3.9%</div></article>
+                    <div class="sppg-kpi-val">{{ $kpis['consumption_rate'] }}% <span class="pill pill-solid">Optimal</span></div><div class="sppg-kpi-foot">Sisa makanan (waste): {{ $kpis['waste_rate'] }}%</div></article>
                 <article class="sppg-kpi"><div class="sppg-kpi-top"><span>ULASAN DITERIMA</span><div class="sppg-ico ico-orange"><span class="material-symbols-outlined">rate_review</span></div></div>
-                    <div class="sppg-kpi-val">342 <small>laporan</small></div><div class="sppg-kpi-foot"><span>18 Satuan Sekolah</span><span class="pill pill-green">100% Mengisi</span></div></article>
+                    <div class="sppg-kpi-val">{{ $kpis['total_reviews'] }} <small>laporan</small></div><div class="sppg-kpi-foot"><span>{{ $kpis['active_schools'] }} Satuan Sekolah</span><span class="pill pill-green">100% Mengisi</span></div></article>
             </section>
 
             <div class="sppg-review-grid">
@@ -118,8 +118,8 @@
                     </section>
                     <section class="sppg-audit">
                         <h4><span class="material-symbols-outlined">verified_user</span>AUDIT HIGIENITAS DAPUR</h4>
-                        <p>Dapur SPPG Pusat telah tersertifikasi Laik Higiene Sanitasi dengan pemeriksaan harian suhu wadah & uji sampel mikrobiologi.</p>
-                        <button type="button" class="btn sppg-audit-btn" data-toast="Membuka sertifikat laboratorium...">Lihat Sertifikat Laboratorium</button>
+                        <p>{{ $latestAudit?->result ?? 'Dapur SPPG Pusat telah tersertifikasi Laik Higiene Sanitasi dengan pemeriksaan harian suhu wadah & uji sampel mikrobiologi.' }}</p>
+                        <button type="button" class="btn sppg-audit-btn" data-toast="Membuka sertifikat {{ $latestAudit?->certificate_file ?? 'laboratorium' }}...">Lihat Sertifikat Laboratorium</button>
                     </section>
                 </aside>
             </div>
@@ -137,6 +137,11 @@
         </div>
     </footer>
 
+    <script>
+        window.SPPG_FEEDBACKS = @json($feedbacks);
+        window.SPPG_RATINGS = @json($ratings);
+        window.SPPG_FAVORITES = @json($favorites);
+    </script>
     <script src="{{ asset('js/main.js') }}"></script>
     <script src="{{ asset('js/pages/sppg.js') }}"></script>
 </body>

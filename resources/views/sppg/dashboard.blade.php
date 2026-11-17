@@ -136,23 +136,44 @@
                 <section class="sppg-panel">
                     <div class="sppg-panel-head">
                         <h2><span class="sppg-ico ico-blue sm"><span class="material-symbols-outlined">restaurant</span></span>Menu Hari Ini</h2>
-                        <span class="pill pill-green">Siklus IV</span>
+                        @if ($todayMenu && $todaySchedule)
+                            <span class="pill pill-green">{{ $todaySchedule->cycle ?? 'Siklus Aktif' }}</span>
+                        @endif
                     </div>
-                    <div class="sppg-today-img">
-                        <img src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=800&q=80" alt="Menu hari ini" loading="lazy">
-                        <div class="sppg-today-cap"><small>PAKET MENU STANDAR A</small><strong>Ayam Kecap Rempah & Sup Sayur Jagung</strong></div>
-                    </div>
-                    <ul class="sppg-comp-list">
-                        <li><b>Karbohidrat</b><span>Nasi Putih Pulen Organik (150g)</span></li>
-                        <li><b>Lauk Utama</b><span>Ayam Kecap Rempah Madu (85g)</span></li>
-                        <li><b>Sayuran</b><span>Sup Wortel Buncis & Jagung Manis</span></li>
-                        <li><b>Buah & Pelengkap</b><span>Pisang Mas & Susu UHT 125ml</span></li>
-                    </ul>
-                    <div class="sppg-macro-3">
-                        <div><small>Energi</small><strong>620 <em>kkal</em></strong></div>
-                        <div><small>Protein</small><strong>24.5 <em>gram</em></strong></div>
-                        <div><small>Serat Pangan</small><strong>6.8 <em>gram</em></strong></div>
-                    </div>
+                    @if ($todayMenu)
+                        <div class="sppg-today-img">
+                            <img src="{{ $todayMenu->image ?: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=800&q=80' }}" alt="{{ $todayMenu->name }}" loading="lazy">
+                            <div class="sppg-today-cap">
+                                <small>{{ match ($todayMenu->category) { 'special' => 'PAKET MENU SPESIAL', 'backup' => 'PAKET MENU CADANGAN', default => 'PAKET MENU STANDAR' } }}</small>
+                                <strong>{{ $todayMenu->name }}</strong>
+                            </div>
+                        </div>
+                        @php
+                            $componentLabels = ['Karbohidrat', 'Lauk Utama', 'Sayuran', 'Buah & Pelengkap'];
+                        @endphp
+                        <ul class="sppg-comp-list">
+                            @forelse ($todayMenu->items ?? [] as $index => $item)
+                                <li>
+                                    <b>{{ $componentLabels[$index] ?? 'Pelengkap' }}</b>
+                                    <span>{{ $item }}</span>
+                                </li>
+                            @empty
+                                <li>
+                                    <b>Komposisi</b>
+                                    <span>{{ $todayMenu->description ?? 'Rincian menu belum tersedia.' }}</span>
+                                </li>
+                            @endforelse
+                        </ul>
+                        <div class="sppg-macro-3">
+                            <div><small>Energi</small><strong>{{ $todayMenu->calories ?? 0 }} <em>kkal</em></strong></div>
+                            <div><small>Protein</small><strong>{{ (float) ($todayMenu->protein ?? 0) }} <em>gram</em></strong></div>
+                            <div><small>Serat Pangan</small><strong>{{ (float) ($todayMenu->fiber ?? 0) }} <em>gram</em></strong></div>
+                        </div>
+                    @else
+                        <div class="sppg-empty">
+                            <p style="margin: 0; font-weight: 600; font-size: var(--font-size-base, 1rem);">Belum Memilih Menu</p>
+                        </div>
+                    @endif
                 </section>
             </div>
 

@@ -48,11 +48,18 @@
             <div class="nav-actions">
                 @php
                     $authUser = Auth::user();
-                    $displayName = $authUser?->full_name ?: ($authUser?->username ?? 'Siswa');
-                    $initial = strtoupper(substr($displayName, 0, 1));
+                    $displayName = ($authUser?->full_name ?: ($authUser?->username ?? 'Siswa'));
+                    $navInitial = strtoupper(substr($displayName, 0, 1));
+                    $navPic = $student?->profile_picture ?? null;
                 @endphp
                 <a href="{{ route('student.profile') }}" class="student-user-chip" title="Lihat Profil Saya">
-                    <div class="student-user-avatar">{{ $initial }}</div>
+                    <div class="student-user-avatar">
+                        @if ($navPic)
+                            <img src="{{ $navPic }}" alt="Foto Profil">
+                        @else
+                            {{ $navInitial }}
+                        @endif
+                    </div>
                     <div class="student-user-meta">
                         <span class="student-user-name student-display-name">{{ $displayName }}</span>
                         <span class="student-user-role">Siswa</span>
@@ -84,8 +91,20 @@
             <div class="profile-container-grid">
                 
                 <aside class="profile-card-sidebar">
+                    @php
+                        $authUser = Auth::user();
+                        $displayName = ($authUser?->full_name ?: ($authUser?->username ?? 'Siswa'));
+                        $initial = strtoupper(substr($displayName, 0, 1));
+                        $profilePic = $student?->profile_picture ?? null;
+                    @endphp
                     <div class="profile-avatar-wrapper">
-                        <div class="profile-big-avatar" id="profileAvatarDisplay">A</div>
+                        <div class="profile-big-avatar" id="profileAvatarDisplay">
+                            @if ($profilePic)
+                                <img src="{{ $profilePic }}" alt="Foto Profil">
+                            @else
+                                {{ $initial }}
+                            @endif
+                        </div>
                         <button type="button" class="btn-change-avatar" id="triggerAvatarUpload" title="Ubah Foto Profil">
                             <span class="material-symbols-outlined">photo_camera</span>
                         </button>
@@ -97,29 +116,33 @@
                         <span>Ubah Profil</span>
                     </button>
 
-                    <h2 class="profile-user-title student-display-name">Alya MBG</h2>
-                    <p class="profile-school-subtitle student-display-school">SMA Negeri 1 Denpasar</p>
+                    <h2 class="profile-user-title student-display-name">{{ $displayName }}</h2>
+                    <p class="profile-school-subtitle student-display-school">{{ $school?->name ?? ($user?->institution ?? 'Sekolah Mitra MBG') }}</p>
 
                     <div class="profile-sidebar-meta-list">
                         <div class="profile-meta-row">
+                            <span class="profile-meta-lbl">Nama Lengkap</span>
+                            <span class="profile-meta-val student-display-nis">{{ $student?->name ?? '–' }}</span>
+                        </div>
+                        <div class="profile-meta-row">
                             <span class="profile-meta-lbl">NISN / NIS</span>
-                            <span class="profile-meta-val student-display-nis">12345678</span>
+                            <span class="profile-meta-val student-display-nis">{{ $student?->nisn ?? '–' }}</span>
                         </div>
                         <div class="profile-meta-row">
                             <span class="profile-meta-lbl">Kelas</span>
-                            <span class="profile-meta-val">XI IPA 1</span>
+                            <span class="profile-meta-val">{{ $student?->class_name ?? '–' }}</span>
                         </div>
                         <div class="profile-meta-row">
                             <span class="profile-meta-lbl">Tingkat Sekolah</span>
-                            <span class="profile-meta-val">SMA / MA</span>
+                            <span class="profile-meta-val">{{ ($school?->education_level ?? 'SMP') . ' / Sederajat' }}</span>
                         </div>
                         <div class="profile-meta-row">
                             <span class="profile-meta-lbl">Unit Dapur SPPG</span>
-                            <span class="profile-meta-val">SPPG Denpasar Selatan</span>
+                            <span class="profile-meta-val">{{ $sppgUnit?->name ?? 'SPPG Denpasar Barat 01' }}</span>
                         </div>
                         <div class="profile-meta-row">
                             <span class="profile-meta-lbl">Status Penerima</span>
-                            <span class="profile-meta-val" style="color: var(--color-primary);">? Terdaftar Aktif</span>
+                            <span class="profile-meta-val" style="color: var(--color-primary);">✓ {{ ($student?->recipient_status ?? 'active') === 'active' ? 'Terdaftar Aktif' : 'Non-Aktif' }}</span>
                         </div>
                     </div>
                 </aside>
@@ -131,12 +154,16 @@
                         <p>Data alergen ini digunakan secara otomatis oleh sistem saat Anda memilih menu dan diteruskan langsung ke dapur SPPG untuk pencegahan kontaminasi silang.</p>
                     </div>
 
+                    @php
+                        $allergiesList = is_array($studentAllergies) ? $studentAllergies : [];
+                    @endphp
+
                     <form id="profileAllergyForm" novalidate>
                         
                         <div class="allergy-checkbox-grid">
                             
-                            <label class="allergy-checkbox-item">
-                                <input type="checkbox" value="Kacang" class="allergy-check-input">
+                            <label class="allergy-checkbox-item {{ in_array('Kacang', $allergiesList) ? 'checked' : '' }}">
+                                <input type="checkbox" value="Kacang" class="allergy-check-input" {{ in_array('Kacang', $allergiesList) ? 'checked' : '' }}>
                                 <div class="allergy-item-info">
                                     <h4>Alergi Kacang (Peanuts / Tree Nuts)</h4>
                                     <p>Kacang tanah, mede, almond, atau selai kacang</p>
@@ -144,8 +171,8 @@
                             </label>
 
                             
-                            <label class="allergy-checkbox-item">
-                                <input type="checkbox" value="Seafood" class="allergy-check-input">
+                            <label class="allergy-checkbox-item {{ in_array('Seafood', $allergiesList) ? 'checked' : '' }}">
+                                <input type="checkbox" value="Seafood" class="allergy-check-input" {{ in_array('Seafood', $allergiesList) ? 'checked' : '' }}>
                                 <div class="allergy-item-info">
                                     <h4>Alergi Makanan Laut (Seafood)</h4>
                                     <p>Udang, kepiting, cumi-cumi, atau kerang laut</p>
@@ -153,8 +180,8 @@
                             </label>
 
                             
-                            <label class="allergy-checkbox-item">
-                                <input type="checkbox" value="Telur" class="allergy-check-input">
+                            <label class="allergy-checkbox-item {{ in_array('Telur', $allergiesList) ? 'checked' : '' }}">
+                                <input type="checkbox" value="Telur" class="allergy-check-input" {{ in_array('Telur', $allergiesList) ? 'checked' : '' }}>
                                 <div class="allergy-item-info">
                                     <h4>Alergi Telur</h4>
                                     <p>Telur ayam, telur bebek, atau produk olahan telur</p>
@@ -162,8 +189,8 @@
                             </label>
 
                             
-                            <label class="allergy-checkbox-item">
-                                <input type="checkbox" value="Laktosa" class="allergy-check-input">
+                            <label class="allergy-checkbox-item {{ in_array('Laktosa', $allergiesList) ? 'checked' : '' }}">
+                                <input type="checkbox" value="Laktosa" class="allergy-check-input" {{ in_array('Laktosa', $allergiesList) ? 'checked' : '' }}>
                                 <div class="allergy-item-info">
                                     <h4>Intoleransi Laktosa (Susu Sapi)</h4>
                                     <p>Susu segar, mentega, keju olahan hewani</p>
@@ -171,8 +198,8 @@
                             </label>
 
                             
-                            <label class="allergy-checkbox-item" style="grid-column: span 2;">
-                                <input type="checkbox" value="Vegetarian" class="allergy-check-input">
+                            <label class="allergy-checkbox-item {{ in_array('Vegetarian', $allergiesList) ? 'checked' : '' }}" style="grid-column: span 2;">
+                                <input type="checkbox" value="Vegetarian" class="allergy-check-input" {{ in_array('Vegetarian', $allergiesList) ? 'checked' : '' }}>
                                 <div class="allergy-item-info">
                                     <h4>Diet Khusus Vegetarian / Bebas Daging</h4>
                                     <p>Hanya mengonsumsi sayuran, jamur, tempe, tahu, dan protein nabati</p>
@@ -183,7 +210,7 @@
                         
                         <div class="form-group-medical">
                             <label for="medicalNotes">Catatan Tambahan Medis / Riwayat Khusus:</label>
-                            <textarea id="medicalNotes" class="form-textarea" rows="3" placeholder="Tuliskan catatan medis jika ada alergi obat atau riwayat maag akut..."></textarea>
+                            <textarea id="medicalNotes" class="form-textarea" rows="3" placeholder="Tuliskan catatan medis jika ada alergi obat atau riwayat maag akut...">{{ $medicalNotes }}</textarea>
                         </div>
 
                         
@@ -214,7 +241,7 @@
                 <div class="student-modal-body">
                     <div class="form-group" style="margin-bottom: var(--space-16);">
                         <label for="newUsernameInput" style="display: block; font-size: 14px; font-weight: 700; color: #0B1C30; margin-bottom: 6px;">Nama Lengkap / Username:</label>
-                        <input type="text" id="newUsernameInput" class="form-textarea" style="min-height: 44px; height: 44px; padding: 8px 12px;" required placeholder="Masukkan nama profil baru...">
+                        <input type="text" id="newUsernameInput" class="form-textarea" style="min-height: 44px; height: 44px; padding: 8px 12px;" required placeholder="Masukkan nama profil baru..." value="{{ $displayName }}">
                     </div>
                     <p style="font-size: 12px; color: #62748E; margin: 0;">Nama ini akan tampil di seluruh sapaan dashboard, ulasan makanan, dan navbar siswa.</p>
                 </div>

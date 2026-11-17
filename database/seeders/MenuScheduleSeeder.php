@@ -16,21 +16,43 @@ class MenuScheduleSeeder extends Seeder
         $sppgMap = DB::table('sppg_units')->pluck('id', 'code');
 
         $today = date('Y-m-d');
-        $tomorrow = date('Y-m-d', strtotime('+1 day'));
+        $sppgCode = 'SPPG-DPS-01';
 
+        // 5 hari jadwal menu yang menyesuaikan dengan day tabs nav (-2 sampai +2 hari)
         $schedules = [
             [
+                'menu_name' => 'Paket Sate Ayam Lilit & Sayur Daun Kelor',
+                'sppg_code' => $sppgCode,
+                'date' => date('Y-m-d', strtotime('-2 days')),
+                'cycle' => 'Minggu '.date('W'),
+                'cutoff_time' => '20:00:00',
+            ],
+            [
+                'menu_name' => 'Paket Ikan Bakar Sambal Dabu & Cah Kangkung',
+                'sppg_code' => $sppgCode,
+                'date' => date('Y-m-d', strtotime('-1 day')),
+                'cycle' => 'Minggu '.date('W'),
+                'cutoff_time' => '20:00:00',
+            ],
+            [
                 'menu_name' => 'Paket Ayam Panggang Madu & Capcay Sayur',
-                'sppg_code' => 'SPPG-DPS-01',
+                'sppg_code' => $sppgCode,
                 'date' => $today,
-                'cycle' => 'Oktober 2026 - Minggu 1',
+                'cycle' => 'Minggu '.date('W'),
                 'cutoff_time' => '20:00:00',
             ],
             [
                 'menu_name' => 'Paket Rolade Daging Sapi & Sup Sayur Bening',
-                'sppg_code' => 'SPPG-DPS-01',
-                'date' => $tomorrow,
-                'cycle' => 'Oktober 2026 - Minggu 1',
+                'sppg_code' => $sppgCode,
+                'date' => date('Y-m-d', strtotime('+1 day')),
+                'cycle' => 'Minggu '.date('W'),
+                'cutoff_time' => '20:00:00',
+            ],
+            [
+                'menu_name' => 'Paket Sate Ayam Lilit & Sayur Daun Kelor',
+                'sppg_code' => $sppgCode,
+                'date' => date('Y-m-d', strtotime('+2 days')),
+                'cycle' => 'Minggu '.date('W'),
                 'cutoff_time' => '20:00:00',
             ],
         ];

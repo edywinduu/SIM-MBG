@@ -2,8 +2,8 @@
 
 namespace Tests\Feature;
 
-use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
 
 class AuthDatabaseTest extends TestCase
 {
@@ -29,7 +29,7 @@ class AuthDatabaseTest extends TestCase
     {
         $response = $this->postJson('/login', [
             'username' => '0081234567',
-            'password' => 'password',
+            'password' => '123',
         ]);
 
         $response->assertStatus(200)

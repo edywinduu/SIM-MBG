@@ -124,9 +124,18 @@
                             </div>
                         </div>
 
-                        <button type="button" class="pickup-status-btn pending" id="pickupStatusBtn">
-                            <img src="{{ asset('assets/icons/icon-hourglass.png') }}" alt="Ikon Jam Pasir" class="pickup-btn-icon" aria-hidden="true">
-                            <span id="pickupStateText">Aktif: Belum Diambil </span>
+                        @php
+                            $isPickedUp = ($todayPickup && $todayPickup->status === 'picked_up');
+                            $pickupTimeFormatted = $todayPickup?->pickup_time ? \Illuminate\Support\Carbon::parse($todayPickup->pickup_time)->format('H:i') . ' WITA' : null;
+                        @endphp
+                        <button type="button" class="pickup-status-btn {{ $isPickedUp ? 'claimed' : 'pending' }}" id="pickupStatusBtn" {{ $isPickedUp ? 'disabled' : '' }}>
+                            @if ($isPickedUp)
+                                <span class="material-symbols-outlined">check_circle</span>
+                                <span id="pickupStateText">Makan Siang Sudah Diambil {{ $pickupTimeFormatted ? "($pickupTimeFormatted)" : '' }}</span>
+                            @else
+                                <img src="{{ asset('assets/icons/icon-hourglass.png') }}" alt="Ikon Jam Pasir" class="pickup-btn-icon" aria-hidden="true">
+                                <span id="pickupStateText">Aktif: Belum Diambil</span>
+                            @endif
                         </button>
                     </article>
 
