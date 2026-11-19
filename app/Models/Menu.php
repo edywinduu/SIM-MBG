@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Menu extends Model
 {
@@ -67,8 +69,24 @@ class Menu extends Model
         ];
     }
 
-    public function optionsMenu()
+    public function schedules(): HasMany
     {
-        return $this->hasMany(OptionsMenu::class);
+        return $this->hasMany(MenuSchedule::class, 'menu_id');
+    }
+
+    public function selections(): HasMany
+    {
+        return $this->hasMany(MenuSelection::class, 'menu_id');
+    }
+
+    public function reviews(): HasMany
+    {
+        return $this->hasMany(StudentReview::class, 'menu_id');
+    }
+
+    public function allergens(): BelongsToMany
+    {
+        return $this->belongsToMany(Allergen::class, 'menu_allergens', 'menu_id', 'allergen_id')
+            ->withPivot('type');
     }
 }

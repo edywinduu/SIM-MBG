@@ -104,9 +104,9 @@ return [
         Admin Seeder
     */
     'admin_seed' => [
-        'name'     => env('ADMIN_NAME', 'Super Administrator'),
+        'name' => env('ADMIN_NAME', 'Super Administrator'),
         'username' => env('ADMIN_USERNAME', 'sysadmin'),
-        'email'    => env('ADMIN_EMAIL', 'admin@simmbg.id'),
+        'email' => env('ADMIN_EMAIL', 'admin@simmbg.id'),
         'password' => env('ADMIN_INITIAL_PASSWORD', 'defaultPassword123!'),
     ],
 

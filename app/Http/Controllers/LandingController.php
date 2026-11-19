@@ -14,6 +14,6 @@ class LandingController extends Controller
             ->orderBy('id', 'asc')
             ->get();
 
-        return view('index', compact('menus')); 
+        return view('index', compact('menus'));
     }
 }

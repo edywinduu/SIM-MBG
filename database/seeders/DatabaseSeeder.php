@@ -19,6 +19,7 @@ class DatabaseSeeder extends Seeder
             SppgUnitSeeder::class,
             AllergenSeeder::class,
             MenuSeeder::class,
+            HolidaySeeder::class,
 
             // 2. Entitas Tingkat 1 (bergantung pada users / sppg_units)
             SchoolSeeder::class,

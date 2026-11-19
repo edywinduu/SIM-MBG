@@ -1,94 +1,42 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\SPPG;
 
+use App\Models\Distribution;
+use App\Models\KitchenAudit;
 use App\Models\Menu;
+use App\Models\School;
+use App\Models\SchoolFeedback;
+use App\Models\StudentReview;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 
-class SPPGDashboardController extends Controller
+class ReviewController extends BaseSppgController
 {
-    private function getSppgId(): int
-    {
-        $user = Auth::user();
-        $sppgId = null;
-
-        if ($user && $user->institution) {
-            $sppgId = DB::table('sppg_units')
-                ->where('name', $user->institution)
-                ->value('id');
-        }
-
-        if (! $sppgId && $user) {
-            $sppgId = DB::table('sppg_staff')
-                ->where('user_id', $user->id)
-                ->value('sppg_id');
-        }
-
-        return (int) ($sppgId ?: 1);
-    }
-
     public function index(): View
-    {
-        $sppgId = $this->getSppgId();
-        $today = today();
-
-        $todaySchedule = DB::table('menu_schedules')
-            ->where('sppg_id', $sppgId)
-            ->whereDate('date', $today)
-            ->first();
-
-        if (! $todaySchedule) {
-            $todaySchedule = DB::table('menu_schedules')
-                ->whereDate('date', $today)
-                ->first();
-        }
-
-        $todayMenu = null;
-        if ($todaySchedule && $todaySchedule->menu_id) {
-            $todayMenu = Menu::find($todaySchedule->menu_id);
-        }
-
-        return view('sppg.dashboard', compact('todaySchedule', 'todayMenu'));
-    }
-
-    public function menu()
-    {
-        return view('sppg.menu');
-    }
-
-    public function selections()
-    {
-        return view('sppg.selections');
-    }
-
-    public function review(): View
     {
         $sppgId = $this->getSppgId();
 
         // 1. Indikator KPI Utama
-        $avgScore = DB::table('school_feedbacks')->avg('score');
+        $avgScore = SchoolFeedback::avg('score');
         $satisfactionScore = $avgScore ? number_format((float) $avgScore, 2, '.', '') : '4.82';
 
-        $totalDist = DB::table('distributions')->where('sppg_id', $sppgId)->count();
-        $deliveredDist = DB::table('distributions')
-            ->where('sppg_id', $sppgId)
+        $totalDist = Distribution::where('sppg_id', $sppgId)->count();
+        $deliveredDist = Distribution::where('sppg_id', $sppgId)
             ->where('status', 'delivered')
             ->count();
         $distributionRate = $totalDist > 0 ? number_format(($deliveredDist / $totalDist) * 100, 1, '.', '') : '98.4';
 
-        $avgWaste = DB::table('school_feedbacks')->avg('waste_percentage');
+        $avgWaste = SchoolFeedback::avg('waste_percentage');
         $wasteRate = $avgWaste !== null ? (float) $avgWaste : 3.9;
         $consumptionRate = number_format(100 - $wasteRate, 1, '.', '');
 
-        $schoolReviewCount = DB::table('school_feedbacks')->count();
-        $studentReviewCount = DB::table('student_reviews')->count();
+        $schoolReviewCount = SchoolFeedback::count();
+        $studentReviewCount = StudentReview::count();
         $totalReviewCount = $schoolReviewCount + $studentReviewCount;
-        $activeSchoolsCount = DB::table('schools')->where('status', 'active')->count();
+        $activeSchoolsCount = School::where('status', 'active')->count();
 
         $kpis = [
             'satisfaction_score' => $satisfactionScore,
@@ -100,24 +48,20 @@ class SPPGDashboardController extends Controller
         ];
 
         // 2. Daftar Umpan Balik Satuan Pendidikan
-        $dbFeedbacks = DB::table('school_feedbacks')
-            ->join('schools', 'school_feedbacks.school_id', '=', 'schools.id')
-            ->select(
-                'school_feedbacks.*',
-                'schools.name as school_name'
-            )
-            ->orderByDesc('school_feedbacks.created_at')
+        $dbFeedbacks = SchoolFeedback::with('school')
+            ->latest('created_at')
             ->get();
 
         $feedbacks = [];
         foreach ($dbFeedbacks as $fb) {
+            $schoolName = $fb->school?->name ?? 'Sekolah';
             $code = 'SP';
-            if (preg_match('/(?:SMP|SD|SMA)\s+(?:Negeri\s+)?(\d+)\s+([A-Za-z]+)/i', $fb->school_name, $m)) {
+            if (preg_match('/(?:SMP|SD|SMA)\s+(?:Negeri\s+)?(\d+)\s+([A-Za-z]+)/i', $schoolName, $m)) {
                 $code = strtoupper(substr($m[2], 0, 1)).$m[1];
-            } elseif (preg_match('/([A-Za-z]+)\s+(\d+)/i', $fb->school_name, $m)) {
+            } elseif (preg_match('/([A-Za-z]+)\s+(\d+)/i', $schoolName, $m)) {
                 $code = strtoupper(substr($m[1], 0, 1)).$m[2];
             } else {
-                $words = explode(' ', $fb->school_name);
+                $words = explode(' ', $schoolName);
                 $code = strtoupper(substr($words[0] ?? 'S', 0, 1).substr($words[1] ?? 'P', 0, 1));
             }
 
@@ -149,7 +93,7 @@ class SPPGDashboardController extends Controller
             $feedbacks[] = [
                 'id' => $fb->id,
                 'code' => $code,
-                'school' => $fb->school_name,
+                'school' => $schoolName,
                 'who' => $who,
                 'score' => (float) $fb->score,
                 'text' => '"'.trim($fb->content, '"').'"',
@@ -161,7 +105,7 @@ class SPPGDashboardController extends Controller
         }
 
         // 3. Sebaran Rating Kepuasan
-        $allRatings = DB::table('student_reviews')->pluck('rating')->toArray();
+        $allRatings = StudentReview::pluck('rating')->toArray();
         if (empty($allRatings)) {
             $ratings = [[5, 82], [4, 14], [3, 4], [2, 0], [1, 0]];
         } else {
@@ -175,15 +119,9 @@ class SPPGDashboardController extends Controller
         }
 
         // 4. Menu Paling Disukai Siswa
-        $favQuery = DB::table('student_reviews')
-            ->join('menus', 'student_reviews.menu_id', '=', 'menus.id')
-            ->select(
-                'menus.name',
-                'menus.category',
-                DB::raw('AVG(student_reviews.rating) as avg_rating'),
-                DB::raw('COUNT(student_reviews.id) as review_count'),
-                DB::raw('ROUND((SUM(CASE WHEN student_reviews.rating >= 4 THEN 1 ELSE 0 END) / COUNT(student_reviews.id)) * 100, 1) as satisfaction_pct')
-            )
+        $favQuery = Menu::select('menus.id', 'menus.name', 'menus.category')
+            ->join('student_reviews', 'student_reviews.menu_id', '=', 'menus.id')
+            ->selectRaw('menus.name, menus.category, AVG(student_reviews.rating) as avg_rating, COUNT(student_reviews.id) as review_count, ROUND((SUM(CASE WHEN student_reviews.rating >= 4 THEN 1 ELSE 0 END) / COUNT(student_reviews.id)) * 100, 1) as satisfaction_pct')
             ->groupBy('menus.id', 'menus.name', 'menus.category')
             ->orderByDesc('avg_rating')
             ->limit(3)
@@ -212,21 +150,17 @@ class SPPGDashboardController extends Controller
         }
 
         // 5. Audit Higienitas Dapur
-        $latestAudit = DB::table('kitchen_audits')
-            ->where('sppg_id', $sppgId)
+        $latestAudit = KitchenAudit::where('sppg_id', $sppgId)
             ->latest('audit_date')
-            ->first();
-
-        if (! $latestAudit) {
-            $latestAudit = DB::table('kitchen_audits')->latest('audit_date')->first();
-        }
+            ->first()
+            ?? KitchenAudit::latest('audit_date')->first();
 
         return view('sppg.review', compact('kpis', 'feedbacks', 'ratings', 'favorites', 'latestAudit'));
     }
 
-    public function respondReview(Request $request, int $id): JsonResponse
+    public function respond(Request $request, int $id): JsonResponse
     {
-        $feedback = DB::table('school_feedbacks')->where('id', $id)->first();
+        $feedback = SchoolFeedback::find($id);
         if (! $feedback) {
             return response()->json([
                 'status' => 'error',
@@ -236,7 +170,7 @@ class SPPGDashboardController extends Controller
 
         $responseText = $request->input('response', 'Tanggapan diteruskan ke Tim Dapur');
 
-        DB::table('school_feedbacks')->where('id', $id)->update([
+        $feedback->update([
             'kitchen_response' => $responseText,
         ]);
 

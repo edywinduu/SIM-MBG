@@ -1,12 +1,13 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Auth;
 
+use App\Http\Controllers\Controller;
+use App\Models\Student;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cookie;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
@@ -51,11 +52,9 @@ class AuthController extends Controller
             ->first();
 
         if (! $user) {
-            $studentUserId = DB::table('students')
-                ->where('nisn', $identifier)
-                ->value('user_id');
-            if ($studentUserId) {
-                $user = User::find($studentUserId);
+            $student = Student::where('nisn', $identifier)->first();
+            if ($student?->user_id) {
+                $user = $student->user ?? User::find($student->user_id);
             }
         }
 

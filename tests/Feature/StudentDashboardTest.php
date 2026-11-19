@@ -4,15 +4,13 @@ namespace Tests\Feature;
 
 use App\Models\Student;
 use App\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\DB;
 use Tests\TestCase;
 
 class StudentDashboardTest extends TestCase
 {
-    use RefreshDatabase;
-
-    protected bool $seed = true;
+    use DatabaseTransactions;
 
     private function getStudentUser(): User
     {

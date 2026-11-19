@@ -3,15 +3,13 @@
 namespace Tests\Feature;
 
 use App\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\DB;
 use Tests\TestCase;
 
 class StudentMenuTest extends TestCase
 {
-    use RefreshDatabase;
-
-    protected bool $seed = true;
+    use DatabaseTransactions;
 
     public function test_student_menu_page_defaults_to_tomorrow_in_center_and_today_is_expired(): void
     {

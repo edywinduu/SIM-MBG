@@ -2,14 +2,12 @@
 
 namespace Tests\Feature;
 
-use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Tests\TestCase;
 
 class AuthDatabaseTest extends TestCase
 {
-    use RefreshDatabase;
-
-    protected bool $seed = true;
+    use DatabaseTransactions;
 
     public function test_user_can_login_with_username_and_password(): void
     {

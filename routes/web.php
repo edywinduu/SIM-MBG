@@ -1,11 +1,22 @@
 <?php
 
-use App\Http\Controllers\AdminDashboardController;
-use App\Http\Controllers\AuthController;
+use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
+use App\Http\Controllers\Admin\SchoolController as AdminSchoolController;
+use App\Http\Controllers\Admin\SppgController as AdminSppgController;
+use App\Http\Controllers\Admin\StudentController as AdminStudentController;
+use App\Http\Controllers\Admin\UserController as AdminUserController;
+use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\LandingController;
-use App\Http\Controllers\SPPGDashboardController;
-use App\Http\Controllers\StudentController;
+use App\Http\Controllers\SPPG\DashboardController as SppgDashboardController;
+use App\Http\Controllers\SPPG\MenuController as SppgMenuController;
+use App\Http\Controllers\SPPG\ReviewController as SppgReviewController;
+use App\Http\Controllers\SPPG\SelectionController as SppgSelectionController;
+use App\Http\Controllers\Student\DashboardController as StudentDashboardController;
+use App\Http\Controllers\Student\HistoryController as StudentHistoryController;
+use App\Http\Controllers\Student\MenuController as StudentMenuController;
+use App\Http\Controllers\Student\ProfileController as StudentProfileController;
+use App\Http\Controllers\Student\ReviewController as StudentReviewController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -40,10 +51,10 @@ Route::middleware(['auth'])->group(function () {
             return redirect()->route('admin.dashboard');
         });
         Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
-        Route::get('/schools', [AdminDashboardController::class, 'schools'])->name('schools');
-        Route::get('/sppg', [AdminDashboardController::class, 'sppg'])->name('sppg');
-        Route::get('/students', [AdminDashboardController::class, 'students'])->name('students');
-        Route::get('/users', [AdminDashboardController::class, 'users'])->name('users');
+        Route::get('/schools', [AdminSchoolController::class, 'index'])->name('schools');
+        Route::get('/sppg', [AdminSppgController::class, 'index'])->name('sppg');
+        Route::get('/students', [AdminStudentController::class, 'index'])->name('students');
+        Route::get('/users', [AdminUserController::class, 'index'])->name('users');
     });
 
     // ----------------------------------------------------------------------
@@ -53,14 +64,14 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/', function () {
             return redirect()->route('sppg.dashboard');
         });
-        Route::get('/dashboard', [SPPGDashboardController::class, 'index'])->name('dashboard');
-        Route::get('/menu', [SPPGDashboardController::class, 'menu'])->name('menu');
-        Route::get('/selections', [SPPGDashboardController::class, 'selections'])->name('selections');
+        Route::get('/dashboard', [SppgDashboardController::class, 'index'])->name('dashboard');
+        Route::get('/menu', [SppgMenuController::class, 'index'])->name('menu');
+        Route::get('/selections', [SppgSelectionController::class, 'index'])->name('selections');
         Route::get('/pilihan', function () {
             return redirect()->route('sppg.selections');
         });
-        Route::get('/review', [SPPGDashboardController::class, 'review'])->name('review');
-        Route::post('/review/{id}/respond', [SPPGDashboardController::class, 'respondReview'])->name('review.respond');
+        Route::get('/review', [SppgReviewController::class, 'index'])->name('review');
+        Route::post('/review/{id}/respond', [SppgReviewController::class, 'respond'])->name('review.respond');
     });
 
     // ----------------------------------------------------------------------
@@ -70,17 +81,17 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/', function () {
             return redirect()->route('student.dashboard');
         });
-        Route::get('/dashboard', [StudentController::class, 'index'])->name('dashboard');
-        Route::post('/pickup/claim', [StudentController::class, 'claimPickup'])->name('pickup.claim');
-        Route::get('/menu', [StudentController::class, 'menu'])->name('menu');
-        Route::post('/menu/select', [StudentController::class, 'selectMenu'])->name('menu.select');
-        Route::get('/history', [StudentController::class, 'history'])->name('history');
-        Route::post('/review/save', [StudentController::class, 'saveReview'])->name('review.save');
-        Route::delete('/review/{id}', [StudentController::class, 'deleteReview'])->name('review.delete');
-        Route::get('/profile', [StudentController::class, 'profile'])->name('profile');
-        Route::post('/profile/allergies', [StudentController::class, 'updateAllergies'])->name('profile.allergies');
-        Route::post('/profile/name', [StudentController::class, 'updateProfileName'])->name('profile.name');
-        Route::post('/profile/avatar', [StudentController::class, 'updateAvatar'])->name('profile.avatar');
-        Route::get('/review', [StudentController::class, 'review'])->name('review');
+        Route::get('/dashboard', [StudentDashboardController::class, 'index'])->name('dashboard');
+        Route::post('/pickup/claim', [StudentDashboardController::class, 'claimPickup'])->name('pickup.claim');
+        Route::get('/menu', [StudentMenuController::class, 'index'])->name('menu');
+        Route::post('/menu/select', [StudentMenuController::class, 'select'])->name('menu.select');
+        Route::get('/history', [StudentHistoryController::class, 'index'])->name('history');
+        Route::post('/review/save', [StudentReviewController::class, 'save'])->name('review.save');
+        Route::delete('/review/{id}', [StudentReviewController::class, 'destroy'])->name('review.delete');
+        Route::get('/profile', [StudentProfileController::class, 'index'])->name('profile');
+        Route::post('/profile/allergies', [StudentProfileController::class, 'updateAllergies'])->name('profile.allergies');
+        Route::post('/profile/name', [StudentProfileController::class, 'updateName'])->name('profile.name');
+        Route::post('/profile/avatar', [StudentProfileController::class, 'updateAvatar'])->name('profile.avatar');
+        Route::get('/review', [StudentHistoryController::class, 'review'])->name('review');
     });
 });

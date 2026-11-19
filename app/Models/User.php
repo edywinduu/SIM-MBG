@@ -80,4 +80,12 @@ class User extends Authenticatable
     {
         return $this->hasOne(Student::class, 'user_id');
     }
+
+    /**
+     * Get the SPPG staff profile associated with the user.
+     */
+    public function sppgStaff(): HasOne
+    {
+        return $this->hasOne(SppgStaff::class, 'user_id');
+    }
 }
