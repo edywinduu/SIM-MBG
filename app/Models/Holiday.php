@@ -25,4 +25,12 @@ class Holiday extends Model
     {
         return $query->whereDate('date', $date);
     }
+
+    public static function checkHolidayStatus(Carbon $date): ?string{
+        if ($date->isWeekend()){
+            return 'Selamat Menikmati Hari Libur!';
+        }
+
+        return null;
+    }
 }

@@ -21,6 +21,15 @@ class DashboardController extends BaseStudentController
         $user = Auth::user();
         $student = $this->resolveStudent($user);
         $school = $this->resolveSchool($student, $user);
+        $today = Carbon::now('Asia/Makassar');
+        $holidayReason = Holiday::checkHolidayStatus($today);
+
+        // Cek Jadwal Ges
+        if ($isDistributionDay) {
+            // $todayMenu = MenuSchedule::with('menu')
+            //     ->whereDate('scheduled_date', $today->toDateString())
+            //     ->first();
+        }
 
         // 1. Ambil jadwal distribusi sekolah hari ini melalui Model Distribution
         $distribution = null;
