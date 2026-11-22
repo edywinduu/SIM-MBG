@@ -22,14 +22,14 @@ class DashboardController extends BaseStudentController
         $student = $this->resolveStudent($user);
         $school = $this->resolveSchool($student, $user);
         $today = Carbon::now('Asia/Makassar');
-        $holidayReason = Holiday::checkHolidayStatus($today);
+        // $holidayReason = Holiday::checkHolidayStatus($today);
 
         // Cek Jadwal Ges
-        if ($isDistributionDay) {
-            // $todayMenu = MenuSchedule::with('menu')
-            //     ->whereDate('scheduled_date', $today->toDateString())
-            //     ->first();
-        }
+        // if ($isDistributionDay) {
+        //     $todayMenu = MenuSchedule::with('menu')
+        //         ->whereDate('scheduled_date', $today->toDateString())
+        //         ->first();
+        // }
 
         // 1. Ambil jadwal distribusi sekolah hari ini melalui Model Distribution
         $distribution = null;
