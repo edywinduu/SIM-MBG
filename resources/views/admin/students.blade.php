@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <title>Manajemen Siswa — SIM-MBG Admin</title>
+    <link rel="icon" href="{{ asset('assets/icons/logo.svg') }}">
+
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,600&display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
+
+    
+    <link rel="stylesheet" href="{{ asset('css/reset.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/variables.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/global.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/components.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/layout.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/pages/admin.css') }}">
+</head>
+<body class="admin-body" id="adminStudentsPage">
+    
+    <div class="ambient-decorations" aria-hidden="true">
+        <div class="ambient-ellipse-secondary"></div>
+        <div class="ambient-ellipse-accent"></div>
+    </div>
+
+    
+    <header class="main-header">
+        <div class="container nav-container">
+            <a href="dashboard.html" class="admin-navbar-brand" aria-label="SIM-MBG Admin Dashboard">
+                <img src="{{ asset('assets/icons/logo.svg') }}" alt="Logo SIM-MBG" width="52" height="48">
+                <span class="admin-brand-title">SIM-MBG</span>
+            </a>
+
+            
+            <nav class="nav-links" id="adminMainNav">
+                <ul class="admin-nav-menu">
+                    <li><a href="dashboard.html" class="admin-nav-btn">Dashboard</a></li>
+                    <li><a href="students.html" class="admin-nav-btn active">Siswa</a></li>
+                    <li><a href="schools.html" class="admin-nav-btn">Sekolah</a></li>
+                    <li><a href="sppg.html" class="admin-nav-btn">SPPG</a></li>
+                    <li><a href="users.html" class="admin-nav-btn">Pengguna</a></li>
+                </ul>
+            </nav>
+
+            
+            <div class="nav-actions">
+                <div class="admin-user-chip">
+                    <div class="admin-user-avatar">A</div>
+                    <div class="admin-user-meta">
+                        <span class="admin-user-name admin-display-name">Atmind Admin</span>
+                        <span class="admin-user-role">Administrator</span>
+                    </div>
+                </div>
+
+                <a href="{{ route('home') }}" class="btn btn-secondary btn-sm" title="Beranda">
+                    <span class="material-symbols-outlined" style="font-size: 18px;">home</span>
+                </a>
+                <form action="{{ route('logout') }}" method="POST" style="display: contents;">
+                    @csrf
+                    <button type="submit" class="btn btn-secondary btn-sm" id="adminLogoutBtn" title="Keluar dari Admin Panel">
+                        <span class="material-symbols-outlined" style="font-size: 18px;">logout</span>
+                    </button>
+                </form>
+
+                
+                <button type="button" class="mobile-nav-toggle" aria-controls="adminMainNav" aria-expanded="false" aria-label="Buka Menu Navigasi">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    
+    <main class="admin-main-content">
+        <div class="admin-container">
+            
+            <section class="admin-page-header">
+                <div class="admin-page-title-group">
+                    <h1>Manajemen Data Siswa</h1>
+                    <div class="admin-page-subtitle">
+                        Kelola data siswa penerima MBG, pantau jenis menu, serta verifikasi catatan alergi medis.
+                    </div>
+                </div>
+                <div class="toolbar-actions">
+                    <button type="button" class="btn btn-primary" id="btnAddStudent">
+                        <span class="material-symbols-outlined" style="font-size: 20px;">add</span>
+                        <span>Tambah Siswa</span>
+                    </button>
+                </div>
+            </section>
+
+            
+            <section class="kpi-grid-3" aria-label="Rekapitulasi Siswa">
+                <article class="kpi-card">
+                    <div class="kpi-top">
+                        <div class="kpi-squircle">
+                            <span class="material-symbols-outlined">groups</span>
+                        </div>
+                        <div class="kpi-meta">
+                            <span class="kpi-label">Total Siswa Terdaftar</span>
+                            <div class="kpi-value" id="recapTotalSiswa">0</div>
+                        </div>
+                    </div>
+                    <div class="kpi-divider"></div>
+                    <div class="kpi-footer">
+                        <span class="kpi-footer-text">Seluruh sekolah binaan</span>
+                    </div>
+                </article>
+
+                <article class="kpi-card">
+                    <div class="kpi-top">
+                        <div class="kpi-squircle">
+                            <span class="material-symbols-outlined">restaurant</span>
+                        </div>
+                        <div class="kpi-meta">
+                            <span class="kpi-label">Penerima Menu Reguler</span>
+                            <div class="kpi-value" id="recapMenuReguler">0 (0%)</div>
+                        </div>
+                    </div>
+                    <div class="kpi-divider"></div>
+                    <div class="kpi-footer">
+                        <span class="kpi-badge kpi-badge-up">Bebas Alergen</span>
+                    </div>
+                </article>
+
+                <article class="kpi-card">
+                    <div class="kpi-top">
+                        <div class="kpi-squircle">
+                            <span class="material-symbols-outlined">health_and_safety</span>
+                        </div>
+                        <div class="kpi-meta">
+                            <span class="kpi-label">Penerima Menu Khusus (Diet/Alergi)</span>
+                            <div class="kpi-value" id="recapMenuKhusus">0 (0%)</div>
+                        </div>
+                    </div>
+                    <div class="kpi-divider"></div>
+                    <div class="kpi-footer">
+                        <span class="kpi-badge kpi-badge-info">Perlu Perhatian Khusus</span>
+                    </div>
+                </article>
+            </section>
+
+            
+            <section class="admin-card">
+                
+                <div class="admin-toolbar">
+                    <div class="toolbar-filters">
+                        
+                        <div class="search-box">
+                            <span class="material-symbols-outlined search-icon">search</span>
+                            <input
+                                type="text"
+                                class="search-input"
+                                id="studentSearchInput"
+                                placeholder="Cari nama siswa, NISN, atau kelas..."
+                            >
+                        </div>
+
+                        
+                        <select class="filter-select" id="studentSchoolFilter" aria-label="Filter berdasarkan Sekolah">
+                            <option value="">Semua Sekolah</option>
+                        </select>
+
+                        
+                        <select class="filter-select" id="studentMenuFilter" aria-label="Filter berdasarkan Jenis Menu">
+                            <option value="">Semua Jenis Menu</option>
+                            <option value="Reguler">Menu Reguler</option>
+                            <option value="Menu Khusus">Menu Khusus (Alergi)</option>
+                        </select>
+                    </div>
+                </div>
+
+                
+                <div class="table-responsive">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th class="col-no">NO</th>
+                                <th>NISN</th>
+                                <th>NAMA SISWA</th>
+                                <th>SEKOLAH</th>
+                                <th>KELAS</th>
+                                <th>JENIS MENU</th>
+                                <th>CATATAN ALERGI</th>
+                                <th>STATUS</th>
+                                <th class="col-actions">AKSI</th>
+                            </tr>
+                        </thead>
+                        <tbody id="studentsTableBody">
+                            
+                        </tbody>
+                    </table>
+                </div>
+
+                
+                <div class="admin-pagination">
+                    <div class="pagination-info" id="studentPaginationInfo">
+                        Menampilkan 0–0 dari 0 siswa
+                    </div>
+                    <div class="pagination-controls" id="studentPaginationControls">
+                        
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    
+    <div class="admin-modal-overlay" id="modalStudent" role="dialog" aria-modal="true" aria-labelledby="modalStudentTitle">
+        <div class="admin-modal">
+            <div class="admin-modal-header">
+                <h3 class="admin-modal-title" id="modalStudentTitle">Tambah Siswa Baru</h3>
+                <button type="button" class="btn-close-modal" onclick="closeModal('modalStudent')" aria-label="Tutup Modal">
+                    <span class="material-symbols-outlined">close</span>
+                </button>
+            </div>
+            <form id="studentForm">
+                <input type="hidden" id="studentFormId">
+                <div class="admin-modal-body">
+                    <div class="form-grid-2">
+                        <div class="admin-form-group">
+                            <label for="studentFormNisn" class="admin-form-label">NISN <span class="required">*</span></label>
+                            <input type="text" id="studentFormNisn" class="admin-form-input" placeholder="Contoh: 0081234567" required maxlength="10">
+                            <span class="admin-form-help">Nomor Induk Siswa Nasional (10 digit)</span>
+                        </div>
+                        <div class="admin-form-group">
+                            <label for="studentFormName" class="admin-form-label">Nama Lengkap Siswa <span class="required">*</span></label>
+                            <input type="text" id="studentFormName" class="admin-form-input" placeholder="Masukkan nama siswa" required>
+                        </div>
+                    </div>
+
+                    <div class="form-grid-2">
+                        <div class="admin-form-group">
+                            <label for="studentFormSchool" class="admin-form-label">Sekolah <span class="required">*</span></label>
+                            <select id="studentFormSchool" class="admin-form-select" required>
+                                <option value="" disabled selected>Pilih Sekolah</option>
+                            </select>
+                        </div>
+                        <div class="admin-form-group">
+                            <label for="studentFormClass" class="admin-form-label">Kelas <span class="required">*</span></label>
+                            <input type="text" id="studentFormClass" class="admin-form-input" placeholder="Contoh: XI IPA 1" required>
+                        </div>
+                    </div>
+
+                    <div class="form-grid-2">
+                        <div class="admin-form-group">
+                            <label for="studentFormMenuType" class="admin-form-label">Jenis Paket Menu <span class="required">*</span></label>
+                            <select id="studentFormMenuType" class="admin-form-select" required>
+                                <option value="Reguler">Reguler</option>
+                                <option value="Menu Khusus">Menu Khusus (Diet/Alergen)</option>
+                            </select>
+                        </div>
+                        <div class="admin-form-group">
+                            <label for="studentFormStatus" class="admin-form-label">Status Keaktifan <span class="required">*</span></label>
+                            <select id="studentFormStatus" class="admin-form-select" required>
+                                <option value="Aktif">Aktif</option>
+                                <option value="Nonaktif">Nonaktif</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="admin-form-group">
+                        <label for="studentFormAllergies" class="admin-form-label">Catatan Alergi / Pantangan Medis</label>
+                        <input type="text" id="studentFormAllergies" class="admin-form-input" placeholder="Contoh: Kacang, Seafood, Telur (kosongkan jika tidak ada)">
+                        <span class="admin-form-help">Catatan ini akan otomatis ditampilkan pada peringatan menu harian siswa.</span>
+                    </div>
+                </div>
+                <div class="admin-modal-footer">
+                    <button type="button" class="btn btn-secondary btn-sm" onclick="closeModal('modalStudent')">Batal</button>
+                    <button type="submit" class="btn btn-primary btn-sm">
+                        <span class="material-symbols-outlined" style="font-size: 18px;">save</span>
+                        <span>Simpan Data</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    
+    <div class="admin-modal-overlay" id="modalDeleteStudent" role="dialog" aria-modal="true" aria-labelledby="modalDeleteTitle">
+        <div class="admin-modal" style="max-width: 440px;">
+            <div class="admin-modal-header">
+                <h3 class="admin-modal-title" id="modalDeleteTitle">Konfirmasi Hapus Siswa</h3>
+                <button type="button" class="btn-close-modal" onclick="closeModal('modalDeleteStudent')" aria-label="Tutup">
+                    <span class="material-symbols-outlined">close</span>
+                </button>
+            </div>
+            <div class="admin-modal-body" style="text-align: center; padding: 24px;">
+                <span class="material-symbols-outlined" style="color: var(--color-danger); font-size: 48px; margin-bottom: 12px;">warning</span>
+                <p style="font-size: 15px; font-weight: 700; color: var(--color-heading); margin-bottom: 6px;">Apakah Anda yakin ingin menghapus siswa ini?</p>
+                <p style="font-size: 13px; color: var(--color-muted); margin-bottom: 0;" id="deleteStudentName">-</p>
+                <p style="font-size: 12px; color: var(--color-danger); margin-top: 10px;">Tindakan ini tidak dapat dibatalkan.</p>
+            </div>
+            <div class="admin-modal-footer" style="justify-content: center;">
+                <button type="button" class="btn btn-secondary btn-sm" onclick="closeModal('modalDeleteStudent')">Batal</button>
+                <button type="button" class="btn btn-primary btn-sm" style="background-color: var(--color-danger); border-color: var(--color-danger);" id="btnConfirmDeleteStudent">
+                    <span class="material-symbols-outlined" style="font-size: 18px;">delete</span>
+                    <span>Ya, Hapus</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    
+<footer class="main-footer">
+    <div class="admin-container">
+        <div class="admin-footer-content">
+            <div>
+                © 2026 SIM-MBG — Sistem Informasi
+                Manajemen Makan Bergizi Gratis.
+            </div>
+
+            <div>
+                Kementerian Pendidikan &amp; Badan Gizi Nasional
+            </div>
+        </div>
+    </div>
+</footer>
+
+    
+    <script src="{{ asset('js/pages/admin.js') }}"></script>
+</body>
+</html>

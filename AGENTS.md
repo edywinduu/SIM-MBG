@@ -1,15 +1,130 @@
-# AGENTS.md
+<laravel-boost-guidelines>
+=== foundation rules ===
 
-## SIM-MBG Frontend — Team Development Guidelines
+# Laravel Boost Guidelines
 
-Dokumen ini menjadi aturan kerja bersama seluruh anggota tim dalam mengembangkan frontend SIM-MBG.
+## Foundational Context
 
-Tujuan:
-- Menjaga struktur project tetap rapi.
-- Menjaga desain Figma tetap konsisten.
-- Menghindari konflik kode antaranggota.
-- Memudahkan integrasi pekerjaan 4 anggota.
-- Menjaga UI/UX tetap konsisten.
+This application is a Laravel application running on PHP 8.5. Always use the APIs that match the installed major version of each package — do not assume a version.
+
+Before relying on a package's API, confirm its installed version:
+- PHP packages: run `composer show --direct` to list direct dependencies with versions, or `composer show <vendor/package>` for a single package.
+- JS packages: check `package.json` for the installed versions.
+
+## Conventions
+
+- You must follow all existing code conventions used in this application. When creating or editing a file, check sibling files for the correct structure, approach, and naming.
+- Use descriptive names for variables and methods. For example, `isRegisteredForDiscounts`, not `discount()`.
+- Check for existing components to reuse before writing a new one.
+
+## Verification Scripts
+
+- Do not create verification scripts or tinker when tests cover that functionality and prove they work. Unit and feature tests are more important.
+
+## Application Structure & Architecture
+
+- Stick to existing directory structure; don't create new base folders without approval.
+- Do not change the application's dependencies without approval.
+
+## Frontend Bundling
+
+- If a frontend change doesn't show in the UI or you get a "Unable to locate file in Vite manifest" error, run `npm run build` or ask the user to run `npm run dev` or `composer run dev`.
+
+## Documentation Files
+
+- You must only create documentation files if explicitly requested by the user.
+
+=== boost rules ===
+
+# Laravel Boost
+
+## Project Rules
+
+- This project contains committed, area-grouped rules in `.ai/rules` when that directory exists, including path-scoped framework guidelines under `.ai/rules/boost`. Before you enter plan mode or create/edit any file, you MUST first: open @.ai/rules/index.md (it maps file globs to rule files), read every rule file whose globs cover the path(s) in scope, and run `grep -rin 'keyword' .ai/rules` to catch what a path match alone misses. Do not write code until you have read and are following every matching rule. If `.ai/rules` does not exist, continue without it.
+
+## Artisan
+
+- Run Artisan commands directly via the command line (e.g., `php artisan route:list`). Use `php artisan list` to discover available commands and `php artisan [command] --help` to check parameters.
+- Inspect routes with `php artisan route:list`. Filter with: `--method=GET`, `--name=users`, `--path=api`, `--except-vendor`, `--only-vendor`.
+- Read configuration values using dot notation: `php artisan config:show app.name`, `php artisan config:show database.default`. Or read config files directly from the `config/` directory.
+
+## Tinker
+
+- Execute PHP in app context for debugging and testing code. Do not create models without user approval, prefer tests with factories instead. Prefer existing Artisan commands over custom tinker code.
+- Always use single quotes to prevent shell expansion: `php artisan tinker --execute 'Your::code();'`
+  - Double quotes for PHP strings inside: `php artisan tinker --execute 'User::where("active", true)->count();'`
+
+=== php rules ===
+
+# PHP
+
+- Always use curly braces for control structures, even for single-line bodies.
+- Use PHP 8 constructor property promotion: `public function __construct(public GitHub $github) { }`. Do not leave empty zero-parameter `__construct()` methods unless the constructor is private.
+- Use explicit return type declarations and type hints for all method parameters: `function isAccessible(User $user, ?string $path = null): bool`
+- Use TitleCase for Enum keys: `FavoritePerson`, `BestLake`, `Monthly`.
+- Prefer PHPDoc blocks over inline comments. Only add inline comments for exceptionally complex logic.
+- Use array shape type definitions in PHPDoc blocks.
+
+=== deployments rules ===
+
+# Deployment
+
+- Laravel can be deployed using [Laravel Cloud](https://cloud.laravel.com/), which is the fastest way to deploy and scale production Laravel applications.
+
+=== laravel/core rules ===
+
+# Do Things the Laravel Way
+
+- Use `php artisan make:` commands to create new files (i.e. migrations, controllers, models, etc.). You can list available Artisan commands using `php artisan list` and check their parameters with `php artisan [command] --help`.
+- If you're creating a generic PHP class, use `php artisan make:class`.
+- Pass `--no-interaction` to all Artisan commands to ensure they work without user input. You should also pass the correct `--options` to ensure correct behavior.
+
+### Model Creation
+
+- When creating new models, create useful factories and seeders for them too. Ask the user if they need any other things, using `php artisan make:model --help` to check the available options.
+
+## APIs & Eloquent Resources
+
+- For APIs, default to using Eloquent API Resources and API versioning unless existing API routes do not, then you should follow existing application convention.
+
+## URL Generation
+
+- When generating links to other pages, prefer named routes and the `route()` function.
+
+## Testing
+
+- When creating models for tests, use the factories for the models. Check if the factory has custom states that can be used before manually setting up the model.
+- Faker: Use methods such as `$this->faker->word()` or `fake()->randomDigit()`. Follow existing conventions whether to use `$this->faker` or `fake()`.
+- When creating tests, make use of `php artisan make:test [options] {name}` to create a feature test, and pass `--unit` to create a unit test. Most tests should be feature tests.
+
+=== pint/core rules ===
+
+# Laravel Pint Code Formatter
+
+- If you have modified any PHP files, you must run `vendor/bin/pint --dirty --format agent` before finalizing changes to ensure your code matches the project's expected style.
+- Do not run `vendor/bin/pint --test --format agent`, simply run `vendor/bin/pint --format agent` to fix any formatting issues.
+
+=== phpunit/core rules ===
+
+# PHPUnit
+
+- This project uses PHPUnit. Create tests with `php artisan make:test --phpunit {name}`.
+- Do not include the test suite directory in `{name}`. Use `SomeFeatureTest`, not `Feature/SomeFeatureTest`.
+- Read the `testing-best-practices` skill for guidance on coverage, naming, structure, dependency isolation, and review.
+
+## Running Tests
+
+- Run the narrowest set of tests that covers the change. Pass a file path or `--filter=testName` to `php artisan test --compact`.
+- Rerun a test after each change to it.
+- Run `vendor/bin/phpunit` to call the test runner directly. It accepts the same file path and `--filter=testName` arguments.
+
+</laravel-boost-guidelines>
+
+---
+
+# SIM-MBG — Team & Agent Development Guidelines (Laravel Integration)
+
+Dokumen ini menjadi panduan kerja bersama seluruh anggota tim dan AI Agent dalam mengembangkan **SIM-MBG (Sistem Informasi Manajemen Makan Bergizi Gratis)** yang kini telah terintegrasi penuh dengan **Laravel 13**.
 
 ---
 
@@ -18,1124 +133,200 @@ Tujuan:
 **Project:** SIM-MBG (Sistem Informasi Manajemen Makan Bergizi Gratis)
 
 **Tech Stack:**
-- HTML5
-- CSS3
-- JavaScript (Vanilla JS)
+- **Backend:** PHP 8.5, Laravel 13
+- **Database:** Relational Database (MySQL / MariaDB / SQLite) dengan Laravel Migrations & Seeders
+- **Views:** Laravel Blade (`resources/views/**/*.blade.php`)
+- **Styling & Scripting:** Custom CSS3 (`public/css/`) & Vanilla JavaScript (`public/js/`) mengacu pada `DESIGN_SYSTEM.md`
 
-Untuk tahap frontend:
-- Tidak menggunakan React, Vue, atau framework frontend lain.
-- Tidak menggunakan Tailwind atau Bootstrap.
-- Tidak menambahkan library UI tanpa persetujuan tim.
-- Backend/Laravel belum menjadi bagian tahap ini.
-- Gunakan mock data/local state untuk simulasi.
+Prinsip Utama:
+- Seluruh halaman utama dirender melalui **Laravel Route -> Controller -> Blade View**.
+- Gunakan helper Laravel seperti `route('...')`, `asset('...')`, `@csrf`, dan `@auth` di dalam file Blade.
+- Jangan menambahkan framework CSS eksternal (seperti Bootstrap/Tailwind CDN) yang menimpa token desain di `public/css/` tanpa persetujuan tim.
 
 ---
 
-## 2. TEAM RESPONSIBILITY
+## 2. TEAM RESPONSIBILITY & MODULE OWNERSHIP
 
 ### Member 1 — Public & Authentication
+- **Controller:** `App\Http\Controllers\AuthController`, `App\Http\Controllers\DashboardController`
+- **Views:** `resources/views/index.blade.php`, `resources/views/auth/login.blade.php`, `resources/views/auth/register.blade.php`
+- **Assets:** `public/css/pages/landing.css`, `public/css/pages/login.css`, `public/js/pages/landing.js`, `public/js/pages/login.js`, `public/js/pages/register.js`
+- **Tanggung jawab:** Landing page, autentikasi multi-identitas (username/email/NISN), registrasi siswa, session management, dan redirect otomatis berdasarkan role (`/dashboard`).
 
-Pages:
-- Landing Page
-- Login
-- Register
+### Member 2 — Modul Siswa (Student)
+- **Controller:** `App\Http\Controllers\StudentDashboardController`
+- **Views:** `resources/views/student/dashboard.blade.php`, `menu.blade.php`, `history.blade.php`, `profile.blade.php`, `review.blade.php`
+- **Assets:** `public/css/pages/siswa.css`, `public/js/pages/siswa.js`
+- **Routes:** Prefix `/student/*` dengan nama rute `student.*` (middleware `auth`, `role:student,siswa`)
+- **Tanggung jawab:** Dashboard siswa, pemilihan paket makanan harian, pengecekan alergi siswa, riwayat pengambilan, profil alergi, dan ulasan makanan.
 
-Tanggung jawab:
-- Navbar public
-- Hero section
-- CTA
-- Login form
-- Register form
-- Pemilihan role/sekolah jika ada pada desain
-- Validasi form frontend
+### Member 3 — Modul SPPG
+- **Controller:** `App\Http\Controllers\SPPGDashboardController`
+- **Views:** `resources/views/sppg/dashboard.blade.php`, `menu.blade.php`, `selections.blade.php`, `review.blade.php`
+- **Assets:** `public/css/pages/sppg.css`, `public/js/pages/sppg.js`
+- **Routes:** Prefix `/sppg/*` dengan nama rute `sppg.*` (middleware `auth`, `role:sppg,guru`)
+- **Tanggung jawab:** Dashboard operasional SPPG, manajemen siklus menu & makronutrisi, rekap pilihan/alergi siswa, dan evaluasi ulasan/audit gizi.
 
-### Member 2 — Siswa
-
-Pages:
-- Dashboard Siswa
-- Pilih Menu
-- Riwayat
-- Review
-
-Tanggung jawab:
-- Student dashboard
-- Informasi menu
-- Pemilihan paket makanan
-- Status pilihan
-- Riwayat pemilihan menu
-- Review makanan
-
-### Member 3 — SPPG
-
-Pages:
-- Dashboard SPPG
-- Menu
-- Pilihan Siswa
-- Review
-
-Tanggung jawab:
-- SPPG dashboard
-- Manajemen menu
-- Informasi pilihan siswa
-- Rekap pilihan makanan
-- Review dari siswa
-
-### Member 4 — Admin
-
-Pages:
-- Dashboard Admin
-- Siswa
-- Sekolah
-- SPPG
-- Pengguna
-
-Tanggung jawab:
-- Admin dashboard
-- Data siswa
-- Data sekolah
-- Data SPPG
-- Data pengguna
-- Tabel/list data
-- CRUD interface frontend
+### Member 4 — Modul Admin
+- **Controller:** `App\Http\Controllers\AdminDashboardController`
+- **Views:** `resources/views/admin/dashboard.blade.php`, `students.blade.php`, `schools.blade.php`, `sppg.blade.php`, `users.blade.php`
+- **Assets:** `public/css/pages/admin.css`, `public/js/pages/admin.js`
+- **Routes:** Prefix `/admin/*` dengan nama rute `admin.*` (middleware `auth`, `role:admin`)
+- **Tanggung jawab:** Dashboard eksekutif admin, manajemen master data siswa, sekolah, unit SPPG, dan akun pengguna.
 
 ---
 
-## 3. SHARED UI
-
-Komponen berikut harus konsisten di seluruh website:
-- Navbar
-- Sidebar
-- Button
-- Input
-- Select
-- Search
-- Card
-- Table
-- Modal
-- Badge
-- Alert
-- Empty state
-- Loading state
-- Pagination
-- Typography
-- Spacing
-- Border radius
-- Shadow
-- Color
-
-Jika komponen sudah tersedia, gunakan kembali. Jangan membuat versi baru tanpa alasan.
-
----=
-
----
-
-## 5. CSS RULES
-
-### 5.1 Hindari inline CSS
-
-Jangan:
-
-```html
-<div style="color: red;">
-```
-
-Gunakan class:
-
-```html
-<div class="alert alert-danger">
-```
-
-### 5.2 Gunakan class yang deskriptif
-
-Gunakan:
-
-```css
-.dashboard-card {}
-.menu-card {}
-.student-table {}
-.review-card {}
-```
-
-Hindari:
-
-```css
-.box1 {}
-.box2 {}
-.bagus {}
-.test {}
-```
-
-### 5.3 Jangan menggunakan ID untuk styling
-
-Gunakan class untuk styling. ID digunakan terutama untuk kebutuhan JavaScript.
-
-### 5.4 Hindari selector terlalu spesifik
-
-Jangan:
-
-```css
-.dashboard .container .content .card div span {}
-```
-
-Lebih baik:
-
-```css
-.card-title {}
-```
-
----
-
-## 6. CSS FILE STRUCTURE
-
-```text
-css/
-├── reset.css
-├── variables.css
-├── global.css
-├── components.css
-├── layout.css
-└── pages/
-    ├── landing.css
-    ├── auth.css
-    ├── siswa.css
-    ├── sppg.css
-    └── admin.css
-```
-
-### `reset.css`
-Reset/default browser style.
-
-### `variables.css`
-Design tokens seperti warna, radius, spacing, dan typography.
-
-### `global.css`
-Style umum seperti body, heading, link, dan utility class.
-
-### `components.css`
-Komponen reusable seperti button, card, input, modal, table, dan badge.
-
-### `layout.css`
-Navbar, sidebar, container, grid, flex layout, dan struktur halaman.
-
-### `pages/`
-Style yang benar-benar spesifik terhadap halaman.
-
----
-
-## 7. HTML STRUCTURE
-
-Gunakan semantic HTML jika memungkinkan:
-
-```html
-<header>
-<nav>
-<main>
-<section>
-<article>
-<footer>
-```
-
-Hindari menggunakan `<div>` untuk semua hal.
-
-Contoh:
-
-```html
-<main class="dashboard">
-    <section class="dashboard-header">
-        ...
-    </section>
-
-    <section class="dashboard-content">
-        ...
-    </section>
-</main>
-```
-
----
-
-## 8. JAVASCRIPT RULES
-
-Pisahkan JavaScript dari HTML.
-
-Hindari:
-
-```html
-<button onclick="openMenu()">
-```
-
-Lebih baik:
-
-```html
-<button id="menuButton">
-```
-
-Kemudian:
-
-```js
-const menuButton = document.querySelector("#menuButton");
-
-menuButton.addEventListener("click", openMenu);
-```
-
-Pastikan element tersedia sebelum digunakan:
-
-```js
-const menu = document.querySelector("#menu");
-
-if (menu) {
-    menu.addEventListener("click", openMenu);
-}
-```
-
----
-
-## 9. JAVASCRIPT FILE STRUCTURE
-
-```text
-js/
-├── main.js
-├── components/
-│   ├── navbar.js
-│   ├── modal.js
-│   └── notification.js
-└── pages/
-    ├── landing.js
-    ├── auth.js
-    ├── siswa.js
-    ├── sppg.js
-    └── admin.js
-```
-
-`main.js` untuk logic umum.
-
-`components/` untuk logic reusable.
-
-`pages/` untuk logic khusus halaman.
-
----
-
-## 10. MOCK DATA
-
-Karena backend belum dibuat, gunakan mock data yang konsisten.
-
-Contoh:
-
-```js
-const students = [
-    {
-        id: 1,
-        name: "Andi",
-        nis: "123456",
-        school: "SMA Negeri 1 Denpasar",
-        class: "XI IPA 1"
-    }
-];
-```
-
-Struktur entity harus disepakati bersama.
-
-### Siswa
-
-```text
-Siswa
-├── ID
-├── Nama
-├── NIS
-├── Sekolah
-└── Kelas
-```
-
-### Menu
-
-```text
-Menu
-├── ID
-├── Nama Paket
-├── Deskripsi
-├── Tanggal
-└── Status
-```
-
-### Review
-
-```text
-Review
-├── ID
-├── Siswa
-├── Menu
-├── Rating
-├── Komentar
-└── Tanggal
-```
-
-Jangan membuat struktur data yang berbeda untuk entity yang sama.
-
----
-
-## 11. NAMING CONVENTION
-
-### JavaScript
-
-Gunakan `camelCase`:
-
-```js
-const selectedMenu = null;
-const studentData = {};
-
-function loadMenuData() {}
-```
-
-### CSS
-
-Gunakan `kebab-case`:
-
-```css
-.menu-card {}
-.menu-card-title {}
-.menu-card-description {}
-```
-
-### File
-
-Gunakan nama yang deskriptif:
-
-```text
-student-dashboard.html
-menu-selection.html
-review.html
-```
-
-Hindari:
-
-```text
-DashboardFinal.html
-dashboard2.html
-coba.html
-test.html
-baru.html
-```
-
----
-
-## 12. FOLDER STRUCTURE
+## 3. STRUKTUR DIREKTORI LARAVEL SIM-MBG
 
 ```text
 SIM-MBG/
-│
-├── index.html
-│
-├── pages/
-│   ├── auth/
-│   │   ├── login.html
-│   │   └── register.html
-│   │
-│   ├── siswa/
-│   │   ├── dashboard.html
-│   │   ├── menu.html
-│   │   ├── history.html
-│   │   └── review.html
-│   │
-│   ├── sppg/
-│   │   ├── dashboard.html
-│   │   ├── menu.html
-│   │   ├── students.html
-│   │   └── review.html
-│   │
-│   └── admin/
-│       ├── dashboard.html
-│       ├── students.html
-│       ├── schools.html
-│       ├── sppg.html
-│       └── users.html
-│
-├── css/
-├── js/
-├── assets/
-│   ├── images/
-│   ├── icons/
-│   └── logo/
-│
-└── AGENTS.md
-```
-
-Perubahan struktur besar harus didiskusikan terlebih dahulu.
-
----
-
-## 13. ASSET RULES
-
-Semua asset disimpan di:
-
-```text
-assets/
-├── images/
-├── icons/
-└── logo/
-```
-
-Gunakan nama file yang jelas:
-
-```text
-logo-sim-mbg.svg
-hero-food.jpg
-menu-paket-a.jpg
-menu-paket-b.jpg
-icon-dashboard.svg
-icon-history.svg
-```
-
-Hindari:
-
-```text
-IMG_1234.png
-Screenshot1.png
-finalfinal.png
-gambarbaru.png
-```
-
-Jangan menyimpan gambar di dalam folder halaman.
-
----
-
-## 14. SVG ICON RULE
-
-Gunakan SVG untuk icon dari desain.
-
-Jangan mengganti icon dengan emoji kecuali memang bagian dari desain.
-
-Jika icon sudah tersedia di:
-
-```text
-assets/icons/
-```
-
-gunakan asset tersebut daripada membuat ulang.
-
----
-
-## 15. RESPONSIVE DESIGN
-
-Minimal lakukan pengujian pada:
-- Desktop 1440px
-- Desktop 1920px
-- Tablet
-- Mobile
-
-Hindari fixed width yang tidak diperlukan.
-
-Jangan:
-
-```css
-width: 1200px;
-```
-
-Lebih baik:
-
-```css
-width: 100%;
-max-width: 1200px;
-margin: 0 auto;
+├── app/
+│   ├── Http/
+│   │   ├── Controllers/
+│   │   │   ├── AdminDashboardController.php
+│   │   │   ├── AuthController.php
+│   │   │   ├── Controller.php
+│   │   │   ├── DashboardController.php
+│   │   │   ├── SPPGDashboardController.php
+│   │   │   └── StudentDashboardController.php
+│   │   └── Middleware/
+│   │       └── CheckRole.php
+│   └── Models/
+│       └── User.php
+├── database/
+│   ├── migrations/
+│   └── seeders/
+│       ├── DatabaseSeeder.php
+│       ├── AdminSeeder.php
+│       ├── SppgSeeder.php
+│       ├── UserSeeder.php
+│       ├── SppgUnitSeeder.php
+│       ├── SchoolSeeder.php
+│       ├── StudentSeeder.php
+│       ├── AllergenSeeder.php
+│       ├── MenuSeeder.php
+│       ├── MenuAllergenSeeder.php
+│       ├── MenuScheduleSeeder.php
+│       ├── MenuSelectionSeeder.php
+│       ├── StudentAllergySeeder.php
+│       ├── DistributionSeeder.php
+│       ├── PickupSeeder.php
+│       ├── StudentReviewSeeder.php
+│       ├── SchoolFeedbackSeeder.php
+│       ├── KitchenAuditSeeder.php
+│       ├── AnnouncementSeeder.php
+│       └── ActivityLogSeeder.php
+├── public/
+│   ├── assets/
+│   │   ├── icons/
+│   │   └── images/
+│   ├── css/
+│   │   ├── reset.css
+│   │   ├── variables.css
+│   │   ├── global.css
+│   │   ├── components.css
+│   │   ├── layout.css
+│   │   └── pages/
+│   │       ├── landing.css
+│   │       ├── login.css
+│   │       ├── siswa.css
+│   │       ├── sppg.css
+│   │       └── admin.css
+│   └── js/
+│       ├── main.js
+│       └── pages/
+│           ├── landing.js
+│           ├── login.js
+│           ├── register.js
+│           ├── siswa.js
+│           ├── sppg.js
+│           └── admin.js
+├── resources/
+│   └── views/
+│       ├── index.blade.php
+│       ├── auth/
+│       │   ├── login.blade.php
+│       │   └── register.blade.php
+│       ├── student/
+│       │   ├── dashboard.blade.php
+│       │   ├── menu.blade.php
+│       │   ├── history.blade.php
+│       │   ├── profile.blade.php
+│       │   └── review.blade.php
+│       ├── sppg/
+│       │   ├── dashboard.blade.php
+│       │   ├── menu.blade.php
+│       │   ├── selections.blade.php
+│       │   └── review.blade.php
+│       └── admin/
+│           ├── dashboard.blade.php
+│           ├── students.blade.php
+│           ├── schools.blade.php
+│           ├── sppg.blade.php
+│           └── users.blade.php
+└── routes/
+    └── web.php
 ```
 
 ---
 
-## 16. FIGMA → CODE
+## 4. ATURAN BLADE, ROUTING, & ASSET
 
-Figma merupakan source of truth untuk visual design.
+### 4.1 Pemanggilan Asset di Blade
+Selalu gunakan helper `asset()` agar path tidak rusak di sub-route:
+```blade
+<link rel="stylesheet" href="{{ asset('css/variables.css') }}">
+<link rel="stylesheet" href="{{ asset('css/pages/siswa.css') }}">
+<script src="{{ asset('js/pages/siswa.js') }}" defer></script>
+<img src="{{ asset('assets/icons/logo.svg') }}" alt="Logo SIM-MBG">
+```
 
-Perhatikan:
-- Layout
-- Spacing
-- Typography
-- Color
-- Border radius
-- Icon
-- Component hierarchy
+### 4.2 Navigasi & Named Routes
+Utamakan penggunaan `route()` dibandingkan URL hardcoded atau link `.html` lama:
+```blade
+<a href="{{ route('student.dashboard') }}">Dashboard</a>
+<a href="{{ route('student.menu') }}">Pilih Menu</a>
+```
+*(Catatan: `routes/web.php` tetap menyediakan rute redirect kompatibilitas untuk URL `.html` lama agar transisi berjalan mulus).*
 
-Namun jangan menerjemahkan semua ukuran Figma secara literal jika menyebabkan layout tidak responsive.
-
-Prioritas:
-
-1. Struktur/layout
-2. Hierarki visual
-3. Typography
-4. Spacing
-5. Color
-6. Detail visual
+### 4.3 Keamanan Form & Request
+- Setiap form `POST`/`PUT`/`DELETE` di Blade wajib menyertakan `@csrf`.
+- Gunakan middleware `auth` dan `role:...` (`App\Http\Middleware\CheckRole`) untuk membatasi akses antar peran.
 
 ---
 
-## 17. REUSABLE COMPONENTS
+## 5. DATABASE, MIGRASI, & SEEDER
 
-Jika komponen muncul di lebih dari satu halaman, usahakan reusable.
-
-Contoh:
-
-```text
-Navbar
-Sidebar
-Button
-Input
-Card
-Modal
-Table
-Badge
-```
-
-Jangan membuat:
-
-```text
-student-button
-sppg-button
-admin-button
-```
-
-jika sebenarnya memiliki fungsi dan visual yang sama.
-
-Gunakan:
-
-```html
-<button class="btn btn-primary">
-```
+- Jangan mengubah tabel secara manual di database lokal tanpa membuat atau memperbarui file **Migration** di `database/migrations/`.
+- Gunakan `php artisan migrate:fresh --seed` untuk mereset dan mengisi ulang database dengan data sampel yang terhubung secara relasional.
+- Urutan eksekusi seeder diatur di `DatabaseSeeder.php` mengikuti hierarki foreign key:
+  1. Master Induk (`AdminSeeder`, `SppgSeeder`, `UserSeeder`, `SppgUnitSeeder`, `AllergenSeeder`, `MenuSeeder`)
+  2. Entitas Tingkat 1 (`SchoolSeeder`, `SppgStaffSeeder`)
+  3. Entitas Tingkat 2 (`StudentSeeder`, `MenuAllergenSeeder`, `MenuScheduleSeeder`, `DistributionSeeder`, `ActivityLogSeeder`, `AnnouncementSeeder`, `SchoolFeedbackSeeder`, `KitchenAuditSeeder`)
+  4. Entitas Tingkat 3 (`StudentAllergySeeder`, `MenuSelectionSeeder`, `PickupSeeder`, `StudentReviewSeeder`)
 
 ---
 
-## 18. NAVBAR & SIDEBAR
+## 6. FRONTEND & DESIGN SYSTEM CONVENTIONS
 
-Navbar/sidebar harus memiliki struktur dan visual yang konsisten.
-
-### Siswa
-
-```text
-Dashboard
-Pilih Menu
-Riwayat
-Review
-Profile
-Logout
-```
-
-### SPPG
-
-```text
-Dashboard
-Menu
-Pilihan Siswa
-Review
-Profile
-Logout
-```
-
-### Admin
-
-```text
-Dashboard
-Siswa
-Sekolah
-SPPG
-Pengguna
-Profile
-Logout
-```
-
-Perbedaan menu tidak berarti membuat desain navbar baru.
+1. **Source of Truth Desain**: Mengacu pada [`DESIGN_SYSTEM.md`](DESIGN_SYSTEM.md) (hasil audit Figma SIM-MBG).
+2. **CSS Rules**:
+   - Hindari inline style (`style="..."`); gunakan class dengan penamaan `kebab-case` yang deskriptif.
+   - Simpan token warna (`--color-primary: #297373`, `--color-bg: #FAFAF9`, `--color-accent: #FF8552`, `--color-secondary: #85FFC7`, `--color-text: #39393A`) di `public/css/variables.css`.
+   - File bersama (`variables.css`, `global.css`, `components.css`, `layout.css`, `main.js`) hanya boleh diubah dengan koordinasi tim.
+3. **JavaScript Rules**:
+   - Gunakan `camelCase` untuk variabel dan fungsi.
+   - Selalu cek keberadaan elemen DOM (`if (element) { ... }`) sebelum memasang event listener.
 
 ---
 
-## 19. PAGE STATE
-
-Halaman yang memiliki data harus mempertimbangkan:
-
-### Normal State
-Data tersedia.
-
-### Empty State
-Tidak ada data.
-
-Contoh:
-
-```text
-Belum ada riwayat pemilihan menu.
-```
-
-### Error State
-Terjadi masalah saat mengambil data.
-
-### Loading State
-Data sedang diproses.
-
-Pada tahap frontend-only, state dapat disimulasikan menggunakan mock data.
-
----
-
-## 20. FORM VALIDATION
-
-Form minimal harus memiliki validasi frontend.
-
-Contoh:
-- Required field
-- Format email
-- Minimum password
-- Confirm password
-- NIS tidak kosong
-- Sekolah harus dipilih
-
-Pesan error harus jelas.
-
-Jangan hanya:
-
-```text
-Error!
-```
-
-Gunakan:
-
-```text
-NIS wajib diisi.
-```
-
----
-
-## 21. GIT WORKFLOW
-
-Setiap anggota WAJIB menggunakan branch sendiri.
-
-Jangan langsung bekerja di `main`.
-
-Branch utama:
-
-```text
-main
-```
-
-Contoh branch:
-
-```text
-feature/landing-auth
-feature/siswa
-feature/sppg
-feature/admin
-```
-
-`main` hanya berisi versi yang sudah stabil.
-
----
-
-## 22. COMMIT CONVENTION
-
-Gunakan:
-
-```text
-type: description
-```
-
-Type yang digunakan:
-
-```text
-feat
-fix
-style
-refactor
-docs
-chore
-```
-
-Contoh:
-
-```text
-feat: add student dashboard
-feat: add menu selection page
-style: update dashboard spacing
-fix: fix mobile navbar
-refactor: simplify menu rendering
-docs: update project documentation
-```
-
-Hindari:
-
-```text
-update
-fix
-done
-final
-final2
-fix lagi
-punya saya
-```
-
----
-
-## 23. PULL REQUEST / MERGE
-
-Sebelum merge ke `main`:
-
-1. Pastikan halaman dapat dibuka.
-2. Tidak terdapat error di console.
-3. Tidak merusak halaman anggota lain.
-4. Asset path benar.
-5. Responsive.
-6. Tidak ada file tidak diperlukan.
-7. Sinkronkan branch dengan branch terbaru jika diperlukan.
-8. Minimal satu anggota melakukan review.
-
-Jangan merge langsung tanpa pengecekan.
-
----
-
-## 24. BEFORE PUSH
-
-Checklist:
-
-```text
-[ ] HTML tidak error
-[ ] CSS tidak error
-[ ] JavaScript tidak menghasilkan console error
-[ ] Semua gambar/icon muncul
-[ ] Semua link halaman bekerja
-[ ] Tidak ada file test yang tertinggal
-[ ] Tidak ada perubahan anggota lain yang tidak disengaja
-[ ] Responsive sudah dicek
-```
-
----
-
-## 25. SHARED FILE WARNING
-
-File yang berpotensi sering mengalami conflict:
-
-```text
-variables.css
-global.css
-components.css
-layout.css
-main.js
-```
-
-Jika ingin mengubah file tersebut secara signifikan:
-
-1. Informasikan di group.
-2. Jelaskan perubahan.
-3. Pastikan tidak sedang dikerjakan anggota lain.
-4. Informasikan setelah selesai.
-
-Hindari dua orang mengubah bagian yang sama secara bersamaan.
-
----
-
-## 26. DO NOT OVERWRITE OTHER MEMBER'S WORK
-
-Jangan menjalankan:
-
-```bash
-git checkout .
-git reset --hard
-```
-
-atau perintah lain yang berpotensi menghapus pekerjaan anggota lain tanpa koordinasi.
-
-Jika terjadi conflict, jangan asal memilih `ours` atau `theirs`. Periksa perubahan terlebih dahulu.
-
----
-
-## 27. PAGE OWNERSHIP
-
-Setiap anggota bertanggung jawab terhadap halaman yang telah ditentukan.
-
-Shared component merupakan tanggung jawab bersama.
-
-Contoh Member 2 boleh mengubah:
-
-```text
-pages/siswa/
-css/pages/siswa.css
-js/pages/siswa/
-```
-
-Tetapi perubahan terhadap:
-
-```text
-components.css
-layout.css
-variables.css
-```
-
-harus dikomunikasikan.
-
----
-
-## 28. DO NOT DUPLICATE CODE
-
-Jika menemukan kode yang sama di beberapa halaman, jangan membuat implementasi berbeda tanpa alasan.
-
-Jika visual dan fungsi dasarnya sama, gunakan satu component/style.
-
-Jangan membuat:
-
-```html
-<div class="custom-card-sppg">...</div>
-<div class="custom-card-admin">...</div>
-```
-
-jika sebenarnya struktur dan fungsinya sama.
-
-Gunakan:
-
-```html
-<div class="custom-card">...</div>
-```
-
----
-
-## 29. ACCESSIBILITY
-
-Minimal perhatikan:
-- Gunakan `<label>` pada input.
-- Gunakan `alt` pada gambar.
-- Button harus memiliki fungsi yang jelas.
-- Jangan hanya menggunakan warna untuk menunjukkan status.
-- Pastikan teks memiliki kontras yang cukup.
-- Gunakan heading secara berurutan.
-
-Contoh:
-
-```html
-<label for="nis">NIS</label>
-<input id="nis" type="text">
-```
-
----
-
-## 30. SECURITY AWARENESS
-
-Meskipun masih frontend:
-
-Jangan menyimpan:
-- Password asli
-- Token asli
-- API key
-- Credential
-- Data sensitif
-
-di source code atau repository.
-
-Login pada tahap ini hanya berupa simulasi. Authentication sebenarnya akan dilakukan setelah backend tersedia.
-
----
-
-## 31. NO PREMATURE BACKEND
-
-Jangan membuat:
-
-```text
-Laravel
-PHP
-API
-MySQL
-```
-
-untuk tahap frontend ini kecuali telah disepakati seluruh tim.
-
-Gunakan mock data dan local state.
-
----
-
-## 32. NO RANDOM LIBRARIES
-
-Jangan menambahkan dependency/library hanya untuk menyelesaikan masalah kecil.
-
-Prioritaskan:
-
-```text
-HTML
-CSS
-JavaScript
-```
-
-Jika membutuhkan library baru, diskusikan terlebih dahulu.
-
----
-
-## 33. DEFINITION OF DONE
-
-Sebuah halaman dianggap SELESAI apabila:
-
-```text
-[ ] Sesuai desain Figma
-[ ] Struktur HTML rapi
-[ ] CSS terorganisir
-[ ] JavaScript berfungsi
-[ ] Tidak ada console error
-[ ] Asset tampil dengan benar
-[ ] Link/navigation berfungsi
-[ ] Responsive
-[ ] Empty state tersedia jika diperlukan
-[ ] Form validation tersedia jika diperlukan
-[ ] Tidak merusak halaman lain
-[ ] Sudah di-commit
-[ ] Sudah di-review
-```
-
----
-
-## 34. DAILY TEAM CHECKPOINT
-
-Setiap hari lakukan checkpoint singkat.
-
-Masing-masing anggota menjawab:
-
-### DONE
-Apa yang sudah selesai?
-
-### DOING
-Apa yang sedang dikerjakan?
-
-### BLOCKED
-Apa yang sedang menghambat?
-
-Contoh:
-
-```text
-Member 2
-
-DONE:
-- Dashboard siswa
-- Card menu
-
-DOING:
-- Halaman pilih menu
-
-BLOCKED:
-- Menunggu asset icon dari desain
-```
-
-Tujuannya adalah mendeteksi blocker lebih awal.
-
----
-
-## 35. PRIORITY
-
-Jika waktu terbatas, prioritaskan:
-
-### Priority 1 — Core Flow
-
-```text
-Landing
-↓
-Login
-↓
-Dashboard
-↓
-Pilih Menu
-↓
-Review
-```
-
-### Priority 2 — SPPG
-
-```text
-SPPG Dashboard
-↓
-Menu
-↓
-Pilihan Siswa
-↓
-Review
-```
-
-### Priority 3 — Admin
-
-```text
-Dashboard
-↓
-Siswa
-↓
-Sekolah
-↓
-SPPG
-↓
-Pengguna
-```
-
-### Priority 4 — Polish
-
-- Animation
-- Hover effect
-- Micro interaction
-- Fine spacing
-- Additional responsive improvements
-
-Jangan mengorbankan core functionality hanya untuk mengejar animasi atau detail visual.
-
----
-
-## 36. COMMUNICATION RULE
-
-Jika menemukan masalah yang mempengaruhi anggota lain, jangan langsung mengubah kode mereka.
-
-Diskusikan terlebih dahulu.
-
-Contoh:
-
-> "Navbar di halaman siswa membutuhkan perubahan struktur agar responsive. Apakah boleh saya ubah component navbar?"
-
-Lebih baik koordinasi 2 menit daripada memperbaiki conflict selama 30 menit.
-
----
-
-## 37. FINAL INTEGRATION
-
-Sebelum presentasi/demo, semua halaman harus dapat diakses dari satu project.
-
-Target flow:
-
-```text
-Landing
-   │
-   ├── Login
-   │     │
-   │     ├── Siswa
-   │     │     ├── Dashboard
-   │     │     ├── Pilih Menu
-   │     │     ├── Riwayat
-   │     │     └── Review
-   │     │
-   │     ├── SPPG
-   │     │     ├── Dashboard
-   │     │     ├── Menu
-   │     │     ├── Pilihan Siswa
-   │     │     └── Review
-   │     │
-   │     └── Admin
-   │           ├── Dashboard
-   │           ├── Siswa
-   │           ├── Sekolah
-   │           ├── SPPG
-   │           └── Pengguna
-   │
-   └── Register
-```
-
-Semua navigasi utama harus dapat digunakan tanpa membuka file HTML secara manual.
-
----
-
-## 38. GOLDEN RULE
-
-Sebelum membuat sesuatu, tanyakan:
-
-1. Apakah komponen ini sudah ada?
-2. Apakah style ini sudah ada?
-3. Apakah data structure-nya sudah disepakati?
-4. Apakah perubahan ini mempengaruhi anggota lain?
-5. Apakah implementasi ini sesuai Figma?
-6. Apakah implementasi ini responsive?
-
-Jika jawabannya jelas, baru implementasikan.
-
----
-
-# FINAL PRINCIPLE
-
-**CONSISTENCY > SPEED > COMPLEXITY**
-
-Lebih baik memiliki website dengan fitur lebih sedikit tetapi konsisten, stabil, dan terintegrasi daripada banyak fitur yang memiliki style dan struktur berbeda-beda.
+## 7. GIT WORKFLOW & CHECKLIST SEBELUM PUSH
+
+1. Gunakan branch fitur/pengembangan (`dev`, `feature/siswa`, `feature/sppg`, `feature/admin`, dll.) sebelum merge ke `main`.
+2. Gunakan format commit konvensional: `feat:`, `fix:`, `style:`, `refactor:`, `docs:`, `chore:`.
+3. Jalankan `vendor/bin/pint --dirty` setelah memodifikasi file PHP.
+4. Pastikan sebelum push:
+   - `[ ]` `php artisan migrate:fresh --seed` berjalan tanpa error.
+   - `[ ]` Rute halaman terkait dapat diakses (`php artisan route:list`).
+   - `[ ]` Tidak ada error PHP/Blade maupun error di browser console.
+   - `[ ]` Asset CSS, JS, dan gambar tampil dengan benar melalui `asset()`.
