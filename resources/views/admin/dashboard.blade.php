@@ -1,6 +1,4 @@
-composer install
-copy .env.example .env
-php artisan key:generate<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
@@ -34,23 +32,23 @@ php artisan key:generate<!DOCTYPE html>
     
     <header class="main-header">
         <div class="container nav-container">
-            <a href="dashboard.html" class="admin-navbar-brand" aria-label="SIM-MBG Admin Dashboard">
+            <a href="{{ route('admin.dashboard') }}" class="admin-navbar-brand" aria-label="SIM-MBG Admin Dashboard">
                 <img src="{{ asset('assets/icons/logo.svg') }}" alt="Logo SIM-MBG" width="52" height="48">
                 <span class="admin-brand-title">SIM-MBG</span>
             </a>
 
-            
+            <!-- Navigasi Utama -->
             <nav class="nav-links" id="adminMainNav">
                 <ul class="admin-nav-menu">
-                    <li><a href="dashboard.html" class="admin-nav-btn active">Dashboard</a></li>
-                    <li><a href="students.html" class="admin-nav-btn">Siswa</a></li>
-                    <li><a href="schools.html" class="admin-nav-btn">Sekolah</a></li>
-                    <li><a href="sppg.html" class="admin-nav-btn">SPPG</a></li>
-                    <li><a href="users.html" class="admin-nav-btn">Pengguna</a></li>
+                    <li><a href="{{ route('admin.dashboard') }}" class="admin-nav-btn active">Dashboard</a></li>
+                    <li><a href="{{ route('admin.students') }}" class="admin-nav-btn">Siswa</a></li>
+                    <li><a href="{{ route('admin.schools') }}" class="admin-nav-btn">Sekolah</a></li>
+                    <li><a href="{{ route('admin.sppg') }}" class="admin-nav-btn">SPPG</a></li>
+                    <li><a href="{{ route('admin.users') }}" class="admin-nav-btn">Pengguna</a></li>
                 </ul>
             </nav>
 
-            
+            <!-- Profil Admin Ringkas & Logout -->
             <div class="nav-actions">
                 <div class="admin-user-chip">
                     <div class="admin-user-avatar">A</div>
@@ -60,7 +58,7 @@ php artisan key:generate<!DOCTYPE html>
                     </div>
                 </div>
 
-                <a href="{{ route('home') }}" class="btn btn-secondary btn-sm" title="Beranda">
+                <a href="{{ route('landing') }}" class="btn btn-secondary btn-sm" title="Beranda">
                     <span class="material-symbols-outlined" style="font-size: 18px;">home</span>
                 </a>
                 <form action="{{ route('logout') }}" method="POST" style="display: contents;">
@@ -195,7 +193,7 @@ php artisan key:generate<!DOCTYPE html>
                             <span class="material-symbols-outlined" style="color: var(--color-primary);">domain</span>
                             <span>Data Ringkas Sekolah Binaan</span>
                         </h2>
-                        <a href="schools.html" class="btn btn-outline btn-sm">
+                        <a href="{{ route('admin.schools') }}" class="btn btn-outline btn-sm">
                             <span>Lihat Semua</span>
                             <span class="material-symbols-outlined" style="font-size: 16px;">arrow_forward</span>
                         </a>
@@ -242,11 +240,11 @@ php artisan key:generate<!DOCTYPE html>
                     <p style="font-size: 14px; color: var(--color-muted); margin: 0;">Pastikan data sekolah dan kapasitas SPPG selalu diperbarui sebelum cut-off pemilihan menu harian oleh siswa setiap pukul 20:00 WITA.</p>
                 </div>
                 <div style="display: flex; gap: 12px;">
-                    <a href="sppg.html" class="btn btn-secondary btn-sm">
+                    <a href="{{ route('admin.sppg') }}" class="btn btn-secondary btn-sm">
                         <span class="material-symbols-outlined" style="font-size: 18px;">soup_kitchen</span>
                         <span>Cek Unit SPPG</span>
                     </a>
-                    <a href="students.html" class="btn btn-primary btn-sm">
+                    <a href="{{ route('admin.students') }}" class="btn btn-primary btn-sm">
                         <span class="material-symbols-outlined" style="font-size: 18px;">playlist_add_check</span>
                         <span>Verifikasi Siswa</span>
                     </a>

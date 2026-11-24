@@ -31,23 +31,23 @@
     
     <header class="main-header">
         <div class="container nav-container">
-            <a href="dashboard.html" class="admin-navbar-brand" aria-label="SIM-MBG Admin Dashboard">
+            <a href="{{ route('admin.dashboard') }}" class="admin-navbar-brand" aria-label="SIM-MBG Admin Dashboard">
                 <img src="{{ asset('assets/icons/logo.svg') }}" alt="Logo SIM-MBG" width="52" height="48">
                 <span class="admin-brand-title">SIM-MBG</span>
             </a>
 
-            
+            <!-- Navigasi Utama -->
             <nav class="nav-links" id="adminMainNav">
                 <ul class="admin-nav-menu">
-                    <li><a href="dashboard.html" class="admin-nav-btn">Dashboard</a></li>
-                    <li><a href="students.html" class="admin-nav-btn">Siswa</a></li>
-                    <li><a href="schools.html" class="admin-nav-btn">Sekolah</a></li>
-                    <li><a href="sppg.html" class="admin-nav-btn active">SPPG</a></li>
-                    <li><a href="users.html" class="admin-nav-btn">Pengguna</a></li>
+                    <li><a href="{{ route('admin.dashboard') }}" class="admin-nav-btn">Dashboard</a></li>
+                    <li><a href="{{ route('admin.students') }}" class="admin-nav-btn">Siswa</a></li>
+                    <li><a href="{{ route('admin.schools') }}" class="admin-nav-btn">Sekolah</a></li>
+                    <li><a href="{{ route('admin.sppg') }}" class="admin-nav-btn active">SPPG</a></li>
+                    <li><a href="{{ route('admin.users') }}" class="admin-nav-btn">Pengguna</a></li>
                 </ul>
             </nav>
 
-            
+            <!-- Profil Admin Ringkas & Logout -->
             <div class="nav-actions">
                 <div class="admin-user-chip">
                     <div class="admin-user-avatar">A</div>
@@ -57,7 +57,7 @@
                     </div>
                 </div>
 
-                <a href="{{ route('home') }}" class="btn btn-secondary btn-sm" title="Beranda">
+                <a href="{{ route('landing') }}" class="btn btn-secondary btn-sm" title="Beranda">
                     <span class="material-symbols-outlined" style="font-size: 18px;">home</span>
                 </a>
                 <form action="{{ route('logout') }}" method="POST" style="display: contents;">
