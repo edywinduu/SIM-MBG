@@ -51,10 +51,10 @@
             <!-- Profil Admin Ringkas & Logout -->
             <div class="nav-actions">
                 <div class="admin-user-chip">
-                    <div class="admin-user-avatar">A</div>
+                    <div class="admin-user-avatar">{{ strtoupper(substr(auth()->user()->full_name ?? auth()->user()->username ?? 'A', 0, 1)) }}</div>
                     <div class="admin-user-meta">
-                        <span class="admin-user-name admin-display-name">Atmind Admin</span>
-                        <span class="admin-user-role">Administrator</span>
+                        <span class="admin-user-name admin-display-name">{{ auth()->user()->full_name ?? auth()->user()->username ?? 'Administrator' }}</span>
+                        <span class="admin-user-role">{{ ucfirst(auth()->user()->role ?? 'Administrator') }}</span>
                     </div>
                 </div>
 
@@ -119,7 +119,7 @@
                         </div>
                         <div class="kpi-meta">
                             <span class="kpi-label">Total Siswa</span>
-                            <div class="kpi-value" id="kpiTotalSiswa">12.482</div>
+                            <div class="kpi-value" id="kpiTotalSiswa">{{ number_format($kpi['total_students'], 0, ',', '.') }}</div>
                         </div>
                     </div>
                     <div class="kpi-divider"></div>
@@ -137,7 +137,7 @@
                         </div>
                         <div class="kpi-meta">
                             <span class="kpi-label">Total Sekolah Terdaftar</span>
-                            <div class="kpi-value" id="kpiTotalSekolah">68</div>
+                            <div class="kpi-value" id="kpiTotalSekolah">{{ number_format($kpi['total_schools'], 0, ',', '.') }}</div>
                         </div>
                     </div>
                     <div class="kpi-divider"></div>
@@ -155,7 +155,7 @@
                         </div>
                         <div class="kpi-meta">
                             <span class="kpi-label">Total SPPG</span>
-                            <div class="kpi-value" id="kpiTotalSppg">12</div>
+                            <div class="kpi-value" id="kpiTotalSppg">{{ number_format($kpi['total_sppg'], 0, ',', '.') }}</div>
                         </div>
                     </div>
                     <div class="kpi-divider"></div>
@@ -173,7 +173,7 @@
                         </div>
                         <div class="kpi-meta">
                             <span class="kpi-label">Total Admin &amp; Staf</span>
-                            <div class="kpi-value" id="kpiTotalStaf">24</div>
+                            <div class="kpi-value" id="kpiTotalStaf">{{ number_format($kpi['total_staff'], 0, ',', '.') }}</div>
                         </div>
                     </div>
                     <div class="kpi-divider"></div>
@@ -212,7 +212,42 @@
                                 </tr>
                             </thead>
                             <tbody id="dashboardSchoolsTableBody">
-                                
+                                @forelse($schools as $school)
+                                    @php
+                                        $statusLower = strtolower($school->status ?? 'active');
+                                        $isActive = in_array($statusLower, ['active', 'aktif'], true);
+                                    @endphp
+                                    <tr>
+                                        <td class="col-no">{{ $loop->iteration }}</td>
+                                        <td>
+                                            <div class="cell-title">{{ $school->name }}</div>
+                                            <div class="cell-sub">NPSN: {{ $school->npsn }}</div>
+                                        </td>
+                                        <td>{{ $school->city ?? $school->district ?? '-' }}</td>
+                                        <td>
+                                            <span class="badge badge-primary">{{ number_format($school->students_count, 0, ',', '.') }} Siswa</span>
+                                        </td>
+                                        <td>
+                                            <div class="cell-title" style="font-size: 13px;">{{ $school->sppgUnit?->name ?? 'Belum Ditugaskan' }}</div>
+                                        </td>
+                                        <td>
+                                            <span class="badge-status {{ $isActive ? 'badge-status-active' : 'badge-status-process' }}">
+                                                {{ $isActive ? 'Aktif' : ucfirst($school->status ?? 'Proses') }}
+                                            </span>
+                                        </td>
+                                        <td class="col-actions">
+                                            <a href="{{ route('admin.schools') }}" class="btn btn-secondary btn-sm" style="padding: 4px 10px; font-size: 12px;">
+                                                <span>Detail</span>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="7" style="text-align: center; padding: 24px; color: var(--color-muted);">
+                                            Belum ada data sekolah binaan terdaftar.
+                                        </td>
+                                    </tr>
+                                @endforelse
                             </tbody>
                         </table>
                     </div>
@@ -228,7 +263,58 @@
                         <span class="badge badge-accent">Live Feed</span>
                     </div>
                     <ul class="activity-list" id="dashboardActivityList">
-                        
+                        @forelse($activityLogs as $log)
+                            @php
+                                $statusLower = strtolower($log->status ?? '');
+                                $icon = 'notifications';
+                                $iconClass = 'kpi-icon-teal';
+
+                                if (str_contains($statusLower, 'selesai') || str_contains($statusLower, 'delivered') || str_contains($statusLower, 'lulus')) {
+                                    $icon = 'check_circle';
+                                    $iconClass = 'kpi-icon-emerald';
+                                } elseif (str_contains($statusLower, 'kirim') || str_contains($statusLower, 'transit')) {
+                                    $icon = 'local_shipping';
+                                    $iconClass = 'kpi-icon-teal';
+                                } elseif (str_contains($statusLower, 'audit')) {
+                                    $icon = 'verified';
+                                    $iconClass = 'kpi-icon-emerald';
+                                } elseif (str_contains($statusLower, 'pelihara') || str_contains($statusLower, 'maintenance')) {
+                                    $icon = 'build';
+                                    $iconClass = 'kpi-icon-accent';
+                                } elseif (str_contains($statusLower, 'verifikasi') || str_contains($statusLower, 'verified')) {
+                                    $icon = 'health_and_safety';
+                                    $iconClass = 'kpi-icon-amber';
+                                }
+                            @endphp
+                            <li class="activity-item">
+                                <div class="activity-icon-wrapper {{ $iconClass }}">
+                                    <span class="material-symbols-outlined">{{ $icon }}</span>
+                                </div>
+                                <div class="activity-body">
+                                    <h4 class="activity-title">{{ $log->title }}</h4>
+                                    @if($log->description)
+                                        <p class="activity-desc">{{ $log->description }}</p>
+                                    @endif
+                                    <span class="activity-time">
+                                        <span class="material-symbols-outlined" style="font-size: 13px;">schedule</span>
+                                        <span>
+                                            @if($log->created_at)
+                                                {{ $log->created_at->diffForHumans() }}
+                                            @else
+                                                Baru saja
+                                            @endif
+                                            @if($log->sppgUnit)
+                                                &bull; {{ $log->sppgUnit->code }}
+                                            @endif
+                                        </span>
+                                    </span>
+                                </div>
+                            </li>
+                        @empty
+                            <li style="padding: 24px; text-align: center; color: var(--color-muted);">
+                                Belum ada aktivitas tercatat pada sistem.
+                            </li>
+                        @endforelse
                     </ul>
                 </section>
             </div>

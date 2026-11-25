@@ -712,6 +712,26 @@
   flex-shrink: 0;
 }
 
+.kpi-icon-teal {
+  background-color: rgba(41, 115, 115, 0.12);
+  color: var(--color-primary);
+}
+
+.kpi-icon-emerald {
+  background-color: rgba(16, 185, 129, 0.12);
+  color: #059669;
+}
+
+.kpi-icon-amber {
+  background-color: rgba(245, 158, 11, 0.12);
+  color: #D97706;
+}
+
+.kpi-icon-accent {
+  background-color: rgba(255, 133, 82, 0.12);
+  color: var(--color-accent);
+}
+
 .activity-body {
   flex: 1;
 }
@@ -741,22 +761,24 @@
 .admin-modal-overlay {
   position: fixed;
   inset: 0;
-  background-color: rgba(15, 23, 43, 0.5);
+  background-color: rgba(15, 23, 43, 0.6);
   backdrop-filter: blur(4px);
   -webkit-backdrop-filter: blur(4px);
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 1000;
+  z-index: 9999;
   padding: var(--space-20);
   opacity: 0;
   visibility: hidden;
+  pointer-events: none;
   transition: opacity var(--transition-normal), visibility var(--transition-normal);
 }
 
 .admin-modal-overlay.open {
-  opacity: 1;
-  visibility: visible;
+  opacity: 1 !important;
+  visibility: visible !important;
+  pointer-events: auto !important;
 }
 
 .admin-modal {

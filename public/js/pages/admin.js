@@ -452,6 +452,23 @@ function closeModal(modalId) {
   }
 }
 
+function openStudentModal() {
+  const modal = document.getElementById('modalStudent');
+  if (modal) {
+    const titleEl = document.getElementById('modalStudentTitle');
+    if (titleEl) titleEl.textContent = 'Tambah Siswa Baru';
+    const form = document.getElementById('studentForm');
+    if (form) form.reset();
+    const idInput = document.getElementById('studentFormId');
+    if (idInput) idInput.value = '';
+    openModal('modalStudent');
+  }
+}
+
+window.openModal = openModal;
+window.closeModal = closeModal;
+window.openStudentModal = openStudentModal;
+
 document.addEventListener('click', (e) => {
   if (e.target.classList.contains('admin-modal-overlay')) {
     e.target.classList.remove('open');
@@ -537,6 +554,13 @@ function initAdminAuthSync() {
 }
 
 function initDashboardPage() {
+  // Jika tabel dashboard sudah di-render secara dinamis dari backend Laravel Blade,
+  // jangan timpa DOM dengan data dummy localStorage.
+  const tableBody = document.getElementById('dashboardSchoolsTableBody');
+  if (tableBody && tableBody.children.length > 0) {
+    return;
+  }
+
   const store = AdminStore.get();
 
   
@@ -575,7 +599,6 @@ function initDashboardPage() {
   }
 
   
-  const tableBody = document.getElementById('dashboardSchoolsTableBody');
   if (tableBody) {
     tableBody.innerHTML = store.schools
       .slice(0, 5)
@@ -616,6 +639,8 @@ function initDashboardPage() {
 }
 
 function initStudentsPage() {
+  const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+
   let state = {
     search: '',
     schoolFilter: '',
@@ -623,7 +648,8 @@ function initStudentsPage() {
     currentPage: 1,
     pageSize: 8,
     activeEditId: null,
-    deleteTargetId: null
+    deleteTargetId: null,
+    searchTimeout: null,
   };
 
   const searchInput = document.getElementById('studentSearchInput');
@@ -636,136 +662,96 @@ function initStudentsPage() {
   const modalForm = document.getElementById('studentForm');
   const deleteConfirmBtn = document.getElementById('btnConfirmDeleteStudent');
 
-  
-  function populateSchoolSelects() {
-    const store = AdminStore.get();
-    const options = store.schools
-      .map((s) => `<option value="${s.id}">${s.name}</option>`)
-      .join('');
-
-    if (schoolFilter) {
-      schoolFilter.innerHTML = `<option value="">Semua Sekolah</option>` + options;
-    }
-
-    const formSchoolSelect = document.getElementById('studentFormSchool');
-    if (formSchoolSelect) {
-      formSchoolSelect.innerHTML = `<option value="" disabled selected>Pilih Sekolah</option>` + options;
-    }
-  }
-
-  
-  function updateRecapKPI() {
-    const store = AdminStore.get();
-    const total = store.students.length;
-    const reguler = store.students.filter((s) => s.menuType === 'Reguler').length;
-    const khusus = store.students.filter((s) => s.menuType === 'Menu Khusus').length;
-
+  function updateRecapKPI(recap) {
+    if (!recap) return;
     const elTotal = document.getElementById('recapTotalSiswa');
     const elReguler = document.getElementById('recapMenuReguler');
     const elKhusus = document.getElementById('recapMenuKhusus');
 
-    if (elTotal) elTotal.textContent = total;
-    if (elReguler) elReguler.textContent = `${reguler} (${Math.round((reguler / (total || 1)) * 100)}%)`;
-    if (elKhusus) elKhusus.textContent = `${khusus} (${Math.round((khusus / (total || 1)) * 100)}%)`;
+    if (elTotal) elTotal.textContent = Number(recap.total).toLocaleString('id-ID');
+    if (elReguler) elReguler.textContent = `${Number(recap.regular).toLocaleString('id-ID')} (${recap.regular_percent}%)`;
+    if (elKhusus) elKhusus.textContent = `${Number(recap.special).toLocaleString('id-ID')} (${recap.special_percent}%)`;
   }
 
-  
-  function render() {
-    const store = AdminStore.get();
-    let filtered = store.students.filter((s) => {
-      const matchSearch =
-        s.name.toLowerCase().includes(state.search.toLowerCase()) ||
-        s.nisn.includes(state.search) ||
-        s.class.toLowerCase().includes(state.search.toLowerCase());
-      const matchSchool = state.schoolFilter ? s.schoolId === Number(state.schoolFilter) : true;
-      const matchMenu = state.menuFilter ? s.menuType === state.menuFilter : true;
-      return matchSearch && matchSchool && matchMenu;
-    });
+  function renderTable(students, pagination) {
+    if (!tableBody) return;
 
-    const totalItems = filtered.length;
-    const totalPages = Math.ceil(totalItems / state.pageSize) || 1;
-    if (state.currentPage > totalPages) state.currentPage = totalPages;
+    if (!students || students.length === 0) {
+      tableBody.innerHTML = `
+        <tr>
+          <td colspan="9" style="text-align: center; padding: 40px; color: var(--color-muted);">
+            <span class="material-symbols-outlined" style="font-size: 36px; display: block; margin-bottom: 8px;">search_off</span>
+            Tidak ada data siswa yang cocok dengan filter atau pencarian.
+          </td>
+        </tr>
+      `;
+    } else {
+      tableBody.innerHTML = students
+        .map((st, i) => {
+          const schoolName = st.school ? st.school.name : 'Sekolah Tidak Ditemukan';
+          const isActive = st.recipient_status === 'active' || st.recipient_status === 'aktif';
+          const statusClass = isActive ? 'badge-status-active' : 'badge-status-inactive';
+          const statusText = isActive ? 'Aktif' : 'Nonaktif';
 
-    const startIndex = (state.currentPage - 1) * state.pageSize;
-    const pagedItems = filtered.slice(startIndex, startIndex + state.pageSize);
+          const hasAllergy = Array.isArray(st.allergies) && st.allergies.length > 0;
+          const menuBadge = hasAllergy
+            ? `<span class="badge badge-accent">Menu Khusus</span>`
+            : `<span class="badge badge-primary">Reguler</span>`;
 
-    if (tableBody) {
-      if (pagedItems.length === 0) {
-        tableBody.innerHTML = `
-          <tr>
-            <td colspan="9" style="text-align: center; padding: 40px; color: var(--color-muted);">
-              <span class="material-symbols-outlined" style="font-size: 36px; display: block; margin-bottom: 8px;">search_off</span>
-              Tidak ada data siswa yang cocok dengan filter atau pencarian.
+          const allergyText = hasAllergy ? st.allergies.map((a) => a.name).join(', ') : '';
+          const allergyDisplay = hasAllergy
+            ? `<span class="badge-allergy"><span class="material-symbols-outlined" style="font-size: 13px;">warning</span>${allergyText}</span>`
+            : `<span class="badge-allergy-safe">Tidak ada alergi</span>`;
+
+          const rowNo = (pagination.from || 1) + i;
+
+          return `
+          <tr data-student-id="${st.id}">
+            <td class="col-no">${rowNo}</td>
+            <td style="font-family: monospace; font-weight: 600;">${st.nisn}</td>
+            <td>
+              <div class="cell-title">${st.name}</div>
+            </td>
+            <td>
+              <div class="cell-title" style="font-size: 13px;">${schoolName}</div>
+            </td>
+            <td><strong>${st.class_name || '-'}</strong></td>
+            <td>${menuBadge}</td>
+            <td>${allergyDisplay}</td>
+            <td><span class="badge-status ${statusClass}">${statusText}</span></td>
+            <td class="col-actions">
+              <div class="btn-action-group">
+                <button type="button" class="btn-icon-action" data-edit-id="${st.id}" title="Edit Siswa">
+                  <span class="material-symbols-outlined" style="font-size: 18px;">edit</span>
+                </button>
+                <button type="button" class="btn-icon-action delete" data-delete-id="${st.id}" data-student-name="${st.name}" data-student-nisn="${st.nisn}" title="Hapus Siswa">
+                  <span class="material-symbols-outlined" style="font-size: 18px;">delete</span>
+                </button>
+              </div>
             </td>
           </tr>
         `;
-      } else {
-        tableBody.innerHTML = pagedItems
-          .map((st, i) => {
-            const school = AdminStore.getSchool(st.schoolId);
-            const schoolName = school ? school.name : 'Sekolah Tidak Ditemukan';
-            const statusClass =
-              st.status === 'Aktif' ? 'badge-status-active' : 'badge-status-inactive';
-            const menuBadge =
-              st.menuType === 'Reguler'
-                ? `<span class="badge badge-primary">Reguler</span>`
-                : `<span class="badge badge-accent">Menu Khusus</span>`;
-            const allergyDisplay =
-              st.allergies && st.allergies !== '-'
-                ? `<span class="badge-allergy"><span class="material-symbols-outlined" style="font-size: 13px;">warning</span>${st.allergies}</span>`
-                : `<span class="badge-allergy-safe">Tidak ada alergi</span>`;
-
-            return `
-            <tr>
-              <td class="col-no">${startIndex + i + 1}</td>
-              <td style="font-family: monospace; font-weight: 600;">${st.nisn}</td>
-              <td>
-                <div class="cell-title">${st.name}</div>
-              </td>
-              <td>
-                <div class="cell-title" style="font-size: 13px;">${schoolName}</div>
-              </td>
-              <td><strong>${st.class}</strong></td>
-              <td>${menuBadge}</td>
-              <td>${allergyDisplay}</td>
-              <td><span class="badge-status ${statusClass}">${st.status}</span></td>
-              <td class="col-actions">
-                <div class="btn-action-group">
-                  <button type="button" class="btn-icon-action" data-edit-id="${st.id}" title="Edit Siswa">
-                    <span class="material-symbols-outlined" style="font-size: 18px;">edit</span>
-                  </button>
-                  <button type="button" class="btn-icon-action delete" data-delete-id="${st.id}" title="Hapus Siswa">
-                    <span class="material-symbols-outlined" style="font-size: 18px;">delete</span>
-                  </button>
-                </div>
-              </td>
-            </tr>
-          `;
-          })
-          .join('');
-      }
+        })
+        .join('');
     }
 
-    
     if (paginationInfo) {
-      const from = totalItems === 0 ? 0 : startIndex + 1;
-      const to = Math.min(startIndex + state.pageSize, totalItems);
-      paginationInfo.textContent = `Menampilkan ${from}–${to} dari ${totalItems} siswa`;
+      paginationInfo.textContent = `Menampilkan ${pagination.from || 0}–${pagination.to || 0} dari ${pagination.total || 0} siswa`;
     }
 
     if (paginationControls) {
       let btns = `
-        <button type="button" class="btn-page" ${state.currentPage === 1 ? 'disabled' : ''} id="btnPrevPage">
+        <button type="button" class="btn-page" ${pagination.current_page <= 1 ? 'disabled' : ''} id="btnPrevPage">
           <span class="material-symbols-outlined" style="font-size: 18px;">chevron_left</span>
         </button>
       `;
-      for (let p = 1; p <= totalPages; p++) {
+      for (let p = 1; p <= pagination.last_page; p++) {
         btns += `
-          <button type="button" class="btn-page ${p === state.currentPage ? 'active' : ''}" data-page="${p}">${p}</button>
+          <button type="button" class="btn-page ${p === pagination.current_page ? 'active' : ''}" data-page="${p}">${p}</button>
         `;
       }
       btns += `
-        <button type="button" class="btn-page" ${state.currentPage === totalPages ? 'disabled' : ''} id="btnNextPage">
+        <button type="button" class="btn-page" ${pagination.current_page >= pagination.last_page ? 'disabled' : ''} id="btnNextPage">
           <span class="material-symbols-outlined" style="font-size: 18px;">chevron_right</span>
         </button>
       `;
@@ -773,28 +759,58 @@ function initStudentsPage() {
     }
   }
 
-  
+  async function fetchStudents(page = 1) {
+    state.currentPage = page;
+    const params = new URLSearchParams();
+    if (state.search) params.append('search', state.search);
+    if (state.schoolFilter) params.append('school_id', state.schoolFilter);
+    if (state.menuFilter) params.append('menu_type', state.menuFilter);
+    params.append('page', page);
+
+    try {
+      const response = await fetch(`/admin/students?${params.toString()}`, {
+        headers: {
+          'Accept': 'application/json',
+          'X-Requested-With': 'XMLHttpRequest',
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error('Gagal mengambil data siswa');
+      }
+
+      const data = await response.json();
+      if (data.success) {
+        updateRecapKPI(data.recap);
+        renderTable(data.students, data.pagination);
+      }
+    } catch (err) {
+      console.error(err);
+      showToast('Gagal memuat data dari server', 'error');
+    }
+  }
+
   if (searchInput) {
     searchInput.addEventListener('input', (e) => {
-      state.search = e.target.value.trim();
-      state.currentPage = 1;
-      render();
+      clearTimeout(state.searchTimeout);
+      state.searchTimeout = setTimeout(() => {
+        state.search = e.target.value.trim();
+        fetchStudents(1);
+      }, 300);
     });
   }
 
   if (schoolFilter) {
     schoolFilter.addEventListener('change', (e) => {
       state.schoolFilter = e.target.value;
-      state.currentPage = 1;
-      render();
+      fetchStudents(1);
     });
   }
 
   if (menuFilter) {
     menuFilter.addEventListener('change', (e) => {
       state.menuFilter = e.target.value;
-      state.currentPage = 1;
-      render();
+      fetchStudents(1);
     });
   }
 
@@ -802,27 +818,22 @@ function initStudentsPage() {
     paginationControls.addEventListener('click', (e) => {
       const pageBtn = e.target.closest('[data-page]');
       if (pageBtn) {
-        state.currentPage = Number(pageBtn.dataset.page);
-        render();
+        const page = Number(pageBtn.dataset.page);
+        if (page !== state.currentPage) {
+          fetchStudents(page);
+        }
         return;
       }
       if (e.target.closest('#btnPrevPage') && state.currentPage > 1) {
-        state.currentPage--;
-        render();
+        fetchStudents(state.currentPage - 1);
         return;
       }
       if (e.target.closest('#btnNextPage')) {
-        const store = AdminStore.get();
-        const totalItems = store.students.length;
-        if (state.currentPage * state.pageSize < totalItems) {
-          state.currentPage++;
-          render();
-        }
+        fetchStudents(state.currentPage + 1);
       }
     });
   }
 
-  
   if (addBtn) {
     addBtn.addEventListener('click', () => {
       state.activeEditId = null;
@@ -833,27 +844,33 @@ function initStudentsPage() {
     });
   }
 
-  
   if (tableBody) {
-    tableBody.addEventListener('click', (e) => {
+    tableBody.addEventListener('click', async (e) => {
       const editBtn = e.target.closest('[data-edit-id]');
       if (editBtn) {
         const id = Number(editBtn.dataset.editId);
         state.activeEditId = id;
-        const store = AdminStore.get();
-        const student = store.students.find((s) => s.id === id);
-        if (student) {
-          document.getElementById('modalStudentTitle').textContent = 'Ubah Data Siswa';
-          document.getElementById('studentFormId').value = student.id;
-          document.getElementById('studentFormNisn').value = student.nisn;
-          document.getElementById('studentFormName').value = student.name;
-          document.getElementById('studentFormSchool').value = student.schoolId;
-          document.getElementById('studentFormClass').value = student.class;
-          document.getElementById('studentFormMenuType').value = student.menuType;
-          document.getElementById('studentFormAllergies').value =
-            student.allergies === '-' ? '' : student.allergies;
-          document.getElementById('studentFormStatus').value = student.status;
-          openModal('modalStudent');
+        try {
+          const res = await fetch(`/admin/students/${id}`, {
+            headers: { 'Accept': 'application/json' },
+          });
+          const resData = await res.json();
+          if (resData.success && resData.data) {
+            const student = resData.data;
+            document.getElementById('modalStudentTitle').textContent = 'Ubah Data Siswa';
+            document.getElementById('studentFormId').value = student.id;
+            document.getElementById('studentFormNisn').value = student.nisn;
+            document.getElementById('studentFormName').value = student.name;
+            document.getElementById('studentFormSchool').value = student.school_id;
+            document.getElementById('studentFormClass').value = student.class_name;
+            document.getElementById('studentFormMenuType').value = student.menu_type;
+            document.getElementById('studentFormAllergies').value = student.allergies;
+            document.getElementById('studentFormStatus').value = student.recipient_status;
+            openModal('modalStudent');
+          }
+        } catch (err) {
+          console.error(err);
+          showToast('Gagal mengambil data detail siswa', 'error');
         }
         return;
       }
@@ -862,26 +879,23 @@ function initStudentsPage() {
       if (deleteBtn) {
         const id = Number(deleteBtn.dataset.deleteId);
         state.deleteTargetId = id;
-        const store = AdminStore.get();
-        const student = store.students.find((s) => s.id === id);
-        if (student) {
-          document.getElementById('deleteStudentName').textContent = `${student.name} (NISN: ${student.nisn})`;
-          openModal('modalDeleteStudent');
-        }
+        const studentName = deleteBtn.dataset.studentName || 'Siswa Terpilih';
+        const studentNisn = deleteBtn.dataset.studentNisn || '';
+        document.getElementById('deleteStudentName').textContent = `${studentName} (NISN: ${studentNisn})`;
+        openModal('modalDeleteStudent');
       }
     });
   }
 
-  
   if (modalForm) {
-    modalForm.addEventListener('submit', (e) => {
+    modalForm.addEventListener('submit', async (e) => {
       e.preventDefault();
       const nisn = document.getElementById('studentFormNisn').value.trim();
       const name = document.getElementById('studentFormName').value.trim();
       const schoolId = Number(document.getElementById('studentFormSchool').value);
       const studentClass = document.getElementById('studentFormClass').value.trim();
       const menuType = document.getElementById('studentFormMenuType').value;
-      const allergies = document.getElementById('studentFormAllergies').value.trim() || '-';
+      const allergies = document.getElementById('studentFormAllergies').value.trim();
       const status = document.getElementById('studentFormStatus').value;
 
       if (!nisn || !name || !schoolId || !studentClass) {
@@ -889,86 +903,77 @@ function initStudentsPage() {
         return;
       }
 
-      const store = AdminStore.get();
-      if (state.activeEditId) {
-        
-        const idx = store.students.findIndex((s) => s.id === state.activeEditId);
-        if (idx !== -1) {
-          store.students[idx] = {
-            ...store.students[idx],
-            nisn,
-            name,
-            schoolId,
-            class: studentClass,
-            menuType,
-            allergies,
-            status
-          };
-          AdminStore.save(store);
-          AdminStore.logActivity(
-            'Data Siswa Diperbarui',
-            `Data siswa ${name} (${studentClass}) berhasil diperbarui oleh admin.`,
-            'edit'
-          );
-          showToast(`Data siswa "${name}" berhasil diperbarui!`, 'success');
+      const payload = {
+        nisn,
+        name,
+        school_id: schoolId,
+        class_name: studentClass,
+        menu_type: menuType,
+        allergies,
+        recipient_status: status,
+      };
+
+      const isEdit = Boolean(state.activeEditId);
+      const url = isEdit ? `/admin/students/${state.activeEditId}` : '/admin/students';
+      const method = isEdit ? 'PUT' : 'POST';
+
+      try {
+        const response = await fetch(url, {
+          method,
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': csrfToken,
+            'Accept': 'application/json',
+          },
+          body: JSON.stringify(payload),
+        });
+
+        const data = await response.json();
+        if (!response.ok) {
+          const errMsg = data.message || (data.errors ? Object.values(data.errors).flat().join(', ') : 'Terjadi kesalahan saat menyimpan data');
+          showToast(errMsg, 'error');
+          return;
         }
-      } else {
-        
-        const newStudent = {
-          id: Date.now(),
-          nisn,
-          name,
-          schoolId,
-          class: studentClass,
-          menuType,
-          allergies,
-          status
-        };
-        store.students.unshift(newStudent);
-        AdminStore.save(store);
-        AdminStore.logActivity(
-          'Siswa Baru Ditambahkan',
-          `Siswa baru ${name} (${studentClass}) berhasil didaftarkan.`,
-          'person_add'
-        );
-        showToast(`Siswa "${name}" berhasil ditambahkan!`, 'success');
-      }
 
-      closeModal('modalStudent');
-      updateRecapKPI();
-      render();
+        showToast(data.message, 'success');
+        closeModal('modalStudent');
+        fetchStudents(state.currentPage);
+      } catch (err) {
+        console.error(err);
+        showToast('Terjadi kesalahan jaringan/server', 'error');
+      }
     });
   }
 
-  
   if (deleteConfirmBtn) {
-    deleteConfirmBtn.addEventListener('click', () => {
+    deleteConfirmBtn.addEventListener('click', async () => {
       if (!state.deleteTargetId) return;
-      const store = AdminStore.get();
-      const target = store.students.find((s) => s.id === state.deleteTargetId);
-      store.students = store.students.filter((s) => s.id !== state.deleteTargetId);
-      AdminStore.save(store);
 
-      if (target) {
-        AdminStore.logActivity(
-          'Data Siswa Dihapus',
-          `Siswa ${target.name} dihapus dari sistem oleh admin.`,
-          'delete',
-          'kpi-icon-accent'
-        );
+      try {
+        const response = await fetch(`/admin/students/${state.deleteTargetId}`, {
+          method: 'DELETE',
+          headers: {
+            'X-CSRF-TOKEN': csrfToken,
+            'Accept': 'application/json',
+          },
+        });
+
+        const data = await response.json();
+        if (!response.ok) {
+          showToast(data.message || 'Gagal menghapus siswa', 'error');
+          return;
+        }
+
+        showToast(data.message, 'info');
+        closeModal('modalDeleteStudent');
+        state.deleteTargetId = null;
+        fetchStudents(state.currentPage);
+      } catch (err) {
+        console.error(err);
+        showToast('Terjadi kesalahan saat menghapus data', 'error');
       }
-
-      showToast('Data siswa berhasil dihapus!', 'info');
-      closeModal('modalDeleteStudent');
-      state.deleteTargetId = null;
-      updateRecapKPI();
-      render();
     });
   }
-
-  populateSchoolSelects();
-  updateRecapKPI();
-  render();
 }
 
 function initSchoolsPage() {
@@ -1897,7 +1902,7 @@ function initUsersPage() {
   render();
 }
 
-document.addEventListener('DOMContentLoaded', () => {
+function runAdminApp() {
   initAdminAuthSync();
 
   if (document.getElementById('adminDashboardPage')) {
@@ -1911,4 +1916,10 @@ document.addEventListener('DOMContentLoaded', () => {
   } else if (document.getElementById('adminUsersPage')) {
     initUsersPage();
   }
-});
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', runAdminApp);
+} else {
+  runAdminApp();
+}

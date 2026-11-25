@@ -91,4 +91,32 @@ class Student extends Model
     {
         return $this->hasMany(StudentAllergy::class, 'student_id');
     }
+
+    /**
+     * Check if the student has registered allergies.
+     */
+    public function hasAllergies(): bool
+    {
+        return $this->allergies->isNotEmpty();
+    }
+
+    /**
+     * Get menu type for display.
+     */
+    public function getMenuTypeAttribute(): string
+    {
+        return $this->hasAllergies() ? 'Menu Khusus' : 'Reguler';
+    }
+
+    /**
+     * Get summary of allergies for display.
+     */
+    public function getAllergiesSummaryAttribute(): string
+    {
+        if ($this->allergies->isEmpty()) {
+            return '-';
+        }
+
+        return $this->allergies->pluck('name')->join(', ');
+    }
 }

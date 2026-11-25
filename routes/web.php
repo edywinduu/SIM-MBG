@@ -54,6 +54,10 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/schools', [AdminSchoolController::class, 'index'])->name('schools');
         Route::get('/sppg', [AdminSppgController::class, 'index'])->name('sppg');
         Route::get('/students', [AdminStudentController::class, 'index'])->name('students');
+        Route::post('/students', [AdminStudentController::class, 'store'])->name('students.store');
+        Route::get('/students/{id}', [AdminStudentController::class, 'show'])->name('students.show');
+        Route::put('/students/{id}', [AdminStudentController::class, 'update'])->name('students.update');
+        Route::delete('/students/{id}', [AdminStudentController::class, 'destroy'])->name('students.destroy');
         Route::get('/users', [AdminUserController::class, 'index'])->name('users');
     });
 

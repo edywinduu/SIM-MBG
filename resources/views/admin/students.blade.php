@@ -19,7 +19,34 @@
     <link rel="stylesheet" href="{{ asset('css/global.css') }}">
     <link rel="stylesheet" href="{{ asset('css/components.css') }}">
     <link rel="stylesheet" href="{{ asset('css/layout.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/pages/admin.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/pages/admin.css') }}?v={{ time() }}">
+    <style>
+        .admin-modal-overlay {
+            position: fixed;
+            inset: 0;
+            background-color: rgba(15, 23, 43, 0.6);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            padding: var(--space-20);
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+            transition: opacity 0.2s ease, visibility 0.2s ease;
+        }
+        .admin-modal-overlay.open {
+            opacity: 1 !important;
+            visibility: visible !important;
+            pointer-events: auto !important;
+            display: flex !important;
+        }
+        .admin-modal-overlay.open .admin-modal {
+            transform: translateY(0) scale(1) !important;
+        }
+    </style>
 </head>
 <body class="admin-body" id="adminStudentsPage">
     
@@ -50,10 +77,10 @@
             <!-- Profil Admin Ringkas & Logout -->
             <div class="nav-actions">
                 <div class="admin-user-chip">
-                    <div class="admin-user-avatar">A</div>
+                    <div class="admin-user-avatar">{{ strtoupper(substr(auth()->user()->full_name ?? auth()->user()->username ?? 'A', 0, 1)) }}</div>
                     <div class="admin-user-meta">
-                        <span class="admin-user-name admin-display-name">Atmind Admin</span>
-                        <span class="admin-user-role">Administrator</span>
+                        <span class="admin-user-name admin-display-name">{{ auth()->user()->full_name ?? auth()->user()->username ?? 'Administrator' }}</span>
+                        <span class="admin-user-role">{{ ucfirst(auth()->user()->role ?? 'Administrator') }}</span>
                     </div>
                 </div>
 
@@ -89,12 +116,25 @@
                     </div>
                 </div>
                 <div class="toolbar-actions">
-                    <button type="button" class="btn btn-primary" id="btnAddStudent">
+                    <button type="button" class="btn btn-primary" id="btnAddStudent" onclick="openStudentModal()">
                         <span class="material-symbols-outlined" style="font-size: 20px;">add</span>
                         <span>Tambah Siswa</span>
                     </button>
                 </div>
             </section>
+
+            @if(session('success'))
+                <div style="background-color: #ECFDF5; border-left: 4px solid #10B981; color: #065F46; padding: 14px 18px; border-radius: 8px; margin-bottom: 20px; font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 8px; box-shadow: var(--shadow-sm);">
+                    <span class="material-symbols-outlined" style="font-size: 20px; color: #10B981;">check_circle</span>
+                    <span>{{ session('success') }}</span>
+                </div>
+            @endif
+            @if(session('error'))
+                <div style="background-color: #FEF2F2; border-left: 4px solid #EF4444; color: #991B1B; padding: 14px 18px; border-radius: 8px; margin-bottom: 20px; font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 8px; box-shadow: var(--shadow-sm);">
+                    <span class="material-symbols-outlined" style="font-size: 20px; color: #EF4444;">error</span>
+                    <span>{{ session('error') }}</span>
+                </div>
+            @endif
 
             
             <section class="kpi-grid-3" aria-label="Rekapitulasi Siswa">
@@ -105,7 +145,7 @@
                         </div>
                         <div class="kpi-meta">
                             <span class="kpi-label">Total Siswa Terdaftar</span>
-                            <div class="kpi-value" id="recapTotalSiswa">0</div>
+                            <div class="kpi-value" id="recapTotalSiswa">{{ number_format($recap['total'], 0, ',', '.') }}</div>
                         </div>
                     </div>
                     <div class="kpi-divider"></div>
@@ -121,7 +161,7 @@
                         </div>
                         <div class="kpi-meta">
                             <span class="kpi-label">Penerima Menu Reguler</span>
-                            <div class="kpi-value" id="recapMenuReguler">0 (0%)</div>
+                            <div class="kpi-value" id="recapMenuReguler">{{ number_format($recap['regular'], 0, ',', '.') }} ({{ $recap['regular_percent'] }}%)</div>
                         </div>
                     </div>
                     <div class="kpi-divider"></div>
@@ -137,7 +177,7 @@
                         </div>
                         <div class="kpi-meta">
                             <span class="kpi-label">Penerima Menu Khusus (Diet/Alergi)</span>
-                            <div class="kpi-value" id="recapMenuKhusus">0 (0%)</div>
+                            <div class="kpi-value" id="recapMenuKhusus">{{ number_format($recap['special'], 0, ',', '.') }} ({{ $recap['special_percent'] }}%)</div>
                         </div>
                     </div>
                     <div class="kpi-divider"></div>
@@ -159,6 +199,7 @@
                                 type="text"
                                 class="search-input"
                                 id="studentSearchInput"
+                                value="{{ $search ?? '' }}"
                                 placeholder="Cari nama siswa, NISN, atau kelas..."
                             >
                         </div>
@@ -166,13 +207,18 @@
                         
                         <select class="filter-select" id="studentSchoolFilter" aria-label="Filter berdasarkan Sekolah">
                             <option value="">Semua Sekolah</option>
+                            @foreach($schools as $school)
+                                <option value="{{ $school->id }}" {{ (string)($schoolFilter ?? '') === (string)$school->id ? 'selected' : '' }}>
+                                    {{ $school->name }}
+                                </option>
+                            @endforeach
                         </select>
 
                         
                         <select class="filter-select" id="studentMenuFilter" aria-label="Filter berdasarkan Jenis Menu">
                             <option value="">Semua Jenis Menu</option>
-                            <option value="Reguler">Menu Reguler</option>
-                            <option value="Menu Khusus">Menu Khusus (Alergi)</option>
+                            <option value="Reguler" {{ ($menuFilter ?? '') === 'Reguler' ? 'selected' : '' }}>Menu Reguler</option>
+                            <option value="Menu Khusus" {{ ($menuFilter ?? '') === 'Menu Khusus' ? 'selected' : '' }}>Menu Khusus (Alergi)</option>
                         </select>
                     </div>
                 </div>
@@ -194,7 +240,64 @@
                             </tr>
                         </thead>
                         <tbody id="studentsTableBody">
-                            
+                            @forelse($students as $st)
+                                @php
+                                    $hasAllergy = $st->allergies->isNotEmpty();
+                                    $allergySummary = $hasAllergy ? $st->allergies->pluck('name')->join(', ') : '';
+                                    $statusLower = strtolower($st->recipient_status ?? 'active');
+                                    $isActive = in_array($statusLower, ['active', 'aktif'], true);
+                                @endphp
+                                <tr data-student-id="{{ $st->id }}">
+                                    <td class="col-no">{{ $students->firstItem() + $loop->index }}</td>
+                                    <td style="font-family: monospace; font-weight: 600;">{{ $st->nisn }}</td>
+                                    <td>
+                                        <div class="cell-title">{{ $st->name }}</div>
+                                    </td>
+                                    <td>
+                                        <div class="cell-title" style="font-size: 13px;">{{ $st->school?->name ?? 'Sekolah Tidak Ditemukan' }}</div>
+                                    </td>
+                                    <td><strong>{{ $st->class_name }}</strong></td>
+                                    <td>
+                                        @if($hasAllergy)
+                                            <span class="badge badge-accent">Menu Khusus</span>
+                                        @else
+                                            <span class="badge badge-primary">Reguler</span>
+                                        @endif
+                                    </td>
+                                    <td>
+                                        @if($hasAllergy)
+                                            <span class="badge-allergy">
+                                                <span class="material-symbols-outlined" style="font-size: 13px;">warning</span>
+                                                {{ $allergySummary }}
+                                            </span>
+                                        @else
+                                            <span class="badge-allergy-safe">Tidak ada alergi</span>
+                                        @endif
+                                    </td>
+                                    <td>
+                                        <span class="badge-status {{ $isActive ? 'badge-status-active' : 'badge-status-inactive' }}">
+                                            {{ $isActive ? 'Aktif' : 'Nonaktif' }}
+                                        </span>
+                                    </td>
+                                    <td class="col-actions">
+                                        <div class="btn-action-group">
+                                            <button type="button" class="btn-icon-action" data-edit-id="{{ $st->id }}" title="Edit Siswa">
+                                                <span class="material-symbols-outlined" style="font-size: 18px;">edit</span>
+                                            </button>
+                                            <button type="button" class="btn-icon-action delete" data-delete-id="{{ $st->id }}" title="Hapus Siswa">
+                                                <span class="material-symbols-outlined" style="font-size: 18px;">delete</span>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="9" style="text-align: center; padding: 40px; color: var(--color-muted);">
+                                        <span class="material-symbols-outlined" style="font-size: 36px; display: block; margin-bottom: 8px;">search_off</span>
+                                        Tidak ada data siswa yang cocok dengan filter atau pencarian.
+                                    </td>
+                                </tr>
+                            @endforelse
                         </tbody>
                     </table>
                 </div>
@@ -202,10 +305,18 @@
                 
                 <div class="admin-pagination">
                     <div class="pagination-info" id="studentPaginationInfo">
-                        Menampilkan 0–0 dari 0 siswa
+                        Menampilkan {{ $students->firstItem() ?? 0 }}–{{ $students->lastItem() ?? 0 }} dari {{ $students->total() }} siswa
                     </div>
-                    <div class="pagination-controls" id="studentPaginationControls">
-                        
+                    <div class="pagination-controls" id="studentPaginationControls" data-current-page="{{ $students->currentPage() }}" data-last-page="{{ $students->lastPage() }}">
+                        <button type="button" class="btn-page" {{ $students->onFirstPage() ? 'disabled' : '' }} id="btnPrevPage">
+                            <span class="material-symbols-outlined" style="font-size: 18px;">chevron_left</span>
+                        </button>
+                        @for($p = 1; $p <= $students->lastPage(); $p++)
+                            <button type="button" class="btn-page {{ $p === $students->currentPage() ? 'active' : '' }}" data-page="{{ $p }}">{{ $p }}</button>
+                        @endfor
+                        <button type="button" class="btn-page" {{ !$students->hasMorePages() ? 'disabled' : '' }} id="btnNextPage">
+                            <span class="material-symbols-outlined" style="font-size: 18px;">chevron_right</span>
+                        </button>
                     </div>
                 </div>
             </section>
@@ -221,45 +332,49 @@
                     <span class="material-symbols-outlined">close</span>
                 </button>
             </div>
-            <form id="studentForm">
-                <input type="hidden" id="studentFormId">
+            <form id="studentForm" method="POST" action="{{ route('admin.students.store') }}">
+                @csrf
+                <input type="hidden" id="studentFormId" name="student_id">
                 <div class="admin-modal-body">
                     <div class="form-grid-2">
                         <div class="admin-form-group">
                             <label for="studentFormNisn" class="admin-form-label">NISN <span class="required">*</span></label>
-                            <input type="text" id="studentFormNisn" class="admin-form-input" placeholder="Contoh: 0081234567" required maxlength="10">
-                            <span class="admin-form-help">Nomor Induk Siswa Nasional (10 digit)</span>
+                            <input type="text" id="studentFormNisn" name="nisn" class="admin-form-input" placeholder="Contoh: 0081234567" required maxlength="12">
+                            <span class="admin-form-help">Nomor Induk Siswa Nasional (10-12 digit)</span>
                         </div>
                         <div class="admin-form-group">
                             <label for="studentFormName" class="admin-form-label">Nama Lengkap Siswa <span class="required">*</span></label>
-                            <input type="text" id="studentFormName" class="admin-form-input" placeholder="Masukkan nama siswa" required>
+                            <input type="text" id="studentFormName" name="name" class="admin-form-input" placeholder="Masukkan nama siswa" required>
                         </div>
                     </div>
 
                     <div class="form-grid-2">
                         <div class="admin-form-group">
                             <label for="studentFormSchool" class="admin-form-label">Sekolah <span class="required">*</span></label>
-                            <select id="studentFormSchool" class="admin-form-select" required>
+                            <select id="studentFormSchool" name="school_id" class="admin-form-select" required>
                                 <option value="" disabled selected>Pilih Sekolah</option>
+                                @foreach($schools as $school)
+                                    <option value="{{ $school->id }}">{{ $school->name }}</option>
+                                @endforeach
                             </select>
                         </div>
                         <div class="admin-form-group">
                             <label for="studentFormClass" class="admin-form-label">Kelas <span class="required">*</span></label>
-                            <input type="text" id="studentFormClass" class="admin-form-input" placeholder="Contoh: XI IPA 1" required>
+                            <input type="text" id="studentFormClass" name="class_name" class="admin-form-input" placeholder="Contoh: XI IPA 1" required>
                         </div>
                     </div>
 
                     <div class="form-grid-2">
                         <div class="admin-form-group">
                             <label for="studentFormMenuType" class="admin-form-label">Jenis Paket Menu <span class="required">*</span></label>
-                            <select id="studentFormMenuType" class="admin-form-select" required>
+                            <select id="studentFormMenuType" name="menu_type" class="admin-form-select" required>
                                 <option value="Reguler">Reguler</option>
                                 <option value="Menu Khusus">Menu Khusus (Diet/Alergen)</option>
                             </select>
                         </div>
                         <div class="admin-form-group">
                             <label for="studentFormStatus" class="admin-form-label">Status Keaktifan <span class="required">*</span></label>
-                            <select id="studentFormStatus" class="admin-form-select" required>
+                            <select id="studentFormStatus" name="recipient_status" class="admin-form-select" required>
                                 <option value="Aktif">Aktif</option>
                                 <option value="Nonaktif">Nonaktif</option>
                             </select>
@@ -268,7 +383,7 @@
 
                     <div class="admin-form-group">
                         <label for="studentFormAllergies" class="admin-form-label">Catatan Alergi / Pantangan Medis</label>
-                        <input type="text" id="studentFormAllergies" class="admin-form-input" placeholder="Contoh: Kacang, Seafood, Telur (kosongkan jika tidak ada)">
+                        <input type="text" id="studentFormAllergies" name="allergies" class="admin-form-input" placeholder="Contoh: Kacang, Seafood, Telur (kosongkan jika tidak ada)">
                         <span class="admin-form-help">Catatan ini akan otomatis ditampilkan pada peringatan menu harian siswa.</span>
                     </div>
                 </div>
@@ -324,7 +439,32 @@
     </div>
 </footer>
 
-    
-    <script src="{{ asset('js/pages/admin.js') }}"></script>
+    <script>
+        function openStudentModal() {
+            var modal = document.getElementById('modalStudent');
+            if (modal) {
+                var title = document.getElementById('modalStudentTitle');
+                if (title) title.textContent = 'Tambah Siswa Baru';
+                var form = document.getElementById('studentForm');
+                if (form) form.reset();
+                var idInput = document.getElementById('studentFormId');
+                if (idInput) idInput.value = '';
+                modal.classList.add('open');
+                document.body.style.overflow = 'hidden';
+            }
+        }
+
+        function closeModal(id) {
+            var modal = document.getElementById(id);
+            if (modal) {
+                modal.classList.remove('open');
+                document.body.style.overflow = '';
+            }
+        }
+
+        window.openStudentModal = openStudentModal;
+        window.closeModal = closeModal;
+    </script>
+    <script src="{{ asset('js/pages/admin.js') }}?v={{ time() }}"></script>
 </body>
 </html>

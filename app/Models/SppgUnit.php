@@ -54,4 +54,9 @@ class SppgUnit extends Model
     {
         return $this->hasMany(KitchenAudit::class, 'sppg_id');
     }
+
+    public function activityLogs(): HasMany
+    {
+        return $this->hasMany(ActivityLog::class, 'sppg_id');
+    }
 }
