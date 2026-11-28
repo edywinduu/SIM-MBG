@@ -73,7 +73,7 @@
         <div class="container">
             <section class="sppg-page-head">
                 <div>
-                    <h1 class="sppg-title">Selamat Pagi, Admin SPPG! ??</h1>
+                    <h1 class="sppg-title">Selamat Pagi, {{ $displayName }}! 👋</h1>
                     <p class="sppg-sub">
                         <span class="material-symbols-outlined">calendar_today</span>
                         <span id="todayDate">–</span> • Satuan Pelayanan Gizi Wilayah Denpasar & Badung
@@ -94,9 +94,9 @@
             <section class="sppg-panel sppg-announce">
                 <div class="sppg-ico ico-orange"><span class="material-symbols-outlined">notifications_active</span></div>
                 <div class="sppg-announce-body">
-                    <div><span class="pill pill-orange">PENGUMUMAN SPPG</span> <small class="text-muted">07:30 WIB</small></div>
-                    <h3>Jadwal Distribusi Menu MBG</h3>
-                    <p>Periode Oktober 2026 sedang berjalan aktif sesuai standar AKG Nasional.</p>
+                    <div><span class="pill pill-orange">PENGUMUMAN SPPG</span> <small class="text-muted">{{ $announcement?->created_at ? $announcement->created_at->format('H:i').' WITA' : '07:30 WITA' }}</small></div>
+                    <h3>{{ $announcement?->title ?? 'Jadwal Distribusi Menu MBG' }}</h3>
+                    <p>{{ $announcement?->content ?? 'Periode Oktober 2026 sedang berjalan aktif sesuai standar AKG Nasional.' }}</p>
                 </div>
                 <a href="#" class="sppg-link" data-toast="Membuka Pedoman Siklus...">Lihat Pedoman Siklus <span class="material-symbols-outlined">chevron_right</span></a>
             </section>
@@ -104,22 +104,22 @@
             <section class="sppg-kpi-grid">
                 <article class="sppg-kpi">
                     <div class="sppg-kpi-top"><span>Total Porsi Hari Ini</span><div class="sppg-ico ico-green"><span class="material-symbols-outlined">lunch_dining</span></div></div>
-                    <div class="sppg-kpi-val">3.450 <small>Porsi</small></div>
-                    <div class="sppg-kpi-foot"><span class="pill pill-green">? +5.2%</span><span>vs target kemarin</span></div>
+                    <div class="sppg-kpi-val" id="kpiTotalPortions">{{ number_format($kpis['total_portions'] ?? 2940, 0, ',', '.') }} <small>Porsi</small></div>
+                    <div class="sppg-kpi-foot"><span class="pill pill-green">↗ +5.2%</span><span>vs target kemarin</span></div>
                 </article>
                 <article class="sppg-kpi">
                     <div class="sppg-kpi-top"><span>Sekolah Penerima Aktif</span><div class="sppg-ico ico-blue"><span class="material-symbols-outlined">school</span></div></div>
-                    <div class="sppg-kpi-val">18 <small>Lembaga</small></div>
+                    <div class="sppg-kpi-val" id="kpiActiveSchools">{{ number_format($kpis['active_schools'] ?? 5, 0, ',', '.') }} <small>Lembaga</small></div>
                     <div class="sppg-kpi-foot"><span class="pill pill-blue">100% Tercakup</span><span>SD & SMP Negeri</span></div>
                 </article>
                 <article class="sppg-kpi">
                     <div class="sppg-kpi-top"><span>Menu Terverifikasi</span><div class="sppg-ico ico-green"><span class="material-symbols-outlined">verified</span></div></div>
-                    <div class="sppg-kpi-val">12 <small>Siklus Menu</small></div>
+                    <div class="sppg-kpi-val" id="kpiVerifiedMenus">{{ number_format($kpis['verified_menus'] ?? 5, 0, ',', '.') }} <small>Siklus Menu</small></div>
                     <div class="sppg-kpi-foot"><span class="pill pill-green">Standar Halal & Higienis</span></div>
                 </article>
                 <article class="sppg-kpi">
                     <div class="sppg-kpi-top"><span>Evaluasi & Catatan</span><div class="sppg-ico ico-orange"><span class="material-symbols-outlined">report</span></div></div>
-                    <div class="sppg-kpi-val val-accent">4 <small>Catatan Baru</small></div>
+                    <div class="sppg-kpi-val val-accent" id="kpiPendingEvals">{{ number_format($kpis['pending_evaluations'] ?? 1, 0, ',', '.') }} <small>Catatan Baru</small></div>
                     <div class="sppg-kpi-foot"><span class="pill pill-orange">Perlu Tindak Lanjut</span><span>Umpan balik sekolah</span></div>
                 </article>
             </section>
@@ -219,6 +219,10 @@
         </div>
     </footer>
 
+    <script>
+        window.SPPG_ACTIVITIES = @json($activities ?? []);
+        window.SPPG_SCHOOLS = @json($schools ?? []);
+    </script>
     <script src="{{ asset('js/main.js') }}"></script>
     <script src="{{ asset('js/pages/sppg.js') }}"></script>
 </body>
