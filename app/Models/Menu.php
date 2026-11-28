@@ -13,6 +13,8 @@ class Menu extends Model
 
     protected $table = 'menus';
 
+    public $timestamps = false;
+
     // Kolom-kolom yang diizinkan untuk mass-assignment
     protected $fillable = [
         'name',

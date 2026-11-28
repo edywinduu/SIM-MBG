@@ -51,7 +51,7 @@
                         <span class="student-user-role sppg-user-role">{{ $sppgUser?->institution ?? 'Pegawai SPPG' }}</span>
                     </div>
                 </a>
-                <a href="{{ route('home') }}" class="btn btn-secondary btn-sm" title="Beranda">
+                <a href="{{ route('landing') }}" class="btn btn-secondary btn-sm" title="Beranda">
                     <span class="material-symbols-outlined" style="font-size: 18px;">home</span>
                 </a>
                 <form action="{{ route('logout') }}" method="POST" style="display: contents;">
@@ -73,7 +73,7 @@
         <div class="container">
             <section class="sppg-page-head">
                 <div>
-                    <div class="sppg-eyebrow"><span class="pill pill-green">? SPPG Wilayah Denpasar & Badung</span><span>Siklus Periode Oktober 2026</span></div>
+                    <div class="sppg-eyebrow"><span class="pill pill-green">● SPPG Wilayah Denpasar & Badung</span><span>Siklus Periode Oktober 2026</span></div>
                     <h1 class="sppg-title">Manajemen Siklus Menu Makan Bergizi Gratis (SPPG)</h1>
                     <p class="sppg-sub">Kelola daftar paket menu bergizi, kalori harian, alergen, dan jadwal distribusi untuk sekolah penerima.</p>
                 </div>
@@ -85,21 +85,21 @@
 
             <section class="sppg-kpi-grid">
                 <article class="sppg-kpi"><div class="sppg-kpi-top"><span>TOTAL MENU AKTIF</span><div class="sppg-ico ico-blue"><span class="material-symbols-outlined">restaurant</span></div></div>
-                    <div class="sppg-kpi-val">24 <small>Paket Menu</small></div><div class="sppg-kpi-foot text-primary">? 100% terjadwal 4 siklus</div></article>
+                    <div class="sppg-kpi-val" id="kpiTotalMenus">{{ $kpis['total_active_menus'] ?? 5 }} <small>Paket Menu</small></div><div class="sppg-kpi-foot text-primary">✓ 100% terjadwal 4 siklus</div></article>
                 <article class="sppg-kpi"><div class="sppg-kpi-top"><span>RATA-RATA KALORI</span><div class="sppg-ico ico-blue"><span class="material-symbols-outlined">local_fire_department</span></div></div>
-                    <div class="sppg-kpi-val">615 <small>kkal / porsi</small></div><div class="sppg-kpi-foot text-primary">? Target Kemenkes: 580 - 650 kkal</div></article>
+                    <div class="sppg-kpi-val" id="kpiAvgCalories">{{ $kpis['avg_calories'] ?? 615 }} <small>kkal / porsi</small></div><div class="sppg-kpi-foot text-primary">✓ Target Kemenkes: 580 - 650 kkal</div></article>
                 <article class="sppg-kpi"><div class="sppg-kpi-top"><span>MENU ALERGEN KHUSUS</span><div class="sppg-ico ico-orange"><span class="material-symbols-outlined">shield</span></div></div>
-                    <div class="sppg-kpi-val val-accent">8 <small>Variasi</small></div><div class="sppg-kpi-foot val-accent">Melayani 372 siswa sensitif</div></article>
+                    <div class="sppg-kpi-val val-accent" id="kpiSpecialMenus">{{ $kpis['special_menus'] ?? 2 }} <small>Variasi</small></div><div class="sppg-kpi-foot val-accent">Melayani {{ $kpis['sensitive_students'] ?? 3 }} siswa sensitif</div></article>
                 <article class="sppg-kpi"><div class="sppg-kpi-top"><span>KEPATUHAN STANDAR GIZI</span><div class="sppg-ico ico-green"><span class="material-symbols-outlined">nutrition</span></div></div>
-                    <div class="sppg-kpi-val">98.5% <small>Audit Ahli</small></div><div class="sppg-kpi-foot text-primary">? Akreditasi A Dinas Kesehatan</div></article>
+                    <div class="sppg-kpi-val">98.5% <small>Audit Ahli</small></div><div class="sppg-kpi-foot text-primary">☆ Akreditasi A Dinas Kesehatan</div></article>
             </section>
 
             <section class="sppg-panel sppg-toolbar">
                 <div class="sppg-tabs" id="menuTabs">
-                    <button type="button" class="sppg-tab active" data-filter="all">Semua Menu <span class="count">24</span></button>
-                    <button type="button" class="sppg-tab" data-filter="reguler">Menu Reguler (SD/SMP) <span class="count">16</span></button>
-                    <button type="button" class="sppg-tab" data-filter="khusus">Menu Alergi Khusus <span class="count">6</span></button>
-                    <button type="button" class="sppg-tab" data-filter="cadangan">Menu Cadangan Darurat <span class="count">2</span></button>
+                    <button type="button" class="sppg-tab active" data-filter="all">Semua Menu <span class="count" id="tabCountAll">{{ $counts['all'] ?? 5 }}</span></button>
+                    <button type="button" class="sppg-tab" data-filter="reguler">Menu Reguler (SD/SMP) <span class="count" id="tabCountReguler">{{ $counts['reguler'] ?? 2 }}</span></button>
+                    <button type="button" class="sppg-tab" data-filter="khusus">Menu Alergi Khusus <span class="count" id="tabCountKhusus">{{ $counts['khusus'] ?? 2 }}</span></button>
+                    <button type="button" class="sppg-tab" data-filter="cadangan">Menu Cadangan Darurat <span class="count" id="tabCountCadangan">{{ $counts['cadangan'] ?? 1 }}</span></button>
                 </div>
                 <div class="sppg-actions">
                     <div class="sppg-search"><span class="material-symbols-outlined">search</span><input type="text" id="menuSearch" placeholder="Cari nama menu / bahan..."></div>
@@ -163,6 +163,9 @@
         </div>
     </footer>
 
+    <script>
+        window.SPPG_MENUS = @json($menus ?? []);
+    </script>
     <script src="{{ asset('js/main.js') }}"></script>
     <script src="{{ asset('js/pages/sppg.js') }}"></script>
 </body>

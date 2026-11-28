@@ -65,11 +65,21 @@ Route::middleware(['auth'])->group(function () {
             return redirect()->route('sppg.dashboard');
         });
         Route::get('/dashboard', [SppgDashboardController::class, 'index'])->name('dashboard');
+        Route::post('/dashboard/sync', [SppgDashboardController::class, 'sync'])->name('dashboard.sync');
+        Route::post('/distributions/{id}/status', [SppgDashboardController::class, 'updateDistributionStatus'])->name('distributions.status');
+
         Route::get('/menu', [SppgMenuController::class, 'index'])->name('menu');
+        Route::post('/menu', [SppgMenuController::class, 'store'])->name('menu.store');
+        Route::put('/menu/{id}', [SppgMenuController::class, 'update'])->name('menu.update');
+        Route::post('/menu/{id}/toggle', [SppgMenuController::class, 'toggle'])->name('menu.toggle');
+
         Route::get('/selections', [SppgSelectionController::class, 'index'])->name('selections');
+        Route::post('/selections/save', [SppgSelectionController::class, 'save'])->name('selections.save');
+        Route::post('/selections/{nisn}/verify', [SppgSelectionController::class, 'verify'])->name('selections.verify');
         Route::get('/pilihan', function () {
             return redirect()->route('sppg.selections');
         });
+
         Route::get('/review', [SppgReviewController::class, 'index'])->name('review');
         Route::post('/review/{id}/respond', [SppgReviewController::class, 'respond'])->name('review.respond');
     });

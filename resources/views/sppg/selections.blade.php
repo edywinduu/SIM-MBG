@@ -51,7 +51,7 @@
                         <span class="student-user-role sppg-user-role">{{ $sppgUser?->institution ?? 'Pegawai SPPG' }}</span>
                     </div>
                 </a>
-                <a href="{{ route('home') }}" class="btn btn-secondary btn-sm" title="Beranda">
+                <a href="{{ route('landing') }}" class="btn btn-secondary btn-sm" title="Beranda">
                     <span class="material-symbols-outlined" style="font-size: 18px;">home</span>
                 </a>
                 <form action="{{ route('logout') }}" method="POST" style="display: contents;">
@@ -85,13 +85,13 @@
 
             <section class="sppg-kpi-grid">
                 <article class="sppg-kpi"><div class="sppg-kpi-top"><span>TOTAL TERDATA</span><div class="sppg-ico ico-blue"><span class="material-symbols-outlined">groups</span></div></div>
-                    <div class="sppg-kpi-val">12.482 <small>Siswa</small></div><div class="sppg-kpi-foot text-primary">? 100% Terverifikasi SPPG</div></article>
+                    <div class="sppg-kpi-val" id="kpiTotalStudents">{{ number_format($kpis['total_students'] ?? 3, 0, ',', '.') }} <small>Siswa</small></div><div class="sppg-kpi-foot text-primary">✓ 100% Terverifikasi SPPG</div></article>
                 <article class="sppg-kpi"><div class="sppg-kpi-top"><span>PAKET REGULER</span><div class="sppg-ico ico-green"><span class="material-symbols-outlined">restaurant</span></div></div>
-                    <div class="sppg-kpi-val val-primary">11.230 <span class="pill pill-green">90%</span></div><div class="sppg-kpi-foot">? Bebas alergen umum</div></article>
+                    <div class="sppg-kpi-val val-primary" id="kpiRegularStudents">{{ number_format($kpis['regular_count'] ?? 0, 0, ',', '.') }} <span class="pill pill-green">{{ $kpis['regular_pct'] ?? 0 }}%</span></div><div class="sppg-kpi-foot">● Bebas alergen umum</div></article>
                 <article class="sppg-kpi"><div class="sppg-kpi-top"><span>DIET & ALERGI KHUSUS</span><div class="sppg-ico ico-orange"><span class="material-symbols-outlined">warning</span></div></div>
-                    <div class="sppg-kpi-val val-accent">1.252 <span class="pill pill-orange">10%</span></div><div class="sppg-kpi-foot val-accent">Monitoring Lab Ketat</div></article>
+                    <div class="sppg-kpi-val val-accent" id="kpiSpecialStudents">{{ number_format($kpis['special_count'] ?? 3, 0, ',', '.') }} <span class="pill pill-orange">{{ $kpis['special_pct'] ?? 100 }}%</span></div><div class="sppg-kpi-foot val-accent">Monitoring Lab Ketat</div></article>
                 <article class="sppg-kpi"><div class="sppg-kpi-top"><span>SEKOLAH TERHUBUNG</span><div class="sppg-ico ico-blue"><span class="material-symbols-outlined">apartment</span></div></div>
-                    <div class="sppg-kpi-val">68 <small>Unit SPPG</small></div><div class="sppg-kpi-foot">? 100% Dapur Unit Siap</div></article>
+                    <div class="sppg-kpi-val" id="kpiConnectedSchools">{{ number_format($kpis['connected_schools'] ?? 5, 0, ',', '.') }} <small>Sekolah Mitra</small></div><div class="sppg-kpi-foot">● 100% Dapur Unit Siap</div></article>
             </section>
 
             <section class="sppg-panel sppg-filterbar">
@@ -166,6 +166,9 @@
         </div>
     </footer>
 
+    <script>
+        window.SPPG_STUDENTS = @json($students ?? []);
+    </script>
     <script src="{{ asset('js/main.js') }}"></script>
     <script src="{{ asset('js/pages/sppg.js') }}"></script>
 </body>
